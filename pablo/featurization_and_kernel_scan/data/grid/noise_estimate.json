@@ -1,0 +1,232 @@
+{
+  "n_experiments": 69,
+  "groups": [
+    {
+      "group_id": 0,
+      "n": 3,
+      "catalyst_id": 6,
+      "solvent": "THF",
+      "base": "no",
+      "batches": [
+        0,
+        0,
+        0
+      ],
+      "yields_pct": [
+        19,
+        22,
+        22
+      ],
+      "conversions_pct": [
+        53,
+        57,
+        60
+      ],
+      "selectivities_pct": [
+        35.8490566037736,
+        38.5964912280702,
+        36.6666666666667
+      ],
+      "var_raw": 0.0003
+    },
+    {
+      "group_id": 1,
+      "n": 3,
+      "catalyst_id": 3,
+      "solvent": "THF",
+      "base": "no",
+      "batches": [
+        0,
+        0,
+        0
+      ],
+      "yields_pct": [
+        43,
+        44,
+        44
+      ],
+      "conversions_pct": [
+        80,
+        80,
+        81
+      ],
+      "selectivities_pct": [
+        53.75,
+        55.0,
+        54.320987654321
+      ],
+      "var_raw": 3.333333333333339e-05
+    },
+    {
+      "group_id": 2,
+      "n": 2,
+      "catalyst_id": 4,
+      "solvent": "THF",
+      "base": "no",
+      "batches": [
+        0,
+        0
+      ],
+      "yields_pct": [
+        50,
+        51
+      ],
+      "conversions_pct": [
+        58,
+        58
+      ],
+      "selectivities_pct": [
+        86.2068965517241,
+        87.9310344827586
+      ],
+      "var_raw": 5.000000000000009e-05
+    },
+    {
+      "group_id": 3,
+      "n": 3,
+      "catalyst_id": 4,
+      "solvent": "H2O",
+      "base": "no",
+      "batches": [
+        2,
+        3,
+        4
+      ],
+      "yields_pct": [
+        15,
+        17,
+        16
+      ],
+      "conversions_pct": [
+        90,
+        94,
+        93
+      ],
+      "selectivities_pct": [
+        16.6666666666667,
+        18.2,
+        16.8
+      ],
+      "var_raw": 0.00010000000000000018
+    },
+    {
+      "group_id": 4,
+      "n": 3,
+      "catalyst_id": 5,
+      "solvent": "1,4-Dioxane",
+      "base": "Et3N",
+      "batches": [
+        3,
+        5,
+        5
+      ],
+      "yields_pct": [
+        6,
+        6,
+        5
+      ],
+      "conversions_pct": [
+        10,
+        13,
+        12
+      ],
+      "selectivities_pct": [
+        60.0,
+        46.0,
+        41.0
+      ],
+      "var_raw": 3.33333333333333e-05
+    }
+  ],
+  "pooled_dof": 9,
+  "inverse_gamma_alpha": 4.5,
+  "prior_cv": 0.6324555320336759,
+  "pooled_sd_yield_pct": 1.0452715401237103,
+  "by_scale": {
+    "Y/raw": {
+      "sum_squares": 0.0009833333333333339,
+      "variance": 0.00010925925925925932,
+      "sd": 0.010452715401237102,
+      "inverse_gamma_beta": 0.0004916666666666669,
+      "prior_mean_variance": 0.00014047619047619057
+    },
+    "Y/logit": {
+      "sum_squares": 0.059313664251182945,
+      "variance": 0.006590407139020327,
+      "sd": 0.08118132259960001,
+      "inverse_gamma_beta": 0.029656832125591472,
+      "prior_mean_variance": 0.00847338060731185
+    },
+    "Y/arcsin_sqrt": {
+      "sum_squares": 0.0017180346938626048,
+      "variance": 0.00019089274376251164,
+      "sd": 0.013816394021687122,
+      "inverse_gamma_beta": 0.0008590173469313024,
+      "prior_mean_variance": 0.0002454335276946578
+    },
+    "Y/probit": {
+      "sum_squares": 0.016740088310642734,
+      "variance": 0.001860009812293637,
+      "sd": 0.04312783106410102,
+      "inverse_gamma_beta": 0.008370044155321367,
+      "prior_mean_variance": 0.0023914411872346763
+    },
+    "C/raw": {
+      "sum_squares": 0.0038666666666666606,
+      "variance": 0.000429629629629629,
+      "sd": 0.020727509006864018,
+      "inverse_gamma_beta": 0.0019333333333333303,
+      "prior_mean_variance": 0.0005523809523809515
+    },
+    "C/logit": {
+      "sum_squares": 0.24700691960723348,
+      "variance": 0.02744521328969261,
+      "sd": 0.16566596901504127,
+      "inverse_gamma_beta": 0.12350345980361674,
+      "prior_mean_variance": 0.035286702801033354
+    },
+    "C/arcsin_sqrt": {
+      "sum_squares": 0.006661557264472977,
+      "variance": 0.0007401730293858863,
+      "sd": 0.027206121174946758,
+      "inverse_gamma_beta": 0.0033307786322364884,
+      "prior_mean_variance": 0.0009516510377818538
+    },
+    "C/probit": {
+      "sum_squares": 0.06793052306435327,
+      "variance": 0.007547835896039252,
+      "sd": 0.08687828207348054,
+      "inverse_gamma_beta": 0.03396526153217663,
+      "prior_mean_variance": 0.009704360437764752
+    },
+    "S/raw": {
+      "sum_squares": 0.02016928523437441,
+      "variance": 0.002241031692708268,
+      "sd": 0.04733953625362492,
+      "inverse_gamma_beta": 0.010084642617187205,
+      "prior_mean_variance": 0.002881326462053487
+    },
+    "S/logit": {
+      "sum_squares": 0.34357484452641707,
+      "variance": 0.03817498272515745,
+      "sd": 0.19538419261843434,
+      "inverse_gamma_beta": 0.17178742226320853,
+      "prior_mean_variance": 0.04908212064663101
+    },
+    "S/arcsin_sqrt": {
+      "sum_squares": 0.020630897883145087,
+      "variance": 0.0022923219870161207,
+      "sd": 0.04787819949639001,
+      "inverse_gamma_beta": 0.010315448941572544,
+      "prior_mean_variance": 0.002947271126163584
+    },
+    "S/probit": {
+      "sum_squares": 0.1324234654245473,
+      "variance": 0.014713718380505256,
+      "sd": 0.12130011698471381,
+      "inverse_gamma_beta": 0.06621173271227365,
+      "prior_mean_variance": 0.01891763791779247
+    }
+  },
+  "note": "InverseGamma(nu/2, S/2) per target (Y yield, C conversion, S selectivity) and outcome transform: the conjugate posterior for the noise variance under a Jeffreys reference prior, given the within-replicate sum of squares S pooled over nu degrees of freedom on the scale the GP is trained on. Model builders divide beta by the variance of the training targets on that scale."
+}

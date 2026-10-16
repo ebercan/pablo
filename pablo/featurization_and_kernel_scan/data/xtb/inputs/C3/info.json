@@ -1,0 +1,12 @@
+{
+  "catalyst_id": 3,
+  "form": "free_nhc",
+  "free_carbene_smiles": "Cc1cc(C)c(N2[C]N(c3c(C)cc(C)cc3C)CC2)c(C)c1",
+  "net_charge": 0,
+  "ff_used": "mmff94",
+  "carbene_idx": 7,
+  "hetero_nbr_indices": [
+    6,
+    8
+  ]
+}

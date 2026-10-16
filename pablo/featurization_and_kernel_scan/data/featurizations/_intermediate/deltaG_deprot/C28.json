@@ -1,0 +1,47 @@
+{
+  "catalyst_id": 28,
+  "form": "salt",
+  "precatalyst_smiles": "C[N+]1=CSC2=CC=CC=C12.[I-]",
+  "azolium": {
+    "smiles": "C[N+]1=CSC2=CC=CC=C21",
+    "charge": 1,
+    "conformer_source": "etkdgv3",
+    "conformers": [
+      {
+        "g_hartree": -26.932702299407,
+        "min_freq_cm1": 136.06,
+        "n_h_on_c2": 1,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 0,
+        "used_in_ensemble": true
+      }
+    ],
+    "n_conformers_embedded": 1,
+    "n_conformers_used": 1,
+    "g_boltzmann_hartree": -26.932702299407
+  },
+  "carbene": {
+    "smiles": "CN1[C]SC2=CC=CC=C21",
+    "charge": 0,
+    "conformer_source": "etkdgv3",
+    "conformers": [
+      {
+        "g_hartree": -26.742813277624,
+        "min_freq_cm1": 133.93,
+        "n_h_on_c2": 0,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 0,
+        "used_in_ensemble": true
+      }
+    ],
+    "n_conformers_embedded": 1,
+    "n_conformers_used": 1,
+    "g_boltzmann_hartree": -26.742813277624
+  },
+  "xtb_deltaG_deprot": 119.15716511454127,
+  "failures": []
+}

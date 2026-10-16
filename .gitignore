@@ -1,0 +1,27 @@
+.venv
+
+# Heavy run artifacts — regenerable from the queue or too large for history.
+pablo/featurization_and_kernel_scan/results/
+pablo/featurization_and_kernel_scan/runs/
+pablo/featurization_and_kernel_scan/archive/
+pablo/featurization_and_kernel_scan/results_archived/
+pablo/featurization_and_kernel_scan/data/weights/
+pablo/featurization_and_kernel_scan/data/grid/queue/
+pablo/featurization_and_kernel_scan/data/xtb/outputs/
+pablo/featurization_and_kernel_scan/data/*_tmp/
+
+# Superseded benchmark runs.
+pablo/mechthild_runs/run_2_acq_opt_robustness/results*/
+
+# run_5 results and queue state live on Mechthild, not in history.
+pablo/mechthild_runs/run_5_scope_extension_v2/results_*/
+pablo/mechthild_runs/run_5_scope_extension_v2/queue_state_*/
+pablo/mechthild_runs/run_5_scope_extension_v2/.submit_dynamic.sh
+
+# Committed SLURM logs and regenerable plots.
+pablo/mechthild_runs/*/logs/
+pablo/mechthild_runs/*/data/logs/
+
+__pycache__/
+*.pyc
+agent_trash/

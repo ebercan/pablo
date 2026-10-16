@@ -1,0 +1,167 @@
+{
+  "catalyst_id": 143,
+  "form": "salt",
+  "precatalyst_smiles": "IC1=CC=C([N+]2=CN(C3=CC=C(I)C=C3)C=C2)C=C1.[Cl-]",
+  "azolium": {
+    "smiles": "IC1=CC=C(N2C=C[N+](C3=CC=C(I)C=C3)=C2)C=C1",
+    "charge": 1,
+    "conformer_source": "etkdgv3",
+    "conformers": [
+      {
+        "g_hartree": -50.711874614921,
+        "min_freq_cm1": 19.62,
+        "n_h_on_c2": 1,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 0,
+        "used_in_ensemble": false
+      },
+      {
+        "g_hartree": -50.711256099217,
+        "min_freq_cm1": 21.09,
+        "n_h_on_c2": 1,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 1,
+        "used_in_ensemble": false
+      },
+      {
+        "g_hartree": -50.711250298819,
+        "min_freq_cm1": 21.55,
+        "n_h_on_c2": 1,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 2,
+        "used_in_ensemble": true
+      },
+      {
+        "g_hartree": -50.711958161679,
+        "min_freq_cm1": 20.32,
+        "n_h_on_c2": 1,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 3,
+        "used_in_ensemble": true
+      },
+      {
+        "g_hartree": -50.711951941342,
+        "min_freq_cm1": 19.44,
+        "n_h_on_c2": 1,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 4,
+        "used_in_ensemble": false
+      },
+      {
+        "g_hartree": -50.711925061604,
+        "min_freq_cm1": 19.49,
+        "n_h_on_c2": 1,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 5,
+        "used_in_ensemble": true
+      },
+      {
+        "g_hartree": -50.711858254391,
+        "min_freq_cm1": 20.11,
+        "n_h_on_c2": 1,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 6,
+        "used_in_ensemble": true
+      },
+      {
+        "g_hartree": -50.711992264444,
+        "min_freq_cm1": 19.61,
+        "n_h_on_c2": 1,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 7,
+        "used_in_ensemble": true
+      },
+      {
+        "g_hartree": -50.711331451611,
+        "min_freq_cm1": 20.88,
+        "n_h_on_c2": 1,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 8,
+        "used_in_ensemble": true
+      },
+      {
+        "g_hartree": -50.711275550101,
+        "min_freq_cm1": 21.2,
+        "n_h_on_c2": 1,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 9,
+        "used_in_ensemble": false
+      },
+      {
+        "g_hartree": -50.711344467755,
+        "min_freq_cm1": 21.05,
+        "n_h_on_c2": 1,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 10,
+        "used_in_ensemble": true
+      }
+    ],
+    "n_conformers_embedded": 11,
+    "n_conformers_used": 7,
+    "g_boltzmann_hartree": -50.71355242511154
+  },
+  "carbene": {
+    "smiles": "IC1=CC=C(N2[C]N(C3=CC=C(I)C=C3)C=C2)C=C1",
+    "charge": 0,
+    "conformer_source": "etkdgv3",
+    "conformers": [
+      {
+        "g_hartree": -50.521354082472,
+        "min_freq_cm1": 21.6,
+        "n_h_on_c2": 0,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 0,
+        "used_in_ensemble": true
+      },
+      {
+        "g_hartree": -50.521437443,
+        "min_freq_cm1": 21.87,
+        "n_h_on_c2": 0,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 1,
+        "used_in_ensemble": true
+      },
+      {
+        "g_hartree": -50.522083962481,
+        "min_freq_cm1": 22.15,
+        "n_h_on_c2": 0,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 2,
+        "used_in_ensemble": true
+      }
+    ],
+    "n_conformers_embedded": 3,
+    "n_conformers_used": 3,
+    "g_boltzmann_hartree": -50.522722153627626
+  },
+  "xtb_deltaG_deprot": 119.74780824373323,
+  "failures": []
+}

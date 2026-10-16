@@ -1,0 +1,31 @@
+{
+  "n_molecules": 161,
+  "n_features": 21,
+  "feature_cols": [
+    "form_salt",
+    "form_free_nhc",
+    "form_co2_adduct",
+    "form_bicarbonate",
+    "ring_imidazolylidene",
+    "ring_imidazolinylidene",
+    "ring_triazolinylidene",
+    "ring_thiazolylidene",
+    "ring_other",
+    "backbone_saturated",
+    "lp_L",
+    "lp_B1",
+    "lp_B5",
+    "vbur_scalar",
+    "vbur_asymmetry",
+    "xtb_homo_eV",
+    "xtb_lumo_eV",
+    "xtb_gap_eV",
+    "xtb_dipole_D",
+    "mw",
+    "heavy_atom_count"
+  ],
+  "descriptors_file": "descriptors.parquet",
+  "method": "Structural one-hots + LP-axis Sterimol + scalar %Vbur + %Vbur asymmetry + molecule-global xTB scalars (HOMO, LUMO, gap, dipole) + RDKit trivial scalars. No carbene-localised electronics.",
+  "xtb_scalar_source": "xtb_homo_eV/xtb_lumo_eV/xtb_gap_eV re-parsed from the post-convergence block of data/xtb/outputs/C*.txt on 2026-09-18 (features/interpretable/repair_xtb_scalars.py); earlier values were read at the unoptimised input geometry.",
+  "duplicate_carbene_policy": "Free-carbene descriptors are canonicalised across salt forms: the 161 entries are 113 distinct free carbenes, and each group carries the values of its lowest-xTB-energy member (features/interpretable/canonicalize_duplicates.py, 19.09.2026)."
+}

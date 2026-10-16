@@ -1,0 +1,13 @@
+{
+  "n_molecules": 161,
+  "label": "graphormer_carbene",
+  "raw_model_output_file": "raw_model_output.parquet",
+  "raw_model_dim": 768,
+  "hf_model": "clefourrier/graphormer-base-pcqm4mv2",
+  "pretraining": "PCQM4Mv2 HOMO-LUMO gap",
+  "embedding": "graph CLS token (768-d)",
+  "free_carbene": true,
+  "form_onehot_appended": false,
+  "n_features": 768,
+  "descriptors_file": "descriptors.parquet"
+}

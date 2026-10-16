@@ -1,0 +1,1439 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GROVER catalyst encoding</title>
+<script>
+(function () {
+  var root = document.documentElement;
+  var saved = localStorage.getItem('pablo_theme');
+  var sys = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  root.setAttribute('data-theme', saved || sys);
+  root.setAttribute('data-sidebar', localStorage.getItem('pablo_sidebar') || 'open');
+  var w = parseInt(localStorage.getItem('pablo_sidebar_w'), 10);
+  if (w >= 220 && w <= 560) root.style.setProperty('--sidebar-w', w + 'px');
+})();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.19.0/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.19.0/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.19.0/dist/contrib/auto-render.min.js"></script>
+<style>
+:root{
+  --font-sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  --font-mono:'Fira Code','SFMono-Regular',Consolas,Monaco,monospace;
+  --sidebar-w:300px; --header-h:60px;
+  --radius-sm:5px; --radius-md:8px; --radius-lg:10px;
+}
+[data-theme="light"]{
+  color-scheme:light;
+  --bg-app:#F5F6F8; --bg-card:#FFFFFF; --bg-card-subtle:#F0F2F5; --bg-elevated:#E8EBF0;
+  --bg-header:rgba(255,255,255,.92); --bg-code:#1B2330; --code-ink:#E3E7ED; --grid-line:rgba(24,32,44,.03);
+  --border-subtle:#DADFE6; --border-strong:#C3CAD4;
+  --text-main:#18202C; --text-muted:#4B5563; --text-dim:#6B7280;
+  --red:#A23B32;    --red-rgb:162,59,50;
+  --orange:#AE5520; --orange-rgb:174,85,32;
+  --yellow:#8A6A12; --yellow-rgb:138,106,18;
+  --green:#2F6B45;  --green-rgb:47,107,69;
+  --teal:#1F6E6A;   --teal-rgb:31,110,106;
+  --blue:#1F5A99;   --blue-rgb:31,90,153;
+  --indigo:#43479A; --indigo-rgb:67,71,154;
+  --purple:#6B3F8F; --purple-rgb:107,63,143;
+  --slate:#4A5568;  --slate-rgb:74,85,104;
+  --tint:.07;
+  --shadow-card:0 1px 2px rgba(24,32,44,.06),0 2px 8px rgba(24,32,44,.04);
+}
+[data-theme="dark"]{
+  color-scheme:dark;
+  --bg-app:#0F1216; --bg-card:#161A20; --bg-card-subtle:#1B2027; --bg-elevated:#232932;
+  --bg-header:rgba(15,18,22,.92); --bg-code:#0B0D10; --code-ink:#D5DBE3; --grid-line:rgba(255,255,255,.02);
+  --border-subtle:#2A3039; --border-strong:#3A424E;
+  --text-main:#E6E9EE; --text-muted:#A7B0BC; --text-dim:#7C8692;
+  --red:#E3867B;    --red-rgb:227,134,123;
+  --orange:#E5A06A; --orange-rgb:229,160,106;
+  --yellow:#D6B862; --yellow-rgb:214,184,98;
+  --green:#82C29B;  --green-rgb:130,194,155;
+  --teal:#6FC0B7;   --teal-rgb:111,192,183;
+  --blue:#82A9DE;   --blue-rgb:130,169,222;
+  --indigo:#A0A4E4; --indigo-rgb:160,164,228;
+  --purple:#BC9DD9; --purple-rgb:188,157,217;
+  --slate:#A0AEC0;  --slate-rgb:160,174,192;
+  --tint:.11;
+  --shadow-card:0 1px 2px rgba(0,0,0,.4);
+}
+:root,[data-hue="0"]{--sec:var(--blue);--sec-rgb:var(--blue-rgb)}
+[data-hue="1"]{--sec:var(--teal);--sec-rgb:var(--teal-rgb)}
+[data-hue="2"]{--sec:var(--red);--sec-rgb:var(--red-rgb)}
+[data-hue="3"]{--sec:var(--green);--sec-rgb:var(--green-rgb)}
+[data-hue="4"]{--sec:var(--purple);--sec-rgb:var(--purple-rgb)}
+[data-hue="5"]{--sec:var(--orange);--sec-rgb:var(--orange-rgb)}
+[data-hue="6"]{--sec:var(--indigo);--sec-rgb:var(--indigo-rgb)}
+[data-hue="7"]{--sec:var(--yellow);--sec-rgb:var(--yellow-rgb)}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{font-size:15px;scroll-behavior:smooth;scroll-padding-top:calc(var(--header-h) + 24px)}
+body{background:var(--bg-app);color:var(--text-main);font-family:var(--font-sans);
+ line-height:1.65;-webkit-font-smoothing:antialiased;min-height:100vh;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+ background-image:linear-gradient(to right,var(--grid-line) 1px,transparent 1px),
+  linear-gradient(to bottom,var(--grid-line) 1px,transparent 1px);
+ background-size:40px 40px}
+
+header.app-header{position:fixed;top:0;left:0;right:0;height:var(--header-h);z-index:100;
+ background:var(--bg-header);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+ border-bottom:1px solid var(--border-subtle);display:flex;align-items:center;
+ justify-content:space-between;gap:1rem;padding:0 1.25rem}
+.brand-wrapper{display:flex;align-items:center;gap:.85rem;min-width:0}
+.brand-badge{font-family:var(--font-mono);font-size:.72rem;font-weight:600;letter-spacing:.06em;
+ text-transform:uppercase;padding:.25rem .6rem;border-radius:var(--radius-sm);white-space:nowrap;
+ color:var(--text-muted);border:1px solid var(--border-strong)}
+.brand-title{font-size:1rem;font-weight:650;letter-spacing:-.01em;color:var(--text-main);
+ white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brand-title .dim{color:var(--text-muted);font-weight:400}
+.header-controls{display:flex;align-items:center;gap:.75rem}
+.reading-progress-track{position:absolute;bottom:-1px;left:0;width:100%;height:2px}
+.reading-progress-bar{height:100%;width:0;background:var(--blue);transition:width .1s ease-out}
+.btn-icon{background:transparent;border:1px solid var(--border-subtle);color:var(--text-muted);
+ width:36px;height:36px;border-radius:var(--radius-sm);display:inline-flex;align-items:center;
+ justify-content:center;cursor:pointer;transition:all .15s ease;flex:none}
+.btn-icon:hover{color:var(--text-main);border-color:var(--border-strong);background:var(--bg-card-subtle)}
+.btn-icon.sm{width:32px;height:32px}
+.btn-icon .moon{display:none}
+[data-theme="light"] .btn-icon .sun{display:none}
+[data-theme="light"] .btn-icon .moon{display:block}
+[data-sidebar="open"] #sidebarToggleBtn{color:var(--blue);border-color:rgba(var(--blue-rgb),.45);background:rgba(var(--blue-rgb),var(--tint))}
+
+.layout-container{display:flex;position:relative;margin-top:var(--header-h);z-index:1}
+aside.app-sidebar{width:var(--sidebar-w);position:fixed;top:var(--header-h);bottom:0;left:0;z-index:50;
+ background:var(--bg-card);border-right:1px solid var(--border-subtle);display:flex;flex-direction:column;
+ transition:transform .25s ease}
+[data-sidebar="closed"] aside.app-sidebar{transform:translateX(-100%)}
+.sidebar-resizer{position:absolute;top:0;right:-4px;width:8px;bottom:0;cursor:col-resize;z-index:2}
+.sidebar-resizer::after{content:"";position:absolute;top:0;bottom:0;left:3px;width:2px;background:var(--blue);
+ opacity:0;transition:opacity .2s}
+.sidebar-resizer:hover::after,.resizing .sidebar-resizer::after{opacity:1}
+.resizing,.resizing *{cursor:col-resize!important;user-select:none!important;transition:none!important}
+.sidebar-toolbar{display:flex;gap:.5rem;align-items:center;padding:1rem 1rem .75rem;
+ border-bottom:1px solid var(--border-subtle)}
+.search-input{flex:1;min-width:0;padding:.45rem .7rem;background:var(--bg-card-subtle);
+ border:1px solid var(--border-subtle);border-radius:var(--radius-sm);color:var(--text-main);
+ font:inherit;font-size:.85rem;outline:none}
+.search-input:focus{border-color:var(--blue);box-shadow:0 0 0 2px rgba(var(--blue-rgb),.18)}
+#expandAllBtn svg{transition:transform .2s}
+#expandAllBtn.all-open svg{transform:rotate(180deg)}
+.nav-links-scroll{flex:1;overflow-y:auto;padding:.75rem .75rem 2rem}
+.nav-group-title{font-size:.68rem;text-transform:uppercase;letter-spacing:.1em;font-weight:650;
+ color:var(--text-dim);padding:.6rem .5rem .35rem}
+.nav-group{margin-bottom:2px}
+.nav-row{display:flex;align-items:stretch;border-radius:var(--radius-sm);border-left:2px solid transparent}
+.nav-row:hover{background:var(--bg-card-subtle)}
+.nav-item{flex:1;min-width:0;display:flex;align-items:baseline;gap:.6rem;padding:.45rem .4rem .45rem .55rem;
+ color:var(--text-muted);text-decoration:none;font-size:.86rem;font-weight:500}
+.nav-row:hover .nav-item{color:var(--text-main)}
+.nav-badge-num{font-family:var(--font-mono);font-size:.7rem;font-weight:600;color:var(--sec);min-width:1.9rem;flex:none}
+.nav-group.active .nav-row{background:rgba(var(--sec-rgb),var(--tint));border-left-color:var(--sec)}
+.nav-group.active .nav-item{color:var(--text-main);font-weight:600}
+.nav-caret{flex:none;width:30px;background:none;border:none;color:var(--text-dim);cursor:pointer;
+ display:flex;align-items:center;justify-content:center;border-radius:var(--radius-sm)}
+.nav-caret:hover{color:var(--text-main)}
+.nav-caret svg{transition:transform .2s}
+.nav-group.open .nav-caret svg{transform:rotate(90deg)}
+.nav-sub{display:none;margin:2px 0 6px 1.4rem;padding-left:.6rem;border-left:1px solid var(--border-strong)}
+.nav-group.open .nav-sub{display:block}
+.nav-subitem{display:block;padding:.28rem .55rem;font-size:.8rem;line-height:1.4;color:var(--text-muted);
+ text-decoration:none;border-radius:4px}
+.nav-subitem:hover{color:var(--text-main);background:var(--bg-card-subtle)}
+.nav-subitem.active{color:var(--sec);font-weight:600}
+.sidebar-hint{padding:.6rem 1rem;border-top:1px solid var(--border-subtle);font-size:.7rem;color:var(--text-dim)}
+.sidebar-hint kbd{font-family:var(--font-mono);font-size:.68rem;border:1px solid var(--border-strong);
+ border-radius:3px;padding:0 .3rem;background:var(--bg-card-subtle)}
+.sidebar-backdrop{display:none}
+
+main.app-main{margin-left:var(--sidebar-w);flex:1;padding:3rem 4rem 6rem;max-width:calc(1240px + var(--sidebar-w));
+ min-width:0;transition:margin-left .25s ease}
+[data-sidebar="closed"] main.app-main{margin-inline:auto;max-width:1240px}
+.hero-header{margin-bottom:3.25rem;padding-bottom:2rem;border-bottom:1px solid var(--border-strong)}
+.hero-meta{display:flex;align-items:center;gap:.75rem;margin-bottom:1rem;flex-wrap:wrap}
+.hero-tag{font-family:var(--font-mono);font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;
+ color:var(--blue);padding:.2rem .6rem;border:1px solid rgba(var(--blue-rgb),.4);border-radius:var(--radius-sm)}
+.hero-date{font-family:var(--font-mono);font-size:.8rem;color:var(--text-dim)}
+.hero-title{font-size:2.5rem;font-weight:800;letter-spacing:-.03em;line-height:1.12;margin-bottom:.9rem;color:var(--text-main)}
+.hero-subtitle{font-size:1.05rem;color:var(--text-muted);max-width:950px;line-height:1.55}
+
+section.content-section{margin-bottom:4.25rem;scroll-margin-top:calc(var(--header-h) + 30px)}
+.section-header-block{margin-bottom:1.6rem;padding-left:1rem;border-left:3px solid var(--sec)}
+.section-num-tag{display:block;font-family:var(--font-mono);font-size:.74rem;font-weight:600;color:var(--sec);
+ text-transform:uppercase;letter-spacing:.1em;margin-bottom:.35rem}
+.section-heading{font-size:1.75rem;font-weight:750;letter-spacing:-.02em;line-height:1.25;margin-bottom:.55rem}
+.section-lead{font-size:1.05rem;color:var(--text-muted);line-height:1.6;max-width:90ch;margin-bottom:0}
+h3.subheading{font-size:1.25rem;font-weight:650;margin:2.25rem 0 .9rem;letter-spacing:-.01em;
+ display:flex;align-items:baseline;gap:.6rem;scroll-margin-top:calc(var(--header-h) + 24px)}
+h3.subheading::before{content:"";flex:none;width:8px;height:8px;border-radius:2px;background:var(--sec);transform:translateY(-2px)}
+h4.tertiary-heading{font-size:1rem;font-weight:650;color:var(--text-main);margin:1.5rem 0 .6rem}
+p{margin-bottom:1.1rem;max-width:90ch}
+p.muted,.small{color:var(--text-muted)}
+.small{font-size:.88rem}
+strong,b{font-weight:650}
+code{font-family:var(--font-mono);font-size:.84em;color:var(--text-main);background:var(--bg-card-subtle);
+ border:1px solid var(--border-subtle);padding:.05rem .35rem;border-radius:4px}
+
+.card{background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:var(--radius-lg);
+ padding:1.4rem 1.5rem;box-shadow:var(--shadow-card);margin-bottom:1.5rem}
+.card > :last-child,.callout > :last-child{margin-bottom:0}
+.grid-2,.grid-3{display:grid;gap:1.25rem;margin-bottom:1.5rem}
+.grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.grid-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.grid-2 > .card,.grid-3 > .card{margin-bottom:0}
+
+.callout{--c:var(--blue);--c-rgb:var(--blue-rgb);
+ border-radius:0 var(--radius-md) var(--radius-md) 0;padding:1rem 1.3rem;margin:1.5rem 0;
+ border-left:3px solid var(--c);background:rgba(var(--c-rgb),var(--tint));max-width:90ch}
+.callout-title{font-weight:650;font-size:.78rem;margin-bottom:.45rem;text-transform:uppercase;letter-spacing:.07em;color:var(--c)}
+.callout-insight{--c:var(--green);--c-rgb:var(--green-rgb)}
+.callout-math{--c:var(--indigo);--c-rgb:var(--indigo-rgb)}
+.callout-warning{--c:var(--yellow);--c-rgb:var(--yellow-rgb)}
+.callout-danger{--c:var(--red);--c-rgb:var(--red-rgb)}
+.callout-arch{--c:var(--blue);--c-rgb:var(--blue-rgb)}
+
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.75rem;margin:1.5rem 0}
+.kpi{background:var(--bg-card);border:1px solid var(--border-subtle);border-top:2px solid var(--sec);
+ border-radius:var(--radius-md);padding:.75rem 1rem;box-shadow:var(--shadow-card)}
+.kpi .k{font-size:.7rem;font-weight:650;text-transform:uppercase;letter-spacing:.07em;color:var(--text-dim)}
+.kpi .v{font-size:1.55rem;font-weight:750;letter-spacing:-.02em;color:var(--text-main);font-variant-numeric:tabular-nums}
+
+.table-responsive{width:100%;overflow-x:auto;margin:1.5rem 0;border-radius:var(--radius-md);
+ border:1px solid var(--border-subtle);background:var(--bg-card)}
+table.data-table{width:100%;border-collapse:collapse;text-align:left;font-size:.9rem}
+table.data-table th{background:var(--bg-card-subtle);color:var(--text-muted);padding:.65rem 1rem;font-weight:650;
+ font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;border-bottom:2px solid var(--sec);
+ white-space:nowrap;position:sticky;top:0}
+table.data-table td{padding:.55rem 1rem;border-bottom:1px solid var(--border-subtle);vertical-align:top}
+table.data-table tbody tr:hover td{background:var(--bg-card-subtle)}
+table.data-table tr:last-child td{border-bottom:none}
+table.data-table .num{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+table.data-table td.r{color:var(--text-dim)}
+table.data-table td.good{background:rgba(var(--green-rgb),calc(var(--tint) * 1.6))!important;color:var(--green);font-weight:650}
+table.data-table td.bad{background:rgba(var(--red-rgb),calc(var(--tint) * 1.6))!important;color:var(--red);font-weight:650}
+
+.chip{display:inline-flex;align-items:center;padding:.08rem .45rem;border-radius:4px;font-family:var(--font-mono);
+ font-size:.72rem;font-weight:600;margin:.1rem;--c:var(--slate);--c-rgb:var(--slate-rgb);
+ color:var(--c);background:rgba(var(--c-rgb),var(--tint));border:1px solid rgba(var(--c-rgb),.35)}
+.chip-red{--c:var(--red);--c-rgb:var(--red-rgb)} .chip-orange{--c:var(--orange);--c-rgb:var(--orange-rgb)}
+.chip-yellow{--c:var(--yellow);--c-rgb:var(--yellow-rgb)} .chip-green{--c:var(--green);--c-rgb:var(--green-rgb)}
+.chip-teal{--c:var(--teal);--c-rgb:var(--teal-rgb)} .chip-blue{--c:var(--blue);--c-rgb:var(--blue-rgb)}
+.chip-indigo{--c:var(--indigo);--c-rgb:var(--indigo-rgb)} .chip-purple{--c:var(--purple);--c-rgb:var(--purple-rgb)}
+.chip-slate{--c:var(--slate);--c-rgb:var(--slate-rgb)}
+
+.math-display{overflow-x:auto;overflow-y:hidden;padding:.35rem 1.25rem;margin:.9rem 0;background:var(--bg-card);
+ border:1px solid var(--border-subtle);border-radius:var(--radius-md);font-size:1.1rem}
+.katex{font-size:1.06em}
+.katex-display{margin:.6em 0}
+.katex-error{color:var(--red)!important;background:rgba(var(--red-rgb),.12);padding:0 .3rem;border-radius:3px}
+.diagram-wrapper{background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:var(--radius-lg);
+ padding:1.5rem;margin:1.5rem 0}
+.diagram-wrapper svg{display:block;max-width:100%;height:auto;margin:0 auto}
+.diagram-caption{margin-top:.9rem;font-size:.82rem;color:var(--text-dim);text-align:center}
+pre.code-block{background:var(--bg-code);border:1px solid var(--border-subtle);border-radius:var(--radius-md);
+ padding:1rem 1.1rem;overflow-x:auto;font-family:var(--font-mono);font-size:.83rem;line-height:1.5;
+ color:var(--code-ink);margin:1rem 0}
+pre.code-block code{color:inherit;background:none;border:none;padding:0}
+
+footer.report-footer{margin-top:3rem;padding-top:1.1rem;border-top:1px solid var(--border-strong);
+ color:var(--text-dim);font-size:.85rem}
+
+@media (max-width:1100px){.grid-2,.grid-3{grid-template-columns:1fr}}
+@media (max-width:900px){
+  aside.app-sidebar{width:min(86vw,340px);transform:translateX(-100%);box-shadow:0 8px 30px rgba(0,0,0,.25)}
+  [data-sidebar-mobile="open"] aside.app-sidebar{transform:none}
+  [data-sidebar-mobile="open"] .sidebar-backdrop{display:block;position:fixed;inset:var(--header-h) 0 0 0;
+   z-index:40;background:rgba(0,0,0,.4)}
+  .sidebar-resizer,.sidebar-hint{display:none}
+  main.app-main,[data-sidebar="closed"] main.app-main{margin-left:0;padding:2rem 16px 5rem}
+  header.app-header{padding:0 12px}
+  .header-controls .chip,.brand-badge{display:none}
+  .hero-title{font-size:1.9rem}
+  .section-heading{font-size:1.45rem}
+}
+@media print{
+  header.app-header,aside.app-sidebar,body::before{display:none}
+  .layout-container{margin-top:0}
+  main.app-main{margin-left:0;padding:0;max-width:none}
+  .card,.kpi{box-shadow:none}
+  table.data-table th{position:static}
+}
+</style></head>
+<body>
+
+<header class="app-header">
+  <div class="brand-wrapper">
+    <button id="sidebarToggleBtn" class="btn-icon" onclick="toggleSidebar()" title="Show or hide contents ( [ )" aria-label="Toggle contents">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><line x1="9" y1="4" x2="9" y2="20"/></svg>
+    </button>
+    <span class="brand-badge">pablo</span>
+    <div class="brand-title">GROVER encoding <span class="dim">&middot; mechanism, successors, Breslow route</span></div>
+  </div>
+  <div class="header-controls">
+    <span class="chip chip-slate">cross_1</span>
+    <button id="themeToggleBtn" class="btn-icon" onclick="toggleTheme()" title="Switch theme" aria-label="Switch theme">
+      <svg class="sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      <svg class="moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
+  </div>
+  <div class="reading-progress-track"><div id="progressBar" class="reading-progress-bar"></div></div>
+</header>
+
+<div class="layout-container">
+  <aside class="app-sidebar" id="sidebar">
+    <div class="sidebar-toolbar">
+      <input type="text" id="sidebarSearch" class="search-input" placeholder="Filter sections...">
+      <button id="expandAllBtn" class="btn-icon sm" title="Expand or collapse all" aria-label="Expand or collapse all">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+    </div>
+    <nav class="nav-links-scroll" id="navLinks">
+      <div class="nav-group-title">Contents</div>
+    </nav>
+    <div class="sidebar-hint"><kbd>[</kbd> hide or show &middot; drag the right edge to resize</div>
+    <div class="sidebar-resizer" id="sidebarResizer" title="Drag to resize, double-click to reset"></div>
+  </aside>
+  <div class="sidebar-backdrop" onclick="toggleSidebar()"></div>
+
+  <main class="app-main">
+
+    <div class="hero-header">
+      <div class="hero-meta">
+        <span class="hero-tag">Results report</span>
+        <span class="hero-date">October 2026 &middot; NHC acyloin campaign</span>
+      </div>
+      <h1 class="hero-title">Why the GROVER catalyst encoding leads, what could replace it, and what a Breslow-intermediate encoding would need</h1>
+      <p class="hero-subtitle">cross_1 &middot; 69 experiments &middot; 22 catalysts tested &middot; 161-catalyst library &middot; primary and leave-one-out studies (60 + 60 folds) &middot; monroe_m3 ten-setting screen (30 configurations)</p>
+    </div>
+
+<section id="sec-background" class="content-section" data-num="00" data-nav="Background">
+  <div class="section-header-block">
+    <span class="section-num-tag">Background</span>
+    <h2 class="section-heading">The reaction and the optimisation problem</h2>
+    <p class="section-lead">We optimise yield of an NHC-catalysed acyloin condensation of formaldehyde with a Gaussian process (GP) over catalyst, solvent, base and four continuous conditions. In the crossed grid <code>cross_1</code> (2,520 GP configurations, 137 folds each) the catalyst encoding <code>grover_pca</code> is the best of seven: median gem +0.284, 0.08 to 0.14 above the others, best configuration gem +0.425 (<code>grover_pca</code> catalyst, Hansen solvent descriptors, <code>grover_pca</code> base block, Mat&eacute;rn-5/2, probit transform, per-block lengthscale prior P2). GROVER is a 2020 model that independent benchmarks rank below ECFP, so its lead needs an explanation before it is relied on, and the newer encoders that could replace it need a cheap test.</p>
+  </div>
+
+  <h3 class="subheading">The GROVER encoding</h3>
+
+  <p>GROVER-large (Rong et al., NeurIPS 2020) is a graph transformer pretrained on 11 million ZINC15 and ChEMBL molecules to predict masked one-hop atom and bond contexts (2,518 atom and 2,686 bond classes) and 85 RDKit functional-group counts. We use it frozen in fingerprint mode on the pre-catalyst SMILES as stored, counter-ion included: four mean-pooled embedding sets of 1,200 columns each (atom-from-atom, atom-from-bond, bond-from-atom, bond-from-bond) followed by 200 RDKit 2D descriptors scaled to [0, 1], 5,000 columns, reduced by PCA over the 161-catalyst library to the 16 components at the variance knee (92.4 percent of the variance). A bond-less counter-ion such as \(\mathrm{Cl}^-\) enters the two atom-level means only.</p>
+
+  <h3 class="subheading">How a configuration is scored</h3>
+
+  <div class="callout callout-math">
+    <div class="callout-title">Primary metric and the gem</div>
+    <p>CRPS measures a predictive distribution against the observed yield in yield percentage points; the baseline quotes the training-fold mean and variance; CRPSS = 0 means no better than the training average, +0.4 means 40 percent lower probabilistic error. The skill score is pooled over every test point of a study:</p>
+    <div class="math-display">\[ \mathrm{CRPSS} = 1 - \frac{\sum_i \mathrm{CRPS}_i(\text{model})}{\sum_i \mathrm{CRPS}_i(\text{baseline})}, \qquad \mathrm{gem} = \min(\mathrm{CRPSS}_{\text{primary}}, \mathrm{CRPSS}_{\text{LOO}}) \]</div>
+    <p><b>The gem is the smaller of the pooled CRPSS on <code>primary</code> and on <code>LOO</code>.</b> <code>primary</code> is 10 \(\times\) 6-fold catalyst-grouped cross-validation (60 folds, about 51 training points per fold), evaluating generalisation across catalysts; leave-one-out (LOO) is 60 folds with 68 training points per fold, evaluating interpolation within the measured set.</p>
+  </div>
+
+  <div class="card">
+    <h4 class="tertiary-heading" style="margin-top:0">Paired comparison</h4>
+    <p>Every swap below changes only the catalyst block of the rank-1 configuration and reuses the stored run's fold seeds. Differences are paired fold bootstraps (4,000 resamples of the 60 folds), reported as median and 95 percent interval.</p>
+    <p>A single gem has a bootstrap standard deviation of 0.066; the paired standard deviation of a difference between two similar catalyst blocks is 0.03 to 0.05.</p>
+  </div>
+</section>
+
+<section id="sec-part-1" class="content-section" data-num="I" data-nav="Why GROVER leads">
+  <div class="section-header-block">
+    <span class="section-num-tag">Part I</span>
+    <h2 class="section-heading">The lead comes from the learned embedding, reduced to a few components, acting as a smoother over related catalysts</h2>
+    <p class="section-lead">All tests refit the production GP (<code>fit_eval</code>, <code>core/models.py</code>) at the rank-1 settings and swap only the catalyst block; control is <code>grover_pca</code> under current code: LOO CRPSS +0.436 (stored +0.435), primary +0.428 (stored +0.425). Fixing the other axes makes the comparison clean, but limits conclusions to this operating point.</p>
+  </div>
+
+  <div class="kpis">
+    <div class="kpi"><div class="k">Control LOO</div><div class="v">+0.436</div></div>
+    <div class="kpi"><div class="k">Control primary</div><div class="v">+0.428</div></div>
+    <div class="kpi"><div class="k">Catalyst blocks tested</div><div class="v">19</div></div>
+    <div class="kpi"><div class="k">GP fits</div><div class="v">1,740</div></div>
+    <div class="kpi"><div class="k">Failed folds</div><div class="v">0</div></div>
+  </div>
+
+  <h3 class="subheading">1. The appended RDKit descriptors play no part</h3>
+
+  <p>Deng et al. 2023 and Sun et al. 2022 show the 200 RDKit descriptors carry GROVER's published benchmark gains, and a ridge model on those descriptors predicts the first five embedding PCs with \(R^2\) 0.80 to 0.95. One would expect removing them to degrade model skill.</p>
+
+  <div class="table-responsive"><table class="data-table">
+    <thead>
+      <tr>
+        <th>Catalyst block</th>
+        <th class="num">Columns</th>
+        <th class="num">LOO CRPSS</th>
+        <th class="num">\(\Delta\) vs control [95%]</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>grover_pca</code> (control)</td>
+        <td class="num">16 PCs of 5,000</td>
+        <td class="num good">+0.436</td>
+        <td class="num">&mdash;</td>
+      </tr>
+      <tr>
+        <td>embedding only (4,800 columns, knee)</td>
+        <td class="num">16</td>
+        <td class="num good">+0.436</td>
+        <td class="num">-0.000 [-0.009, +0.007]</td>
+      </tr>
+      <tr>
+        <td>RDKit 200 only (knee)</td>
+        <td class="num">9</td>
+        <td class="num bad">+0.178</td>
+        <td class="num">-0.257 [-0.443, -0.066]</td>
+      </tr>
+      <tr>
+        <td>RDKit functional-group counts <code>fr_*</code> only (the motif target)</td>
+        <td class="num">7</td>
+        <td class="num bad">+0.073</td>
+        <td class="num">-0.363 [-0.589, -0.140]</td>
+      </tr>
+    </tbody>
+  </table></div>
+
+  <p><b>Removing the 200 descriptors changes the LOO CRPSS by less than 0.01; the descriptors alone lose 0.26.</b></p>
+
+  <p>After per-column standardisation the 200 descriptors are 4 percent of 5,000 columns and carry 3.2 percent of the variance of the 16 components; linear CKA between the full and the embedding-only reduction on the 22 tested catalysts is 0.99, and 18 of 21 screened catalysts keep the same nearest neighbour. The descriptors are predictable from the embedding, not the other way round: what the GP uses is the learned embedding.</p>
+
+  <h3 class="subheading">2. The GP uses five components as a smoother over about five related catalysts</h3>
+
+  <p>Refitting the rank-1 configuration on all 69 experiments with the production code yields lengthscales in min-max-scaled units: short on components 1, 2, 3, 4 and 9 (0.38 to 0.56), long on 0, 5, 6 and 10 to 15 (1.4 to 2.6). The P2 prior for this 16-column block has a median of 16.5 and a log-scale of 2.0, so the data pull every catalyst lengthscale well below it. At these lengthscales the Mat&eacute;rn-5/2 catalyst correlation between a tested catalyst and its nearest neighbour is 0.78 (median), with the other 21 it is 0.23 on average, and the sum of correlations (effective number of neighbours) is 4.6.</p>
+
+  <div class="table-responsive"><table class="data-table">
+    <thead>
+      <tr>
+        <th>Encoding</th>
+        <th class="num">Columns</th>
+        <th class="num">gem</th>
+        <th class="num">Median lengthscale</th>
+        <th class="num">NN correlation</th>
+        <th class="num">Mean correlation</th>
+        <th class="num">Effective neighbours</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>grover_pca</code></td>
+        <td class="num">16</td>
+        <td class="num good"><b>+0.425</b></td>
+        <td class="num">1.50</td>
+        <td class="num">0.78</td>
+        <td class="num">0.23</td>
+        <td class="num">4.6</td>
+      </tr>
+      <tr>
+        <td><code>soap_pca</code></td>
+        <td class="num">18</td>
+        <td class="num">+0.346</td>
+        <td class="num">0.37</td>
+        <td class="num">0.75</td>
+        <td class="num">0.20</td>
+        <td class="num">5.5</td>
+      </tr>
+      <tr>
+        <td><code>unimol</code></td>
+        <td class="num">1,540</td>
+        <td class="num">+0.320</td>
+        <td class="num">2.96</td>
+        <td class="num">0.22</td>
+        <td class="num">0.07</td>
+        <td class="num">0.7</td>
+      </tr>
+      <tr>
+        <td><code>minimol_precat_pca</code></td>
+        <td class="num">11</td>
+        <td class="num">+0.318</td>
+        <td class="num">1.40</td>
+        <td class="num">0.62</td>
+        <td class="num">0.21</td>
+        <td class="num">4.9</td>
+      </tr>
+      <tr>
+        <td><code>transformerm_precat_pca</code></td>
+        <td class="num">14</td>
+        <td class="num">+0.317</td>
+        <td class="num">1.01</td>
+        <td class="num">0.56</td>
+        <td class="num">0.15</td>
+        <td class="num">3.3</td>
+      </tr>
+      <tr>
+        <td><code>scage_carbene</code></td>
+        <td class="num">516</td>
+        <td class="num">+0.297</td>
+        <td class="num">1.75</td>
+        <td class="num">0.16</td>
+        <td class="num">0.06</td>
+        <td class="num">0.3</td>
+      </tr>
+      <tr>
+        <td><code>interpretable_steric</code></td>
+        <td class="num">10</td>
+        <td class="num bad">+0.278</td>
+        <td class="num">0.24</td>
+        <td class="num">0.46</td>
+        <td class="num">0.14</td>
+        <td class="num">2.2</td>
+      </tr>
+    </tbody>
+  </table></div>
+
+  <p><b>The two full-width encodings make every catalyst nearly independent of the others (under one effective neighbour), so they can only learn a catalyst from its own experiments; the reduced encodings share information across about three to six catalysts.</b></p>
+
+  <p><code>soap_pca</code> shares as much as <code>grover_pca</code> and scores 0.08 lower, so locality is necessary but which catalysts are neighbours decides. Under the fitted lengthscales, the nearest and the three nearest neighbours of a screened catalyst predict its mean screen yield to 8.4 and 8.3 percentage points (pp), against 13.9 pp for the mean of the other catalysts and a median of 18.1 pp for random 16-column features.</p>
+
+  <div class="callout callout-insight">
+    <div class="callout-title">Fitted lengthscales</div>
+    <p>The fitted lengthscales are stored in every fold record of the result files (<code>hyperparams</code>, <code>raw_lengthscale</code>; lengthscale \(= 0.05 + \operatorname{softplus}(\text{raw})\)), so this analysis needs no refit.</p>
+  </div>
+
+  <h3 class="subheading">3. The components it uses encode counter-ion, ring type and N-substituent</h3>
+
+  <p>We compute the \(R^2\) of each component across the 161-catalyst library from one structural factor at a time.</p>
+
+  <div class="table-responsive"><table class="data-table">
+    <thead>
+      <tr>
+        <th>Component</th>
+        <th class="num">Lengthscale</th>
+        <th class="num">Counter-ion</th>
+        <th class="num">Ring type</th>
+        <th class="num">N-aryl vs N-alkyl</th>
+        <th class="num">Pre-catalyst form</th>
+        <th class="num">xTB LUMO</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td class="num">0.56</td>
+        <td class="num">0.44</td>
+        <td class="num">0.22</td>
+        <td class="num">0.04</td>
+        <td class="num">0.02</td>
+        <td class="num">0.03</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td class="num">0.50</td>
+        <td class="num">0.36</td>
+        <td class="num">0.27</td>
+        <td class="num">0.51</td>
+        <td class="num">0.06</td>
+        <td class="num">0.04</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td class="num">0.48</td>
+        <td class="num">0.29</td>
+        <td class="num">0.24</td>
+        <td class="num">0.05</td>
+        <td class="num">0.05</td>
+        <td class="num">0.01</td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td class="num">0.43</td>
+        <td class="num">0.09</td>
+        <td class="num">0.20</td>
+        <td class="num">0.05</td>
+        <td class="num">0.02</td>
+        <td class="num">0.18</td>
+      </tr>
+      <tr>
+        <td>9</td>
+        <td class="num">0.38</td>
+        <td class="num">0.06</td>
+        <td class="num">0.42</td>
+        <td class="num">0.02</td>
+        <td class="num">0.01</td>
+        <td class="num">0.01</td>
+      </tr>
+    </tbody>
+  </table></div>
+
+  <p><b>The used directions separate catalysts by counter-ion, heterocycle and N-aryl versus N-alkyl substitution, the classes along which the 22 tested catalysts differ; the pre-catalyst form explains at most 6 percent of any component, and electronic xTB descriptors at most 18 percent.</b></p>
+
+  <p>Steric B1 explains 0.41 of component 2. Nearest-neighbour pairs in this space are chemically close and differ in screen yield by 9 pp or less (catalysts 1 and 4, 6 and 7, 9 and 10, 11 and 12, 15 and 17, 8 and 13, 18 and 20).</p>
+
+  <h3 class="subheading">4. Eight to sixteen components work; more lose up to 0.13</h3>
+
+  <p>LOO CRPSS of GROVER with a fixed component count, evaluated under the same pipeline.</p>
+
+  <div class="table-responsive"><table class="data-table">
+    <thead>
+      <tr>
+        <th>Components</th>
+        <th class="num">Variance retained</th>
+        <th class="num">LOO CRPSS</th>
+        <th class="num">\(\Delta\) vs 16 [95%]</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>4</td>
+        <td class="num">58.2%</td>
+        <td class="num">+0.343</td>
+        <td class="num">-0.092 [-0.194, -0.021]</td>
+      </tr>
+      <tr>
+        <td>8</td>
+        <td class="num">79.0%</td>
+        <td class="num good">+0.425</td>
+        <td class="num">-0.007 [-0.081, +0.035]</td>
+      </tr>
+      <tr>
+        <td>12</td>
+        <td class="num">88.1%</td>
+        <td class="num good">+0.416</td>
+        <td class="num">-0.018 [-0.084, +0.014]</td>
+      </tr>
+      <tr>
+        <td>16 (knee)</td>
+        <td class="num">92.4%</td>
+        <td class="num good">+0.436</td>
+        <td class="num">&mdash;</td>
+      </tr>
+      <tr>
+        <td>20</td>
+        <td class="num">94.7%</td>
+        <td class="num">+0.359</td>
+        <td class="num">-0.073 [-0.167, -0.010]</td>
+      </tr>
+      <tr>
+        <td>24</td>
+        <td class="num">96.2%</td>
+        <td class="num bad">+0.301</td>
+        <td class="num">-0.133 [-0.232, -0.054]</td>
+      </tr>
+      <tr>
+        <td>32</td>
+        <td class="num">97.9%</td>
+        <td class="num bad">+0.320</td>
+        <td class="num">-0.115 [-0.249, +0.015]</td>
+      </tr>
+    </tbody>
+  </table></div>
+
+  <p><b>The skill is flat between 8 and 16 components and falls by 0.07 to 0.13 beyond; the variance knee happens to sit at the upper edge of the plateau.</b></p>
+
+  <p>Each extra component adds a lengthscale that 51 to 68 training points must switch off, and the P2 prior's location grows with the block width (\(\log\sqrt{D}\), Hvarfner et al. 2024). The knee is chosen without seeing any yield, so this is not selection on outcomes, but the lead depends on keeping the block short.</p>
+
+  <h3 class="subheading">5. The pretrained embedding beats a substructure embedding with the same neighbour structure</h3>
+
+  <p><code>mol2vec_pca</code> (Morgan-substructure word2vec, 2018; 16 components) shares 14 of 21 nearest neighbours with <code>grover_pca</code>, linear CKA 0.88, and the same 1-NN screen-yield error (7.6 pp), yet scores LOO +0.353, \(\Delta\) -0.081 [-0.159, -0.018].</p>
+
+  <p><b>Substructure similarity explains most of the geometry but not all of the skill; the remaining 0.08 is the pretrained part.</b></p>
+
+  <h3 class="subheading">6. The pre-catalyst graph carries most of the lead; the counter-ion a fifth of it</h3>
+
+  <p>H2 asked whether the separate pre-catalyst forms of one carbene (\(\mathrm{CO}_2\) adduct, chloride, free carbene, bicarbonate, tetrafluoroborate) matter. We ran GROVER-large again on two other inputs (installation and versions in <code>PROVENANCE.md</code>): the free carbene of each catalyst, combined with the four-column pre-catalyst-form one-hot as the grid does for every <code>_carbene</code> level, and the pre-catalyst with its counter-ion removed. Both through the same 16-or-fewer-component PCA knee, at the rank-1 settings, primary and LOO.</p>
+
+  <div class="table-responsive"><table class="data-table">
+    <thead>
+      <tr>
+        <th>Catalyst block</th>
+        <th class="num">Columns</th>
+        <th class="num">Primary</th>
+        <th class="num">LOO</th>
+        <th class="num">gem</th>
+        <th class="num">\(\Delta\text{gem}\) vs control [95%]</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>grover_pca</code>, pre-catalyst as stored (control)</td>
+        <td class="num">16</td>
+        <td class="num good">+0.428</td>
+        <td class="num good">+0.436</td>
+        <td class="num good"><b>+0.428</b></td>
+        <td class="num">&mdash;</td>
+      </tr>
+      <tr>
+        <td><code>grover_ionstripped_pca</code>, counter-ion removed</td>
+        <td class="num">15</td>
+        <td class="num">+0.352</td>
+        <td class="num good">+0.406</td>
+        <td class="num">+0.352</td>
+        <td class="num">-0.065 [-0.096, -0.005]</td>
+      </tr>
+      <tr>
+        <td><code>grover_carbene_pca</code> + form one-hot</td>
+        <td class="num">20</td>
+        <td class="num bad">+0.118</td>
+        <td class="num bad">+0.241</td>
+        <td class="num bad">+0.118</td>
+        <td class="num">-0.291 [-0.373, -0.139]</td>
+      </tr>
+    </tbody>
+  </table></div>
+
+  <p><b>Encoding the free carbene instead of the pre-catalyst costs 0.29 of gem even with the form one-hot; removing only the counter-ion costs 0.065.</b></p>
+
+  <p>The four-column one-hot does not replace what the embedding of the whole pre-catalyst carries; with the carbene input, catalysts 1 to 5 share one embedding point and differ only by the one-hot. The same drop appears for every other model in Part II (0.27 to 0.38), so it is a property of the input, not of GROVER. H2 is supported: the lead needs the pre-catalyst graph, and about a fifth of the loss from carbene input is the counter-ion.</p>
+
+  <h3 class="subheading">7. A nearest-neighbour proxy can order encodings but cannot pre-filter them</h3>
+
+  <p>Over the 50 catalyst encodings of the elimination run, Spearman correlation between a cheap proxy computed on the 21 screened catalysts and the elimination gem: LOO MAE of an isotropic GP on the mean screen yield -0.60 against the best gem per encoding (\(p \lt 0.001\)), -0.38 against the median; 1-NN error -0.39 / -0.16; 3-NN -0.11 / +0.04; effective rank of the encoding -0.20.</p>
+
+  <p><b>The isotropic-GP proxy is the only usable one, and it would have discarded <code>graphormer_precat_pca</code>, fifth in the elimination run (proxy 11.8 pp against 8.5 pp for <code>grover_pca</code>).</b></p>
+
+  <p>Therefore the cheapest reliable filter is a GP run itself (Part III).</p>
+
+  <div class="callout callout-warning">
+    <div class="callout-title">Limitation</div>
+    <p>Everything above holds at one configuration (rank 1) and on 22 catalysts; the leave-one-scaffold-out study, where <code>grover_pca</code> is fourth (+0.071 against +0.158 for <code>scage_carbene</code>), is not addressed by these tests.</p>
+  </div>
+
+  <div class="card">
+    <h4 class="tertiary-heading" style="margin-top:0">What the literature says</h4>
+    <p>Independent frozen-embedding benchmarks place GROVER 17th of 25 (mean rank 17.1, ECFP 7.5; Praski et al. 2025); its published gains came from appended RDKit descriptors and optimistic splits (Deng et al. 2023; Sun et al. 2022). Those benchmarks score drug-like ADMET tasks with hundreds to tens of thousands of molecules and random-forest, logistic or kNN heads. Our setting differs in three ways: 22 congeneric catalysts, interpolation inside the measured set, and a GP whose ARD metric reweights a short PCA block. Deep embeddings do well when the target is smooth over structural neighbours (Xia et al. 2023), which is the situation the GP creates here.</p>
+  </div>
+</section>
+
+<section id="sec-part-2" class="content-section" data-num="II" data-nav="Replacement candidates">
+  <div class="section-header-block">
+    <span class="section-num-tag">Part II</span>
+    <h2 class="section-heading">Of three newer encoders only Monroe comes within the noise of GROVER at the rank-1 setting, and only on the pre-catalyst</h2>
+    <p class="section-lead">We evaluate whether modern pretrained encoders (2023 to 2026) can replace GROVER when tested at the rank-1 operating point. Pretrained foundation models offer wider chemical coverage, but require testing on our salt and pre-catalyst formats.</p>
+  </div>
+
+  <h3 class="subheading">8. The candidates</h3>
+
+  <div class="table-responsive"><table class="data-table">
+    <thead>
+      <tr>
+        <th class="num">#</th>
+        <th>Model</th>
+        <th>Year, venue</th>
+        <th>Pretraining</th>
+        <th class="num">Width</th>
+        <th>Weights, licence</th>
+        <th>Takes the stored SMILES</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="num r">1</td>
+        <td>CheMeleon</td>
+        <td>2025, arXiv 2506.15792</td>
+        <td>Chemprop D-MPNN trained to predict 1,613 Mordred descriptors (~1M PubChem)</td>
+        <td class="num">2,048</td>
+        <td>Zenodo, MIT</td>
+        <td>Yes: RDKit graph with formal charge, all 11 elements, salts as disconnected graphs</td>
+      </tr>
+      <tr>
+        <td class="num r">2</td>
+        <td>Monroe</td>
+        <td>2026, arXiv 2608.18982</td>
+        <td>GRIT transformer, 81M PM6 molecules with ground, triplet, cation and anion targets, PCBA, conformer denoising</td>
+        <td class="num">720</td>
+        <td>GitHub (LFS), MIT</td>
+        <td>Yes with care: InChI round trip, seeded conformer; 1 pre-catalyst and 13 free carbenes fall back to a flat 2D layout</td>
+      </tr>
+      <tr>
+        <td class="num r">3</td>
+        <td>KPGT</td>
+        <td>2023, Nat. Commun.</td>
+        <td>Line-graph transformer, descriptor and fingerprint targets, 2M ChEMBL</td>
+        <td class="num">768</td>
+        <td>Figshare, Apache-2.0 code</td>
+        <td>Partly: the line graph has no node for a bond-less ion, so \(\mathrm{Cl}^-\), \(\mathrm{Br}^-\), \(\mathrm{I}^-\) vanish</td>
+      </tr>
+      <tr>
+        <td class="num r">4</td>
+        <td>SMI-TED-Light</td>
+        <td>2024, arXiv 2407.20267</td>
+        <td>SMILES encoder-decoder, 91M PubChem</td>
+        <td class="num">768</td>
+        <td>Hugging Face, Apache-2.0</td>
+        <td>Yes: every token of the library is in its vocabulary</td>
+      </tr>
+      <tr>
+        <td class="num r">5</td>
+        <td>OrbMol (OMol25)</td>
+        <td>2025</td>
+        <td>Equivariant interatomic potential, total charge and spin as inputs</td>
+        <td class="num">256&ndash;512</td>
+        <td>Apache-2.0</td>
+        <td>Needs relaxed 3D ion pairs and a hook to read embeddings</td>
+      </tr>
+      <tr>
+        <td class="num r">6</td>
+        <td>AIMNet2</td>
+        <td>2025, Chem. Sci.</td>
+        <td>Interatomic potential, 14 elements incl. B and P, total charge input</td>
+        <td class="num">512</td>
+        <td>MIT</td>
+        <td>As OrbMol</td>
+      </tr>
+      <tr>
+        <td class="num r">7</td>
+        <td>UMA / OMol25 eSEN</td>
+        <td>2025, NeurIPS</td>
+        <td>Interatomic potential, 83 elements, charge and spin embeddings</td>
+        <td class="num">&mdash;</td>
+        <td>Gated, FAIR Chemistry licence</td>
+        <td>As OrbMol</td>
+      </tr>
+    </tbody>
+  </table></div>
+
+  <p>Other published encoders were rejected: MolE and MolGPS lack public weights; Mole-BERT and GraphMVP do not support formal charge in their featurizers; GEM and R-MAT are conformer-dependent; MolCLR performs below ECFP-level baselines; Egret-1 and MACE-OFF lack boron parameters for \(\mathrm{BF}_4^-\); Uni-Mol3 is a reaction-level model; SELFormer fails because SELFIES rejects divalent carbon; ChemFM scores below ECFP in Praski et al.; and TabPFN-style in-context models represent competing surrogates rather than encodings. Rows 1, 2 and 4 were installed and run; their execution is recorded in <code>PROVENANCE.md</code>.</p>
+
+  <h3 class="subheading">9. Monroe passes the first screen; CheMeleon and SMI-TED do not</h3>
+
+  <p>At the rank-1 settings, the catalyst block was swapped for each model's PCA-knee reduction, using both the pre-catalyst as stored and the free carbene with form one-hot; this constitutes option M2 of Part III.</p>
+
+  <div class="table-responsive"><table class="data-table">
+    <thead>
+      <tr>
+        <th>Model</th>
+        <th>Input</th>
+        <th class="num">Columns</th>
+        <th class="num">Primary</th>
+        <th class="num">LOO</th>
+        <th class="num">gem</th>
+        <th class="num">\(\Delta\text{gem}\) vs grover_pca [95%]</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Monroe</td>
+        <td>pre-catalyst</td>
+        <td class="num">15</td>
+        <td class="num good">+0.389</td>
+        <td class="num good">+0.392</td>
+        <td class="num good"><b>+0.389</b></td>
+        <td class="num">-0.040 [-0.127, +0.050]</td>
+      </tr>
+      <tr>
+        <td>SMI-TED</td>
+        <td>pre-catalyst</td>
+        <td class="num">15</td>
+        <td class="num">+0.178</td>
+        <td class="num">+0.233</td>
+        <td class="num"><b>+0.178</b></td>
+        <td class="num">-0.237 [-0.354, -0.087]</td>
+      </tr>
+      <tr>
+        <td>CheMeleon</td>
+        <td>pre-catalyst</td>
+        <td class="num">21</td>
+        <td class="num bad">+0.137</td>
+        <td class="num">+0.279</td>
+        <td class="num bad"><b>+0.137</b></td>
+        <td class="num">-0.274 [-0.325, -0.118]</td>
+      </tr>
+      <tr>
+        <td>Monroe</td>
+        <td>free carbene + form</td>
+        <td class="num">19</td>
+        <td class="num bad">+0.066</td>
+        <td class="num bad">+0.193</td>
+        <td class="num bad"><b>+0.066</b></td>
+        <td class="num">-0.343 [-0.431, -0.193]</td>
+      </tr>
+      <tr>
+        <td>SMI-TED</td>
+        <td>free carbene + form</td>
+        <td class="num">15</td>
+        <td class="num bad">+0.061</td>
+        <td class="num bad">+0.205</td>
+        <td class="num bad"><b>+0.061</b></td>
+        <td class="num">-0.347 [-0.427, -0.185]</td>
+      </tr>
+      <tr>
+        <td>CheMeleon</td>
+        <td>free carbene + form</td>
+        <td class="num">23</td>
+        <td class="num bad">+0.029</td>
+        <td class="num bad">+0.209</td>
+        <td class="num bad"><b>+0.029</b></td>
+        <td class="num">-0.376 [-0.465, -0.216]</td>
+      </tr>
+    </tbody>
+  </table></div>
+
+  <p><b>At the rank-1 setting Monroe on the pre-catalyst is indistinguishable from <code>grover_pca</code> (\(\Delta\text{gem}\) -0.040, interval covering zero); CheMeleon and SMI-TED lose 0.24 to 0.27.</b></p>
+
+  <p>Monroe is the only candidate pretrained on charged states (cation and anion PM6 targets) and it reads the salt as one system; CheMeleon, best of all models in its own kNN-probing benchmark, keeps only 72 percent of its variance at the knee (21 of 2,048 columns; 90 percent needs 51), and its primary score is half its LOO score, so it fails on held-out catalyst groups.</p>
+
+  <p>All settings were tuned with <code>grover_pca</code>, so a candidate's own best settings may differ; Part IV tests Monroe at the ten best settings.</p>
+</section>
+
+<section id="sec-part-3" class="content-section" data-num="III" data-nav="Screening plan">
+  <div class="section-header-block">
+    <span class="section-num-tag">Part III</span>
+    <h2 class="section-heading">A screening plan that swaps only the catalyst block</h2>
+    <p class="section-lead">A full grid per candidate is out of reach; every option keeps the non-catalyst axes of the top <code>cross_1</code> configurations and swaps the catalyst block, always with a <code>grover_pca</code> control rerun under current code. Costs from <code>cross_1</code>'s measured fold times: 477 CPU-h for 2,520 cells (0.77 of the projection); one primary + LOO cell takes a median 7.5 CPU-min at 16 columns, 12.2 at 516 and 19.2 at 1,540; primary and LOO are 87.4 percent of all fold time.</p>
+  </div>
+
+  <h3 class="subheading">10. Options</h3>
+
+  <div class="table-responsive"><table class="data-table">
+    <thead>
+      <tr>
+        <th>Option</th>
+        <th>Settings</th>
+        <th class="num">Fits per variant</th>
+        <th class="num">CPU-h (PCA / ~2,000 col raw)</th>
+        <th>Counts as promising</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>M1</td>
+        <td>Rank-1 settings, LOO only</td>
+        <td class="num">60</td>
+        <td class="num">0.03 / 0.15</td>
+        <td>\(\Delta\text{LOO} \ge -0.03\) with the interval covering 0</td>
+      </tr>
+      <tr>
+        <td>M2</td>
+        <td>Rank-1 settings, primary + LOO</td>
+        <td class="num">120</td>
+        <td class="num">0.13 / 0.33</td>
+        <td>\(\Delta\text{gem} \ge -0.03\) with the interval covering 0</td>
+      </tr>
+      <tr>
+        <td>M3</td>
+        <td>Top 10 settings by gem, primary + LOO</td>
+        <td class="num">1,200</td>
+        <td class="num">1.25 / 3.3 (+1.25 control)</td>
+        <td>Mean \(\Delta\text{gem} \ge 0\) over the ten and a win in at least 5 of 10</td>
+      </tr>
+      <tr>
+        <td>M4</td>
+        <td>All 74 tied settings</td>
+        <td class="num">8,880</td>
+        <td class="num">9.3 / 24 (+9.3 control, Mechthild)</td>
+        <td>As M3</td>
+      </tr>
+    </tbody>
+  </table></div>
+
+  <div class="callout callout-arch">
+    <div class="callout-title">Why the top 10 by gem</div>
+    <p>The 74 best configurations cannot be told apart, so \(K\) is chosen for coverage, not rank precision; the top 10 are 10 distinct settings spanning three solvent and three base encodings, both kernels, both bounded transforms and both lengthscale priors, at about one CPU-hour. All of them were found with <code>grover_pca</code>, so the menu favours the control; a candidate that wins under these settings is likely to win under its own.</p>
+  </div>
+
+  <h3 class="subheading">11. Order of use</h3>
+
+  <p>We run M2 with the PCA-knee block and with an 8-component block (the plateau of finding 4), testing raw width only for blocks under about 800 columns. A candidate is promoted to M3 only if M2 passes. The nearest-neighbour proxy of finding 7 serves only to order a long candidate list.</p>
+
+  <p>Monroe is the one candidate that passed M2; its M3 screen is Part IV.</p>
+</section>
+
+<section id="sec-part-4" class="content-section" data-num="IV" data-nav="Ten-setting screen">
+  <div class="section-header-block">
+    <span class="section-num-tag">Part IV</span>
+    <h2 class="section-heading">Monroe trails GROVER at every one of the ten best settings</h2>
+    <p class="section-lead">The pre-catalyst Monroe block passed M2 at the rank-1 setting, where one setting can favour or penalise a block by chance. We ran option M3 on it: the ten best <code>cross_1</code> settings, each with Monroe at its variance knee (15 components), Monroe at 8 components (the plateau of finding 4) and <code>grover_pca</code> refitted as the paired control, all 137 folds per cell. Every setting was found with <code>grover_pca</code>, so the menu favours the control; that is the main limitation of the verdict.</p>
+  </div>
+
+  <div class="kpis">
+    <div class="kpi"><div class="k">Configurations</div><div class="v">30</div></div>
+    <div class="kpi"><div class="k">Folds</div><div class="v">4,110</div></div>
+    <div class="kpi"><div class="k">Failed folds</div><div class="v">0</div></div>
+    <div class="kpi"><div class="k">Monroe-15 vs control</div><div class="v">-0.060</div></div>
+    <div class="kpi"><div class="k">Monroe-8 vs control</div><div class="v">-0.145</div></div>
+  </div>
+
+  <h3 class="subheading">12. Neither Monroe block is ahead at any setting</h3>
+
+  <p>The table gives the gem of each block and the paired fold-bootstrap \(\Delta\text{gem}\) against the control at the same setting (4,000 resamples of the <code>primary</code> and LOO folds, 95 percent interval). The pairing is on folds; the L-BFGS restart seeds of the Monroe and control cells differ.</p>
+
+  <div class="table-responsive"><table class="data-table">
+    <thead>
+      <tr>
+        <th class="num">Rank</th>
+        <th>Solvent</th>
+        <th>Base</th>
+        <th>Kernel</th>
+        <th>Transform</th>
+        <th>Prior</th>
+        <th class="num">grover_pca gem</th>
+        <th class="num">Monroe-15 gem</th>
+        <th class="num">\(\Delta\text{gem}\) [95%]</th>
+        <th class="num">Monroe-8 gem</th>
+        <th class="num">\(\Delta\text{gem}\) [95%]</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="num r">1</td>
+        <td><code>Hansen</code></td>
+        <td><code>grover_pca</code></td>
+        <td>Mat&eacute;rn-5/2</td>
+        <td>probit</td>
+        <td>P2</td>
+        <td class="num"><b>+0.428</b></td>
+        <td class="num">+0.389</td>
+        <td class="num">-0.040 [-0.130, +0.047]</td>
+        <td class="num">+0.254</td>
+        <td class="num bad">-0.174 [-0.293, -0.094]</td>
+      </tr>
+      <tr>
+        <td class="num r">2</td>
+        <td><code>Hansen</code></td>
+        <td><code>steric</code></td>
+        <td>Mat&eacute;rn-5/2</td>
+        <td>arcsin_sqrt</td>
+        <td>P2</td>
+        <td class="num"><b>+0.416</b></td>
+        <td class="num">+0.345</td>
+        <td class="num">-0.071 [-0.204, +0.016]</td>
+        <td class="num">+0.205</td>
+        <td class="num bad">-0.210 [-0.271, -0.105]</td>
+      </tr>
+      <tr>
+        <td class="num r">3</td>
+        <td><code>Hansen</code></td>
+        <td><code>OHE</code></td>
+        <td>Mat&eacute;rn-5/2</td>
+        <td>probit</td>
+        <td>P2</td>
+        <td class="num"><b>+0.418</b></td>
+        <td class="num">+0.390</td>
+        <td class="num">-0.028 [-0.121, +0.077]</td>
+        <td class="num">+0.294</td>
+        <td class="num bad">-0.123 [-0.220, -0.049]</td>
+      </tr>
+      <tr>
+        <td class="num r">4</td>
+        <td><code>grover_pca</code></td>
+        <td><code>grover_pca</code></td>
+        <td>Mat&eacute;rn-5/2</td>
+        <td>probit</td>
+        <td>P2</td>
+        <td class="num"><b>+0.412</b></td>
+        <td class="num">+0.403</td>
+        <td class="num">-0.009 [-0.088, +0.078]</td>
+        <td class="num">+0.287</td>
+        <td class="num bad">-0.126 [-0.243, -0.021]</td>
+      </tr>
+      <tr>
+        <td class="num r">5</td>
+        <td><code>Hansen</code></td>
+        <td><code>steric</code></td>
+        <td>Mat&eacute;rn-5/2</td>
+        <td>probit</td>
+        <td>P2</td>
+        <td class="num"><b>+0.412</b></td>
+        <td class="num">+0.386</td>
+        <td class="num">-0.026 [-0.127, +0.093]</td>
+        <td class="num">+0.260</td>
+        <td class="num bad">-0.152 [-0.266, -0.068]</td>
+      </tr>
+      <tr>
+        <td class="num r">6</td>
+        <td><code>Gutmann</code></td>
+        <td><code>OHE</code></td>
+        <td>Mat&eacute;rn-5/2</td>
+        <td>arcsin_sqrt</td>
+        <td>P1</td>
+        <td class="num"><b>+0.404</b></td>
+        <td class="num">+0.303</td>
+        <td class="num">-0.101 [-0.177, +0.002]</td>
+        <td class="num">+0.315</td>
+        <td class="num">-0.089 [-0.140, +0.006]</td>
+      </tr>
+      <tr>
+        <td class="num r">7</td>
+        <td><code>Gutmann</code></td>
+        <td><code>steric</code></td>
+        <td>RBF</td>
+        <td>arcsin_sqrt</td>
+        <td>P1</td>
+        <td class="num"><b>+0.409</b></td>
+        <td class="num">+0.306</td>
+        <td class="num bad">-0.103 [-0.190, -0.003]</td>
+        <td class="num">+0.242</td>
+        <td class="num bad">-0.167 [-0.230, -0.076]</td>
+      </tr>
+      <tr>
+        <td class="num r">8</td>
+        <td><code>Gutmann</code></td>
+        <td><code>steric</code></td>
+        <td>Mat&eacute;rn-5/2</td>
+        <td>arcsin_sqrt</td>
+        <td>P1</td>
+        <td class="num"><b>+0.409</b></td>
+        <td class="num">+0.301</td>
+        <td class="num bad">-0.108 [-0.208, -0.006]</td>
+        <td class="num">+0.262</td>
+        <td class="num bad">-0.148 [-0.198, -0.041]</td>
+      </tr>
+      <tr>
+        <td class="num r">9</td>
+        <td><code>Gutmann</code></td>
+        <td><code>steric</code></td>
+        <td>Mat&eacute;rn-5/2</td>
+        <td>arcsin_sqrt</td>
+        <td>P2</td>
+        <td class="num"><b>+0.404</b></td>
+        <td class="num">+0.351</td>
+        <td class="num">-0.053 [-0.122, +0.026]</td>
+        <td class="num">+0.238</td>
+        <td class="num bad">-0.166 [-0.204, -0.058]</td>
+      </tr>
+      <tr>
+        <td class="num r">10</td>
+        <td><code>Gutmann</code></td>
+        <td><code>steric</code></td>
+        <td>Mat&eacute;rn-5/2</td>
+        <td>probit</td>
+        <td>P1</td>
+        <td class="num"><b>+0.384</b></td>
+        <td class="num">+0.323</td>
+        <td class="num">-0.061 [-0.139, +0.021]</td>
+        <td class="num">+0.284</td>
+        <td class="num bad">-0.100 [-0.187, -0.025]</td>
+      </tr>
+    </tbody>
+  </table></div>
+
+  <p><b>Monroe trails <code>grover_pca</code> at all ten settings: by a mean of 0.060 with 15 components (resolved at 2 of 10) and by 0.145 with 8 components (resolved at 9 of 10), so neither block meets the M3 rule of a mean \(\Delta\text{gem} \ge 0\) and a win at 5 of 10 settings.</b></p>
+
+  <p>The rank-1 row reproduces the M2 screen of finding 9 (\(\Delta\text{gem}\) -0.040, interval covering zero); the other nine settings are at least as unfavourable to Monroe, and none puts it ahead. A candidate that loses at ten settings spanning three solvent and three base encodings, both kernels, both transforms and both lengthscale priors is unlikely to win at settings of its own.</p>
+
+  <h3 class="subheading">13. The 15-component deficit sits on leave-one-out; at 8 components it covers both studies</h3>
+
+  <div class="table-responsive"><table class="data-table">
+    <thead>
+      <tr>
+        <th>Catalyst block</th>
+        <th class="num">Mean \(\Delta\) primary</th>
+        <th class="num">Range</th>
+        <th class="num">Mean \(\Delta\) LOO</th>
+        <th class="num">Range</th>
+        <th class="num">LOO binds</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>grover_pca</code> (control)</td>
+        <td class="num">0</td>
+        <td class="num">&mdash;</td>
+        <td class="num">0</td>
+        <td class="num">&mdash;</td>
+        <td class="num">8 of 10</td>
+      </tr>
+      <tr>
+        <td>Monroe, 15 components</td>
+        <td class="num">-0.029</td>
+        <td class="num">-0.056 to -0.005</td>
+        <td class="num bad">-0.064</td>
+        <td class="num">-0.108 to -0.009</td>
+        <td class="num">9 of 10</td>
+      </tr>
+      <tr>
+        <td>Monroe, 8 components</td>
+        <td class="num bad">-0.151</td>
+        <td class="num">-0.210 to -0.100</td>
+        <td class="num bad">-0.127</td>
+        <td class="num">-0.184 to -0.069</td>
+        <td class="num">4 of 10</td>
+      </tr>
+    </tbody>
+  </table></div>
+
+  <p><b>With 15 components Monroe transfers to held-out catalysts almost as well as <code>grover_pca</code> and loses on interpolation among measured catalysts; cutting it to 8 components costs a further 0.12 on <code>primary</code>.</b></p>
+
+  <p>The columns are pooled CRPSS differences against the control at the same setting, averaged over the ten settings; "LOO binds" counts the settings at which LOO is the smaller of the two scores and so sets the gem. The 15-component LOO deficit is largest at ranks 6 to 8, where Monroe scores +0.301 to +0.306 on LOO against +0.404 to +0.409 for the control. <code>grover_pca</code> keeps its score from 8 to 16 components (finding 4); Monroe does not, so its components 9 to 15 carry information the GP uses. The <code>primary</code> and LOO folds of the ten settings take 1.19 CPU-h for the 15-component block, 1.05 for the 8-component block and 1.13 for the control, in line with the 1.25 CPU-h projected for M3 in Part III.</p>
+
+  <p><b>No Monroe level enters a full grid, no candidate of Part II remains for M4, and <code>grover_pca</code> stays the catalyst encoding.</b></p>
+</section>
+
+<section id="sec-part-5" class="content-section" data-num="V" data-nav="Breslow route">
+  <div class="section-header-block">
+    <span class="section-num-tag">Part V</span>
+    <h2 class="section-heading">Breslow intermediates as the catalyst input</h2>
+    <p class="section-lead">The proposal is to encode each catalyst by its Breslow intermediate with formaldehyde, the enaminol formed when the free carbene adds to formaldehyde, instead of the pre-catalyst or the free carbene. We built these SMILES for the whole library to see what the representation gives and what it still lacks; no model was run on them.</p>
+  </div>
+
+  <h3 class="subheading">14. Writing the SMILES is easy and removes the ingestion problems</h3>
+
+  <p>From the free carbene of each catalyst we attach =CH–OH at the carbene carbon (enol form), and also build the keto tautomer (C2–H, CH=O) and the zwitterionic tetrahedral adduct (\(\mathrm{C2}^+ \text{--} \mathrm{CH}_2 \text{--} \mathrm{O}^-\)).</p>
+
+  <div class="table-responsive"><table class="data-table">
+    <thead>
+      <tr>
+        <th>Quantity</th>
+        <th class="num">Value</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Enol, keto and adduct SMILES that sanitise in RDKit</td>
+        <td class="num">159 of 161</td>
+      </tr>
+      <tr>
+        <td>Catalysts with two carbene centres (bis-NHCs 61 and 78)</td>
+        <td class="num">2, need a rule (one arm or both)</td>
+      </tr>
+      <tr>
+        <td>Enols with an E/Z or other stereo choice</td>
+        <td class="num">79 of 159 (66 with two stereoisomers, 13 with 4 to 12)</td>
+      </tr>
+      <tr>
+        <td>Enols that embed with ETKDGv3 and have MMFF94 parameters</td>
+        <td class="num">158 of 159</td>
+      </tr>
+      <tr>
+        <td>Distinct species among the 22 tested catalysts</td>
+        <td class="num">22 pre-catalysts, 17 free carbenes, 16 Breslow intermediates</td>
+      </tr>
+      <tr>
+        <td>Distinct species in the library</td>
+        <td class="num">161 pre-catalysts, 116 free carbenes, 111 Breslow intermediates</td>
+      </tr>
+    </tbody>
+  </table></div>
+
+  <p><b>A Breslow intermediate is a neutral, single-fragment, closed-shell molecule, so every model in the scan can read it, including those that cannot read salts or divalent carbon.</b></p>
+
+  <p>This is the main practical gain: KPGT, SMI-TED, the interatomic potentials and every 3D model lose their ingestion failure modes.</p>
+
+  <h3 class="subheading">15. What SMILES alone do not provide</h3>
+
+  <p>The pre-catalyst disappears. Catalysts 1 to 5 (SIMes as \(\mathrm{CO}_2\) adduct, chloride, free carbene, bicarbonate and tetrafluoroborate) become one molecule, as do 6 and 16 and 8 and 13. Yet finding 3 shows that the encoding the GP uses most distinguishes counter-ions, and the screen yields of these forms differ (catalyst 1: 53 percent, 2: 29 percent, 3: 44 percent, 4: 51 percent). The activation step (base needed, \(\mathrm{CO}_2\) loss, counter-ion) must then enter separately: the four-column form one-hot the grid already appends to <code>_carbene</code> levels, plus a counter-ion descriptor, plus the existing base-active flag. At the rank-1 settings, every model loses 0.29 to 0.38 of gem when using the free carbene with the form one-hot in place of the pre-catalyst (findings 6 and 9). A Breslow encoding merges the forms in the same way (22 tested pre-catalysts become 16 intermediates, against 17 free carbenes), so it starts from the carbene's position. It can only do better if the structure of the intermediate carries yield information that the carbene does not.</p>
+
+  <p><b>The measured cost of dropping the pre-catalyst graph (0.29 to 0.38 of gem) is the hurdle a Breslow encoding has to clear.</b></p>
+
+  <p>One species must be chosen and named: enol or keto tautomer, or the tetrahedral adduct; which one controls the turnover is a mechanistic claim (Berkessel et al. characterise the keto tautomer and spiro-dioxolane resting states; Mayr and co-workers measure nucleophilicities of Breslow-type enamines). With formaldehyde the second carbonyl addition and the formoin side chemistry also matter.</p>
+
+  <p>Stereochemistry: 79 enols have an E/Z choice that string and graph models with bond stereo read differently; it must be fixed (lowest-energy isomer from a conformer search) or both isomers averaged.</p>
+
+  <p>Geometry for the 3D models (Uni-Mol2, Frad, Transformer-M, SCAGE, SOAP, Monroe, the interatomic potentials): an RDKit conformer exists for 158 of 159, but a physically meaningful one, with the N-aryl twist and the enol O–H orientation, needs a GFN2-xTB conformer search, which the interpretable pipeline already runs for carbenes.</p>
+
+  <p>Out-of-distribution input: hydroxy ketene aminals are rare in the drug-like corpora of every pretrained model; the encodings will reflect general enamine chemistry more than Breslow-intermediate stability.</p>
+
+  <p>The physically motivated route is descriptors of the intermediate itself: xTB free energy of formation from carbene and formaldehyde, keto&ndash;enol free energy, HOMO energy of the enol as a nucleophilicity proxy. These are computed with the existing xTB pipeline and are interpretable, unlike an embedding.</p>
+
+  <h3 class="subheading">16. What a Breslow test needs</h3>
+
+  <div class="table-responsive"><table class="data-table">
+    <thead>
+      <tr>
+        <th>Model family</th>
+        <th>Members in the scan</th>
+        <th>What is needed beyond the SMILES</th>
+        <th>Effort</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>String and fingerprint</td>
+        <td>ECFP4, MAP4, Mordred, mol2vec, ChemBERTa-2, MolFormer-XL, CLAMP, SMI-TED</td>
+        <td>Stereo rule; form one-hot</td>
+        <td>Minutes</td>
+      </tr>
+      <tr>
+        <td>2D graph</td>
+        <td>GROVER, CheMeleon, MiniMol, Graphormer, 3D-Infomax (2D inference)</td>
+        <td>Stereo rule; form one-hot</td>
+        <td>Minutes</td>
+      </tr>
+      <tr>
+        <td>3D</td>
+        <td>Uni-Mol2, Frad, Transformer-M, SCAGE, Monroe, SOAP</td>
+        <td>Stereo rule; xTB conformer search; form one-hot</td>
+        <td>Hours on Mechthild</td>
+      </tr>
+      <tr>
+        <td>Interpretable</td>
+        <td>xTB descriptors</td>
+        <td>Conformer search; formation and tautomer free energies; HOMO</td>
+        <td>Hours on Mechthild</td>
+      </tr>
+    </tbody>
+  </table></div>
+
+  <p>Build <code>_breslow</code> levels for the 2D models first (minutes each) and score them with M2 in two forms: the intermediate with the form one-hot (directly comparable to the <code>_carbene</code> rows above), and the intermediate's PCA components concatenated with the pre-catalyst <code>grover_pca</code> block, which keeps the pre-catalyst information and asks whether the intermediate adds to it. Run the xTB descriptor set for the intermediates on Mechthild in parallel. A Breslow block that only matches the carbene rows adds nothing; a concatenated block that beats <code>grover_pca</code> is evidence that the intermediate carries signal the pre-catalyst graph does not.</p>
+</section>
+
+    <footer class="report-footer">Sources, under <code>pablo/featurization_and_kernel_scan/</code>:
+    <code>runs/cross_1/gem_scores.parquet</code> (2,520 configurations) and <code>runs/cross_1/cells/</code> (fold hyperparameters, timings);
+    <code>runs/monroe_m3/scan_aggregate.parquet</code> (30 configurations, 4,110 folds) and <code>runs/monroe_m3/gem_scores.parquet</code>;
+    <code>results/gem_scores.parquet</code> (elimination run, 50 catalyst encodings);
+    <code>data/grid/cv_splits.json</code> (137 folds);
+    <code>data/libraries/experiments.parquet</code> (69 experiments) and <code>data/libraries/catalysts.parquet</code> (161);
+    <code>data/featurizations/</code> (<code>grover</code>, <code>grover_pca</code>, <code>grover_carbene</code>, <code>grover_ionstripped</code>, <code>chemeleon_*</code>, <code>monroe_*</code>, <code>smited_*</code> and their <code>_pca</code>).
+    New featurizations and their versions: <code>PROVENANCE.md</code>.
+    Paired bootstrap: 4,000 resamples of the 60 folds per study, seed 0.
+    Literature: Rong et al. NeurIPS 2020; Praski et al. arXiv 2508.06199; Deng et al. Nat. Commun. 2023; Sun et al. NeurIPS 2022; Xia et al. NeurIPS 2023; Hvarfner et al. ICML 2024; Burns et al. arXiv 2506.15792; Banaszewski and Fitzgibbon arXiv 2608.18982; Soares et al. arXiv 2407.20267; Li et al. Nat. Commun. 2023 (KPGT).</footer>
+  </main>
+</div>
+
+<script>
+var narrow = window.matchMedia('(max-width: 900px)');
+
+function toggleTheme() {
+  var next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('pablo_theme', next);
+}
+
+function toggleSidebar() {
+  var root = document.documentElement;
+  if (narrow.matches) {
+    root.setAttribute('data-sidebar-mobile', root.getAttribute('data-sidebar-mobile') === 'open' ? 'closed' : 'open');
+    return;
+  }
+  var next = root.getAttribute('data-sidebar') === 'closed' ? 'open' : 'closed';
+  root.setAttribute('data-sidebar', next);
+  localStorage.setItem('pablo_sidebar', next);
+}
+
+window.addEventListener('keydown', function (e) {
+  if (e.key !== '[' || e.ctrlKey || e.metaKey || e.altKey) return;
+  if (/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName)) return;
+  toggleSidebar();
+});
+
+window.addEventListener('scroll', function () {
+  var el = document.documentElement;
+  var bar = document.getElementById('progressBar');
+  bar.style.width = (el.scrollTop / (el.scrollHeight - el.clientHeight)) * 100 + '%';
+});
+
+window.addEventListener('DOMContentLoaded', function () {
+  var root = document.documentElement;
+  var nav = document.getElementById('navLinks');
+  var sections = document.querySelectorAll('section.content-section');
+  var caretSvg = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 6 15 12 9 18"/></svg>';
+  var groups = [];
+  var subLinks = [];
+
+  sections.forEach(function (sec, i) {
+    var hue = sec.dataset.hue || String(i % 8);
+    sec.dataset.hue = hue;
+    var group = document.createElement('div');
+    group.className = 'nav-group';
+    group.dataset.hue = hue;
+    group.dataset.target = sec.id;
+
+    var row = document.createElement('div');
+    row.className = 'nav-row';
+    var a = document.createElement('a');
+    a.href = '#' + sec.id;
+    a.className = 'nav-item';
+    var num = document.createElement('span');
+    num.className = 'nav-badge-num';
+    num.textContent = sec.dataset.num || '';
+    var label = document.createElement('span');
+    label.textContent = sec.dataset.nav || sec.querySelector('.section-heading').textContent;
+    a.append(num, label);
+    row.appendChild(a);
+    group.appendChild(row);
+
+    var subs = sec.querySelectorAll('h3.subheading');
+    if (subs.length) {
+      var caret = document.createElement('button');
+      caret.className = 'nav-caret';
+      caret.setAttribute('aria-label', 'Expand');
+      caret.innerHTML = caretSvg;
+      caret.addEventListener('click', function () { group.classList.toggle('open'); });
+      row.appendChild(caret);
+      var box = document.createElement('div');
+      box.className = 'nav-sub';
+      subs.forEach(function (h, j) {
+        if (!h.id) h.id = sec.id + '-' + (j + 1);
+        var s = document.createElement('a');
+        s.href = '#' + h.id;
+        s.className = 'nav-subitem';
+        s.textContent = h.textContent;
+        box.appendChild(s);
+        subLinks.push(s);
+      });
+      group.appendChild(box);
+    }
+    a.addEventListener('click', function () { if (subs.length) group.classList.add('open'); });
+    nav.appendChild(group);
+    groups.push(group);
+  });
+
+  if (window.renderMathInElement) {
+    renderMathInElement(document.body, {
+      delimiters: [
+        {left: '\\[', right: '\\]', display: true},
+        {left: '\\(', right: '\\)', display: false}
+      ],
+      throwOnError: false
+    });
+  } else {
+    console.error('KaTeX did not load; formulas are shown as LaTeX source.');
+  }
+
+  nav.addEventListener('click', function (e) {
+    if (narrow.matches && e.target.closest('a')) root.setAttribute('data-sidebar-mobile', 'closed');
+  });
+
+  var lastActive = null;
+  function spy() {
+    var line = 120;
+    var current = sections[0];
+    sections.forEach(function (sec) { if (sec.getBoundingClientRect().top <= line) current = sec; });
+    var sub = null;
+    current.querySelectorAll('h3.subheading').forEach(function (h) { if (h.getBoundingClientRect().top <= line) sub = h; });
+    groups.forEach(function (g) {
+      var on = g.dataset.target === current.id;
+      g.classList.toggle('active', on);
+      if (on && current !== lastActive && g.querySelector('.nav-sub')) g.classList.add('open');
+    });
+    subLinks.forEach(function (s) { s.classList.toggle('active', !!sub && s.getAttribute('href') === '#' + sub.id); });
+    lastActive = current;
+  }
+  window.addEventListener('scroll', spy, {passive: true});
+  spy();
+
+  var expandBtn = document.getElementById('expandAllBtn');
+  expandBtn.addEventListener('click', function () {
+    var open = !expandBtn.classList.contains('all-open');
+    expandBtn.classList.toggle('all-open', open);
+    groups.forEach(function (g) { if (g.querySelector('.nav-sub')) g.classList.toggle('open', open); });
+  });
+
+  document.getElementById('sidebarSearch').addEventListener('input', function (e) {
+    var term = e.target.value.toLowerCase().trim();
+    groups.forEach(function (g) {
+      var own = g.querySelector('.nav-item').textContent.toLowerCase().includes(term);
+      var anySub = false;
+      g.querySelectorAll('.nav-subitem').forEach(function (s) {
+        var hit = !term || own || s.textContent.toLowerCase().includes(term);
+        s.style.display = hit ? 'block' : 'none';
+        anySub = anySub || (term && s.textContent.toLowerCase().includes(term));
+      });
+      g.style.display = !term || own || anySub ? 'block' : 'none';
+      if (term && anySub) g.classList.add('open');
+    });
+  });
+
+  var resizer = document.getElementById('sidebarResizer');
+  resizer.addEventListener('pointerdown', function (e) {
+    e.preventDefault();
+    resizer.setPointerCapture(e.pointerId);
+    root.classList.add('resizing');
+  });
+  resizer.addEventListener('pointermove', function (e) {
+    if (!root.classList.contains('resizing')) return;
+    var w = Math.min(560, Math.max(220, e.clientX));
+    root.style.setProperty('--sidebar-w', w + 'px');
+  });
+  resizer.addEventListener('pointerup', function (e) {
+    root.classList.remove('resizing');
+    resizer.releasePointerCapture(e.pointerId);
+    localStorage.setItem('pablo_sidebar_w', parseInt(getComputedStyle(root).getPropertyValue('--sidebar-w'), 10));
+  });
+  resizer.addEventListener('dblclick', function () {
+    root.style.removeProperty('--sidebar-w');
+    localStorage.removeItem('pablo_sidebar_w');
+  });
+});
+</script>
+</body></html>

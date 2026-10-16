@@ -1,0 +1,12 @@
+{
+  "n_molecules": 161,
+  "label": "GROVERlarge",
+  "raw_model_output_file": "raw_model_output.parquet",
+  "raw_model_dim": 5000,
+  "model": "grover_large",
+  "params": "100M",
+  "fingerprint_source": "both",
+  "checkpoint": "/mechthild/home/enisbaris/pablo/pablo/featurization_and_kernel_scan/data/grover_large.pt",
+  "n_features": 5000,
+  "descriptors_file": "descriptors.parquet"
+}

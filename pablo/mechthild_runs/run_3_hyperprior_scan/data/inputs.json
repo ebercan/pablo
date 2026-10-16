@@ -1,0 +1,578 @@
+{
+  "0": {
+    "outer_cell_id": 0,
+    "hyperprior": "baseline",
+    "hyperprior_params": {
+      "ls_scale": 2.5,
+      "ls_floor": 0.1,
+      "dirichlet_conc": 2.0
+    },
+    "cat_feat": "interpretable",
+    "solv_feat": "physical",
+    "base_feat": "structured",
+    "kernel_structure": "KS4",
+    "append_form_onehot_to_cat": false,
+    "inner_cells": [
+      {
+        "inner_id": 0,
+        "outcome_transform": "raw",
+        "model_class": "st_y",
+        "base_kernel": "matern52",
+        "mean_function": "constant"
+      },
+      {
+        "inner_id": 1,
+        "outcome_transform": "raw",
+        "model_class": "st_y",
+        "base_kernel": "matern52",
+        "mean_function": "type_linear"
+      },
+      {
+        "inner_id": 2,
+        "outcome_transform": "raw",
+        "model_class": "lcm_cs",
+        "base_kernel": "matern52",
+        "mean_function": "constant"
+      },
+      {
+        "inner_id": 3,
+        "outcome_transform": "raw",
+        "model_class": "lcm_cs",
+        "base_kernel": "matern52",
+        "mean_function": "type_linear"
+      },
+      {
+        "inner_id": 4,
+        "outcome_transform": "logit",
+        "model_class": "st_y",
+        "base_kernel": "matern52",
+        "mean_function": "constant"
+      },
+      {
+        "inner_id": 5,
+        "outcome_transform": "logit",
+        "model_class": "st_y",
+        "base_kernel": "matern52",
+        "mean_function": "type_linear"
+      },
+      {
+        "inner_id": 6,
+        "outcome_transform": "logit",
+        "model_class": "lcm_cs",
+        "base_kernel": "matern52",
+        "mean_function": "constant"
+      },
+      {
+        "inner_id": 7,
+        "outcome_transform": "logit",
+        "model_class": "lcm_cs",
+        "base_kernel": "matern52",
+        "mean_function": "type_linear"
+      }
+    ]
+  },
+  "1": {
+    "outer_cell_id": 1,
+    "hyperprior": "baseline",
+    "hyperprior_params": {
+      "ls_scale": 2.5,
+      "ls_floor": 0.1,
+      "dirichlet_conc": 2.0
+    },
+    "cat_feat": "grover",
+    "solv_feat": "physical",
+    "base_feat": "structured",
+    "kernel_structure": "KS4",
+    "append_form_onehot_to_cat": false,
+    "inner_cells": [
+      {
+        "inner_id": 0,
+        "outcome_transform": "raw",
+        "model_class": "st_y",
+        "base_kernel": "matern52",
+        "mean_function": "constant"
+      },
+      {
+        "inner_id": 1,
+        "outcome_transform": "raw",
+        "model_class": "st_y",
+        "base_kernel": "matern52",
+        "mean_function": "type_linear"
+      },
+      {
+        "inner_id": 2,
+        "outcome_transform": "raw",
+        "model_class": "lcm_cs",
+        "base_kernel": "matern52",
+        "mean_function": "constant"
+      },
+      {
+        "inner_id": 3,
+        "outcome_transform": "raw",
+        "model_class": "lcm_cs",
+        "base_kernel": "matern52",
+        "mean_function": "type_linear"
+      },
+      {
+        "inner_id": 4,
+        "outcome_transform": "logit",
+        "model_class": "st_y",
+        "base_kernel": "matern52",
+        "mean_function": "constant"
+      },
+      {
+        "inner_id": 5,
+        "outcome_transform": "logit",
+        "model_class": "st_y",
+        "base_kernel": "matern52",
+        "mean_function": "type_linear"
+      },
+      {
+        "inner_id": 6,
+        "outcome_transform": "logit",
+        "model_class": "lcm_cs",
+        "base_kernel": "matern52",
+        "mean_function": "constant"
+      },
+      {
+        "inner_id": 7,
+        "outcome_transform": "logit",
+        "model_class": "lcm_cs",
+        "base_kernel": "matern52",
+        "mean_function": "type_linear"
+      }
+    ]
+  },
+  "2": {
+    "outer_cell_id": 2,
+    "hyperprior": "tighter_ls",
+    "hyperprior_params": {
+      "ls_scale": 2.0,
+      "ls_floor": 0.1,
+      "dirichlet_conc": 2.0
+    },
+    "cat_feat": "interpretable",
+    "solv_feat": "physical",
+    "base_feat": "structured",
+    "kernel_structure": "KS4",
+    "append_form_onehot_to_cat": false,
+    "inner_cells": [
+      {
+        "inner_id": 0,
+        "outcome_transform": "raw",
+        "model_class": "st_y",
+        "base_kernel": "matern52",
+        "mean_function": "constant"
+      },
+      {
+        "inner_id": 1,
+        "outcome_transform": "raw",
+        "model_class": "st_y",
+        "base_kernel": "matern52",
+        "mean_function": "type_linear"
+      },
+      {
+        "inner_id": 2,
+        "outcome_transform": "raw",
+        "model_class": "lcm_cs",
+        "base_kernel": "matern52",
+        "mean_function": "constant"
+      },
+      {
+        "inner_id": 3,
+        "outcome_transform": "raw",
+        "model_class": "lcm_cs",
+        "base_kernel": "matern52",
+        "mean_function": "type_linear"
+      },
+      {
+        "inner_id": 4,
+        "outcome_transform": "logit",
+        "model_class": "st_y",
+        "base_kernel": "matern52",
+        "mean_function": "constant"
+      },
+      {
+        "inner_id": 5,
+        "outcome_transform": "logit",
+        "model_class": "st_y",
+        "base_kernel": "matern52",
+        "mean_function": "type_linear"
+      },
+      {
+        "inner_id": 6,
+        "outcome_transform": "logit",
+        "model_class": "lcm_cs",
+        "base_kernel": "matern52",
+        "mean_function": "constant"
+      },
+      {
+        "inner_id": 7,
+        "outcome_transform": "logit",
+        "model_class": "lcm_cs",
+        "base_kernel": "matern52",
+        "mean_function": "type_linear"
+      }
+    ]
+  },
+  "3": {
+    "outer_cell_id": 3,
+    "hyperprior": "tighter_ls",
+    "hyperprior_params": {
+      "ls_scale": 2.0,
+      "ls_floor": 0.1,
+      "dirichlet_conc": 2.0
+    },
+    "cat_feat": "grover",
+    "solv_feat": "physical",
+    "base_feat": "structured",
+    "kernel_structure": "KS4",
+    "append_form_onehot_to_cat": false,
+    "inner_cells": [
+      {
+        "inner_id": 0,
+        "outcome_transform": "raw",
+        "model_class": "st_y",
+        "base_kernel": "matern52",
+        "mean_function": "constant"
+      },
+      {
+        "inner_id": 1,
+        "outcome_transform": "raw",
+        "model_class": "st_y",
+        "base_kernel": "matern52",
+        "mean_function": "type_linear"
+      },
+      {
+        "inner_id": 2,
+        "outcome_transform": "raw",
+        "model_class": "lcm_cs",
+        "base_kernel": "matern52",
+        "mean_function": "constant"
+      },
+      {
+        "inner_id": 3,
+        "outcome_transform": "raw",
+        "model_class": "lcm_cs",
+        "base_kernel": "matern52",
+        "mean_function": "type_linear"
+      },
+      {
+        "inner_id": 4,
+        "outcome_transform": "logit",
+        "model_class": "st_y",
+        "base_kernel": "matern52",
+        "mean_function": "constant"
+      },
+      {
+        "inner_id": 5,
+        "outcome_transform": "logit",
+        "model_class": "st_y",
+        "base_kernel": "matern52",
+        "mean_function": "type_linear"
+      },
+      {
+        "inner_id": 6,
+        "outcome_transform": "logit",
+        "model_class": "lcm_cs",
+        "base_kernel": "matern52",
+        "mean_function": "constant"
+      },
+      {
+        "inner_id": 7,
+        "outcome_transform": "logit",
+        "model_class": "lcm_cs",
+        "base_kernel": "matern52",
+        "mean_function": "type_linear"
+      }
+    ]
+  },
+  "4": {
+    "outer_cell_id": 4,
+    "hyperprior": "wider_ls",
+    "hyperprior_params": {
+      "ls_scale": 3.0,
+      "ls_floor": 0.1,
+      "dirichlet_conc": 2.0
+    },
+    "cat_feat": "interpretable",
+    "solv_feat": "physical",
+    "base_feat": "structured",
+    "kernel_structure": "KS4",
+    "append_form_onehot_to_cat": false,
+    "inner_cells": [
+      {
+        "inner_id": 0,
+        "outcome_transform": "raw",
+        "model_class": "st_y",
+        "base_kernel": "matern52",
+        "mean_function": "constant"
+      },
+      {
+        "inner_id": 1,
+        "outcome_transform": "raw",
+        "model_class": "st_y",
+        "base_kernel": "matern52",
+        "mean_function": "type_linear"
+      },
+      {
+        "inner_id": 2,
+        "outcome_transform": "raw",
+        "model_class": "lcm_cs",
+        "base_kernel": "matern52",
+        "mean_function": "constant"
+      },
+      {
+        "inner_id": 3,
+        "outcome_transform": "raw",
+        "model_class": "lcm_cs",
+        "base_kernel": "matern52",
+        "mean_function": "type_linear"
+      },
+      {
+        "inner_id": 4,
+        "outcome_transform": "logit",
+        "model_class": "st_y",
+        "base_kernel": "matern52",
+        "mean_function": "constant"
+      },
+      {
+        "inner_id": 5,
+        "outcome_transform": "logit",
+        "model_class": "st_y",
+        "base_kernel": "matern52",
+        "mean_function": "type_linear"
+      },
+      {
+        "inner_id": 6,
+        "outcome_transform": "logit",
+        "model_class": "lcm_cs",
+        "base_kernel": "matern52",
+        "mean_function": "constant"
+      },
+      {
+        "inner_id": 7,
+        "outcome_transform": "logit",
+        "model_class": "lcm_cs",
+        "base_kernel": "matern52",
+        "mean_function": "type_linear"
+      }
+    ]
+  },
+  "5": {
+    "outer_cell_id": 5,
+    "hyperprior": "wider_ls",
+    "hyperprior_params": {
+      "ls_scale": 3.0,
+      "ls_floor": 0.1,
+      "dirichlet_conc": 2.0
+    },
+    "cat_feat": "grover",
+    "solv_feat": "physical",
+    "base_feat": "structured",
+    "kernel_structure": "KS4",
+    "append_form_onehot_to_cat": false,
+    "inner_cells": [
+      {
+        "inner_id": 0,
+        "outcome_transform": "raw",
+        "model_class": "st_y",
+        "base_kernel": "matern52",
+        "mean_function": "constant"
+      },
+      {
+        "inner_id": 1,
+        "outcome_transform": "raw",
+        "model_class": "st_y",
+        "base_kernel": "matern52",
+        "mean_function": "type_linear"
+      },
+      {
+        "inner_id": 2,
+        "outcome_transform": "raw",
+        "model_class": "lcm_cs",
+        "base_kernel": "matern52",
+        "mean_function": "constant"
+      },
+      {
+        "inner_id": 3,
+        "outcome_transform": "raw",
+        "model_class": "lcm_cs",
+        "base_kernel": "matern52",
+        "mean_function": "type_linear"
+      },
+      {
+        "inner_id": 4,
+        "outcome_transform": "logit",
+        "model_class": "st_y",
+        "base_kernel": "matern52",
+        "mean_function": "constant"
+      },
+      {
+        "inner_id": 5,
+        "outcome_transform": "logit",
+        "model_class": "st_y",
+        "base_kernel": "matern52",
+        "mean_function": "type_linear"
+      },
+      {
+        "inner_id": 6,
+        "outcome_transform": "logit",
+        "model_class": "lcm_cs",
+        "base_kernel": "matern52",
+        "mean_function": "constant"
+      },
+      {
+        "inner_id": 7,
+        "outcome_transform": "logit",
+        "model_class": "lcm_cs",
+        "base_kernel": "matern52",
+        "mean_function": "type_linear"
+      }
+    ]
+  },
+  "6": {
+    "outer_cell_id": 6,
+    "hyperprior": "strong_reg",
+    "hyperprior_params": {
+      "ls_scale": 2.5,
+      "ls_floor": 0.1,
+      "dirichlet_conc": 5.0
+    },
+    "cat_feat": "interpretable",
+    "solv_feat": "physical",
+    "base_feat": "structured",
+    "kernel_structure": "KS4",
+    "append_form_onehot_to_cat": false,
+    "inner_cells": [
+      {
+        "inner_id": 0,
+        "outcome_transform": "raw",
+        "model_class": "st_y",
+        "base_kernel": "matern52",
+        "mean_function": "constant"
+      },
+      {
+        "inner_id": 1,
+        "outcome_transform": "raw",
+        "model_class": "st_y",
+        "base_kernel": "matern52",
+        "mean_function": "type_linear"
+      },
+      {
+        "inner_id": 2,
+        "outcome_transform": "raw",
+        "model_class": "lcm_cs",
+        "base_kernel": "matern52",
+        "mean_function": "constant"
+      },
+      {
+        "inner_id": 3,
+        "outcome_transform": "raw",
+        "model_class": "lcm_cs",
+        "base_kernel": "matern52",
+        "mean_function": "type_linear"
+      },
+      {
+        "inner_id": 4,
+        "outcome_transform": "logit",
+        "model_class": "st_y",
+        "base_kernel": "matern52",
+        "mean_function": "constant"
+      },
+      {
+        "inner_id": 5,
+        "outcome_transform": "logit",
+        "model_class": "st_y",
+        "base_kernel": "matern52",
+        "mean_function": "type_linear"
+      },
+      {
+        "inner_id": 6,
+        "outcome_transform": "logit",
+        "model_class": "lcm_cs",
+        "base_kernel": "matern52",
+        "mean_function": "constant"
+      },
+      {
+        "inner_id": 7,
+        "outcome_transform": "logit",
+        "model_class": "lcm_cs",
+        "base_kernel": "matern52",
+        "mean_function": "type_linear"
+      }
+    ]
+  },
+  "7": {
+    "outer_cell_id": 7,
+    "hyperprior": "strong_reg",
+    "hyperprior_params": {
+      "ls_scale": 2.5,
+      "ls_floor": 0.1,
+      "dirichlet_conc": 5.0
+    },
+    "cat_feat": "grover",
+    "solv_feat": "physical",
+    "base_feat": "structured",
+    "kernel_structure": "KS4",
+    "append_form_onehot_to_cat": false,
+    "inner_cells": [
+      {
+        "inner_id": 0,
+        "outcome_transform": "raw",
+        "model_class": "st_y",
+        "base_kernel": "matern52",
+        "mean_function": "constant"
+      },
+      {
+        "inner_id": 1,
+        "outcome_transform": "raw",
+        "model_class": "st_y",
+        "base_kernel": "matern52",
+        "mean_function": "type_linear"
+      },
+      {
+        "inner_id": 2,
+        "outcome_transform": "raw",
+        "model_class": "lcm_cs",
+        "base_kernel": "matern52",
+        "mean_function": "constant"
+      },
+      {
+        "inner_id": 3,
+        "outcome_transform": "raw",
+        "model_class": "lcm_cs",
+        "base_kernel": "matern52",
+        "mean_function": "type_linear"
+      },
+      {
+        "inner_id": 4,
+        "outcome_transform": "logit",
+        "model_class": "st_y",
+        "base_kernel": "matern52",
+        "mean_function": "constant"
+      },
+      {
+        "inner_id": 5,
+        "outcome_transform": "logit",
+        "model_class": "st_y",
+        "base_kernel": "matern52",
+        "mean_function": "type_linear"
+      },
+      {
+        "inner_id": 6,
+        "outcome_transform": "logit",
+        "model_class": "lcm_cs",
+        "base_kernel": "matern52",
+        "mean_function": "constant"
+      },
+      {
+        "inner_id": 7,
+        "outcome_transform": "logit",
+        "model_class": "lcm_cs",
+        "base_kernel": "matern52",
+        "mean_function": "type_linear"
+      }
+    ]
+  }
+}

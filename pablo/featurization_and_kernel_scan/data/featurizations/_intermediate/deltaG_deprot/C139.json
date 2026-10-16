@@ -1,0 +1,367 @@
+{
+  "catalyst_id": 139,
+  "form": "salt",
+  "precatalyst_smiles": "CC(C1=CC2=C([N+]3=CN(C4=C5C=C(C(C)C)C=CC5=CC=C4C(C)C)CC3)C(C(C)C)=CC=C2C=C1)C.[Cl-]",
+  "azolium": {
+    "smiles": "CC(C)C1=CC2=C(N3C=[N+](C4=C5C=C(C(C)C)C=CC5=CC=C4C(C)C)CC3)C(C(C)C)=CC=C2C=C1",
+    "charge": 1,
+    "conformer_source": "etkdgv3",
+    "conformers": [
+      {
+        "g_hartree": -101.896197120301,
+        "min_freq_cm1": -4.92,
+        "n_h_on_c2": 1,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 0,
+        "used_in_ensemble": true
+      },
+      {
+        "g_hartree": -101.891358300059,
+        "min_freq_cm1": 5.03,
+        "n_h_on_c2": 1,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 1,
+        "used_in_ensemble": true
+      },
+      {
+        "g_hartree": -101.891371185889,
+        "min_freq_cm1": 4.13,
+        "n_h_on_c2": 1,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 2,
+        "used_in_ensemble": true
+      },
+      {
+        "g_hartree": -101.895370102062,
+        "min_freq_cm1": -5.46,
+        "n_h_on_c2": 1,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 3,
+        "used_in_ensemble": true
+      },
+      {
+        "g_hartree": -101.896337361005,
+        "min_freq_cm1": 8.21,
+        "n_h_on_c2": 1,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 4,
+        "used_in_ensemble": true
+      },
+      {
+        "g_hartree": -101.896382976603,
+        "min_freq_cm1": 8.08,
+        "n_h_on_c2": 1,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 5,
+        "used_in_ensemble": true
+      },
+      {
+        "g_hartree": -101.891371069903,
+        "min_freq_cm1": 9.79,
+        "n_h_on_c2": 1,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 6,
+        "used_in_ensemble": true
+      },
+      {
+        "g_hartree": -101.895260078251,
+        "min_freq_cm1": 10.75,
+        "n_h_on_c2": 1,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 7,
+        "used_in_ensemble": true
+      },
+      {
+        "g_hartree": -101.894152990148,
+        "min_freq_cm1": 10.21,
+        "n_h_on_c2": 1,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 8,
+        "used_in_ensemble": true
+      },
+      {
+        "g_hartree": -101.894604904297,
+        "min_freq_cm1": 8.37,
+        "n_h_on_c2": 1,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 9,
+        "used_in_ensemble": true
+      },
+      {
+        "g_hartree": -101.896461323973,
+        "min_freq_cm1": -8.29,
+        "n_h_on_c2": 1,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 10,
+        "used_in_ensemble": true
+      },
+      {
+        "g_hartree": -101.882552318519,
+        "min_freq_cm1": 8.68,
+        "n_h_on_c2": 1,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 11,
+        "used_in_ensemble": true
+      },
+      {
+        "g_hartree": -101.888568609742,
+        "min_freq_cm1": 7.44,
+        "n_h_on_c2": 1,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 12,
+        "used_in_ensemble": true
+      },
+      {
+        "g_hartree": -101.890681184374,
+        "min_freq_cm1": 8.29,
+        "n_h_on_c2": 1,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 13,
+        "used_in_ensemble": true
+      },
+      {
+        "g_hartree": -101.890407073137,
+        "min_freq_cm1": 10.04,
+        "n_h_on_c2": 1,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 14,
+        "used_in_ensemble": true
+      },
+      {
+        "g_hartree": -101.893583944913,
+        "min_freq_cm1": 9.2,
+        "n_h_on_c2": 1,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 15,
+        "used_in_ensemble": true
+      }
+    ],
+    "n_conformers_embedded": 16,
+    "n_conformers_used": 16,
+    "g_boltzmann_hartree": -101.89786881422302
+  },
+  "carbene": {
+    "smiles": "CC(C)C1=CC2=C(N3[C]N(C4=C5C=C(C(C)C)C=CC5=CC=C4C(C)C)CC3)C(C(C)C)=CC=C2C=C1",
+    "charge": 0,
+    "conformer_source": "etkdgv3",
+    "conformers": [
+      {
+        "g_hartree": -101.680346357664,
+        "min_freq_cm1": -7.02,
+        "n_h_on_c2": 0,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 0,
+        "used_in_ensemble": true
+      },
+      {
+        "g_hartree": -101.681635416705,
+        "min_freq_cm1": 8.88,
+        "n_h_on_c2": 0,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 1,
+        "used_in_ensemble": true
+      },
+      {
+        "g_hartree": -101.682380285245,
+        "min_freq_cm1": 7.13,
+        "n_h_on_c2": 0,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 2,
+        "used_in_ensemble": true
+      },
+      {
+        "g_hartree": -101.682179310885,
+        "min_freq_cm1": 9.54,
+        "n_h_on_c2": 0,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 3,
+        "used_in_ensemble": true
+      },
+      {
+        "g_hartree": -101.682160748894,
+        "min_freq_cm1": -18.24,
+        "n_h_on_c2": 0,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 4,
+        "used_in_ensemble": true
+      },
+      {
+        "g_hartree": -101.681874528475,
+        "min_freq_cm1": 8.84,
+        "n_h_on_c2": 0,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 5,
+        "used_in_ensemble": true
+      },
+      {
+        "g_hartree": -101.681198136,
+        "min_freq_cm1": -8.17,
+        "n_h_on_c2": 0,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 6,
+        "used_in_ensemble": true
+      },
+      {
+        "g_hartree": -101.681321631575,
+        "min_freq_cm1": -7.05,
+        "n_h_on_c2": 0,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 7,
+        "used_in_ensemble": true
+      },
+      {
+        "g_hartree": -101.683112386143,
+        "min_freq_cm1": 3.15,
+        "n_h_on_c2": 0,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 8,
+        "used_in_ensemble": true
+      },
+      {
+        "g_hartree": -101.675111650619,
+        "min_freq_cm1": -8.59,
+        "n_h_on_c2": 0,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 9,
+        "used_in_ensemble": true
+      },
+      {
+        "g_hartree": -101.68296313912,
+        "min_freq_cm1": -5.76,
+        "n_h_on_c2": 0,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 10,
+        "used_in_ensemble": true
+      },
+      {
+        "g_hartree": -101.670305069959,
+        "min_freq_cm1": 13.55,
+        "n_h_on_c2": 0,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 11,
+        "used_in_ensemble": true
+      },
+      {
+        "g_hartree": -101.682528251342,
+        "min_freq_cm1": -17.15,
+        "n_h_on_c2": 0,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 12,
+        "used_in_ensemble": true
+      },
+      {
+        "g_hartree": -101.681286384677,
+        "min_freq_cm1": -11.39,
+        "n_h_on_c2": 0,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 13,
+        "used_in_ensemble": true
+      },
+      {
+        "g_hartree": -101.679706258049,
+        "min_freq_cm1": 9.72,
+        "n_h_on_c2": 0,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 14,
+        "used_in_ensemble": true
+      },
+      {
+        "g_hartree": -101.676913178208,
+        "min_freq_cm1": 14.49,
+        "n_h_on_c2": 0,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 15,
+        "used_in_ensemble": true
+      },
+      {
+        "g_hartree": -101.675128356288,
+        "min_freq_cm1": 16.41,
+        "n_h_on_c2": 0,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 16,
+        "used_in_ensemble": true
+      },
+      {
+        "g_hartree": -101.676428422599,
+        "min_freq_cm1": 9.12,
+        "n_h_on_c2": 0,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 17,
+        "used_in_ensemble": true
+      }
+    ],
+    "n_conformers_embedded": 18,
+    "n_conformers_used": 18,
+    "g_boltzmann_hartree": -101.68454884744877
+  },
+  "xtb_deltaG_deprot": 133.8603056905264,
+  "failures": []
+}

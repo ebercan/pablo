@@ -1,0 +1,34 @@
+{
+  "n_molecules": 14,
+  "n_features": 8,
+  "feature_cols": [
+    "solvent_grover_pc0",
+    "solvent_grover_pc1",
+    "solvent_grover_pc2",
+    "solvent_grover_pc3",
+    "solvent_grover_pc4",
+    "solvent_grover_pc5",
+    "solvent_grover_pc6",
+    "solvent_grover_pc7"
+  ],
+  "descriptors_file": "descriptors.parquet",
+  "method": "Frozen PCA of the standardized full-dimensional featurization, fit once over the whole 14-member solvent_id library with no access to any outcome. Component count from the Kneedle knee of the explained-variance curve.",
+  "source_featurization": "solvent_grover",
+  "source_n_features": 5000,
+  "kneedle_sensitivity": 1,
+  "knee_from_fallback": false,
+  "variance_retained": 0.9288865305264551,
+  "n_components_for_90pct": 8,
+  "n_components_for_95pct": 9,
+  "explained_variance_ratio": [
+    0.20623287811988436,
+    0.16649393153134057,
+    0.13843950658449805,
+    0.1341727696297563,
+    0.12119113338211053,
+    0.06676178671767316,
+    0.055769433237911614,
+    0.03982509132328054
+  ],
+  "random_state": 42
+}

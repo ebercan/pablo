@@ -1,0 +1,1751 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Search-space featurizations</title>
+<style>
+:root{
+  color-scheme:light;
+  --page:#ffffff; --ink:#111111; --ink2:#4a4a48; --ink3:#6f6e6a;
+  --rule:#d5d2ca; --rule2:#c2beb4;
+  --win:#f4f2ec;
+  --win-edge:#e0dcd2;
+  --tbl:#eef3f8;
+  --tbl-head:#d9e5f0;
+  --tbl-alt:#e5edf5;
+  --h1:#173f5f; --h2:#1f6091; --h3:#a2541c;
+  --good:#12633c; --good-bg:#dcefe2;
+  --bad:#95231f;  --bad-bg:#f8e2df;
+  --accent:#1f6091;
+}
+*{box-sizing:border-box}
+body{background:var(--page);color:var(--ink);
+ font:15px/1.62 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+ padding:34px 22px 60px;max-width:1150px;margin:0 auto;}
+h1{font-size:26px;margin:0 0 5px;letter-spacing:-.01em;color:var(--h1)}
+h2{font-size:19px;margin:36px 0 10px;padding-bottom:6px;color:var(--h2);
+ border-bottom:2px solid var(--tbl-head)}
+h3{font-size:15.5px;margin:24px 0 6px;color:var(--h3)}
+.sub{color:var(--ink2);margin:0 0 22px;font-size:14px}
+p{margin:10px 0;max-width:84ch}
+.win{background:var(--win);border:1px solid var(--win-edge);border-radius:7px;
+ padding:13px 16px;margin:16px 0;max-width:84ch}
+.win.hi{border-left:4px solid var(--accent)}
+.win h4{margin:0 0 6px;font-size:14px;color:var(--h2)}
+.kpis{display:flex;flex-wrap:wrap;gap:9px;margin:18px 0}
+.kpi{background:var(--win);border:1px solid var(--win-edge);border-radius:7px;
+ padding:9px 13px;min-width:120px;flex:1 1 120px}
+.kpi .v{font-size:21px;font-weight:650;letter-spacing:-.02em;color:var(--h1)}
+.kpi .k{font-size:11.5px;color:var(--ink2);text-transform:uppercase;letter-spacing:.04em}
+.scroll{overflow-x:auto;margin:14px 0;border:1px solid var(--rule2);border-radius:7px}
+table{border-collapse:collapse;font-size:13px;width:100%;background:var(--tbl)}
+th,td{padding:5px 9px;text-align:right;border-bottom:1px solid #cfdbe6;white-space:nowrap}
+th{background:var(--tbl-head);color:#123;font-weight:650;text-align:right;font-size:11.5px;
+ text-transform:uppercase;letter-spacing:.03em;position:sticky;top:0}
+tr:nth-child(even) td{background:var(--tbl-alt)}
+td.lbl,th.lbl{text-align:left;white-space:normal}
+td.r{color:var(--ink3)}
+td.good{background:var(--good-bg)!important;color:var(--good)}
+td.bad{background:var(--bad-bg)!important;color:var(--bad)}
+tr:last-child td{border-bottom:none}
+code{background:var(--win);border:1px solid var(--win-edge);padding:0 4px;
+ border-radius:3px;font-size:12.5px}
+ul{max-width:84ch}li{margin:4px 0}
+.small{font-size:13px;color:var(--ink2)}
+footer{margin-top:44px;padding-top:14px;border-top:1px solid var(--rule);
+ color:var(--ink3);font-size:12.5px}
+</style></head><body>
+
+<h1>Catalyst, solvent, base and condition featurizations for the NHC cross-acyloin condensation</h1>
+<p class="sub">NHC-catalysed cross-acyloin condensation &middot; 69 experiments &middot; 161 catalysts,
+14 solvents, 8 bases &middot; 27 catalyst, 5 solvent and 4 base descriptor sets &middot; 23 PCA-reduced
+catalyst sets</p>
+
+<h2>Background</h2>
+
+<p>We are optimising the yield of an NHC-catalysed cross-acyloin condensation of nonanal with
+formaldehyde by batch Bayesian optimisation. Each experiment is a point in a mixed space: four
+continuous reaction variables (temperature, formaldehyde ratio, catalyst loading and time) and three
+discrete choices, of catalyst, solvent and base.</p>
+
+<p>A Gaussian process compares two discrete choices only through the vectors that represent them, so
+the kernel's notion of how similar two catalysts are is the similarity of their descriptor vectors.
+What a descriptor set measures, and what it cannot see, therefore bounds what the model can learn from
+69 experiments. The featurization and kernel scan compares 27 catalyst descriptor sets, 5 solvent sets
+and 4 base sets. For each we give what it measures, how it is computed, how wide it is, the literature
+behind it, and the properties of its values that change how a result computed on it should be read.
+The <b>width</b> of a set is its number of columns.</p>
+
+<h3>The three discrete libraries</h3>
+
+<div class="scroll"><table>
+<tr><th class="lbl">Library</th><th>Members</th><th class="lbl">Contents</th></tr>
+<tr><td class="lbl">Catalysts</td><td>161</td><td class="lbl">NHC pre-catalysts: azolium salts, CO&#8322; adducts, bicarbonate salts and free carbenes</td></tr>
+<tr><td class="lbl">Solvents</td><td>14</td><td class="lbl">THF, 2-Me-THF, propylene carbonate, dimethoxyethane, toluene, ethyl acetate, heptane, <i>m</i>-xylene, water, ethanol, DMF, dichloromethane, 1,4-dioxane, HFIP</td></tr>
+<tr><td class="lbl">Bases</td><td>8</td><td class="lbl">Et&#8323;N, KO<i>t</i>Bu, Rb&#8322;CO&#8323;, <i>N</i>(<i>i</i>Pr)&#8322;Et, Cs&#8322;CO&#8323;, DBU, KHMDS, NaO<i>t</i>Bu</td></tr>
+</table></div>
+
+<p>Twenty-two of the 161 catalysts have been run experimentally. The other 139 are scope-expansion
+candidates, and every catalyst descriptor set covers all 161, because the acquisition function scores
+untested catalysts when it proposes a batch. The 69 experiments span 8 of the 14 solvents and 5 of the
+8 bases; 39 use an external base and 30 do not.</p>
+
+<h3>Pre-catalyst forms</h3>
+
+<p>An NHC is almost never handled as the free carbene. It is stored and weighed out as a masked
+precursor, and the mask decides whether an external base is needed to release the active species. Four
+forms occur in the library.</p>
+
+<div class="scroll"><table>
+<tr><th class="lbl">Form</th><th>Count</th><th class="lbl">What it is</th><th class="lbl">External base</th></tr>
+<tr><td class="lbl">Azolium salt</td><td>151</td><td class="lbl">Cationic azolium ring with a discrete counterion (halide, tetrafluoroborate and similar). Deprotonation at C2 releases the carbene.</td><td class="lbl">required</td></tr>
+<tr><td class="lbl">CO&#8322; adduct</td><td>6</td><td class="lbl">Neutral betaine in which CO&#8322; caps the carbene carbon as a carboxylate. Releases the carbene thermally by decarboxylation.</td><td class="lbl">not required</td></tr>
+<tr><td class="lbl">Free carbene</td><td>3</td><td class="lbl">The isolated divalent carbene.</td><td class="lbl">not required</td></tr>
+<tr><td class="lbl">Bicarbonate salt</td><td>1</td><td class="lbl">Azolium paired with bicarbonate, which deprotonates the ring on its own.</td><td class="lbl">not required, self-activating</td></tr>
+</table></div>
+
+<p>The distinction is chemical, not bookkeeping. For a salt the base is a genuine reaction component
+with its own basicity and steric profile; for the other three forms there is no base in the mixture.
+Experiments run with a non-salt catalyst therefore carry an all-zero base block, and that block is a
+real category rather than missing data.</p>
+
+<h3>Pre-catalyst and free-carbene variants</h3>
+
+<p>Every pretrained model is applied twice, in two variants that differ only in which molecule the
+model is shown.</p>
+
+<div class="scroll"><table>
+<tr><th class="lbl">Variant</th><th class="lbl">Molecule shown to the model</th><th class="lbl">What it asserts</th></tr>
+<tr><td class="lbl"><code>_precat</code> (entangled)</td><td class="lbl">The pre-catalyst exactly as stored, counterion included.</td><td class="lbl">The form is implicit in the representation. A chloride salt and a CO&#8322; adduct of the same carbene are different molecules and receive different vectors, which is correct if the mask affects reactivity and a confound if it does not.</td></tr>
+<tr><td class="lbl"><code>_carbene</code> (decoupled)</td><td class="lbl">The formal free carbene, obtained by removing the mask.</td><td class="lbl">The embedding describes the catalytically active species alone. The form is supplied separately as a four-column indicator, which keeps the categorical signal apart from the continuous structure.</td></tr>
+</table></div>
+
+<p>The pair is a controlled comparison: the two variants differ in the input molecule and in nothing
+else, so a difference between them measures whether separating the mask from the carbene helps. The
+four form columns are appended to a <code>_carbene</code> set when the model is built
+(<code>append_form_onehot</code> in <code>core/config.py</code>), so the widths quoted below exclude
+them. <code>unimol</code> is computed on the free carbene only and is treated the same way. Three of the
+four interpretable quantum-chemical sets are computed on the free carbene and carry the form indicator
+as four of their own columns.</p>
+
+<div class="win">
+<h4>Locating the carbene centre</h4>
+<p class="small" style="margin:4px 0">Every descriptor computed at the reactive carbon depends on
+identifying that atom. It is found as a two-coordinate carbon flanked by ring heteroatoms, with the
+threshold set at one heteroatom rather than two so that cyclic (alkyl)(amino)carbenes and mesoionic
+centres are matched as well as ordinary N-heterocyclic carbenes. Ring-based identification alone is not
+enough for this library: <b>C83 is an acyclic diaminocarbene</b>, a tetraisopropyl formamidinium salt
+whose free carbene contains no ring, and it is classified under the residual ring category. Once
+identified, the carbene index is stored with the geometry and reused, so every descriptor measures the
+same atom. C78 carries two carbene centres; one is measured, so its carbene-localised columns describe
+half the molecule.</p>
+</div>
+
+<h2>Part I &middot; Catalyst descriptor sets computed from structure</h2>
+
+<div class="kpis">
+  <div class="kpi"><div class="k">Classical sets</div><div class="v">5</div></div>
+  <div class="kpi"><div class="k">Pretrained sets</div><div class="v">18</div></div>
+  <div class="kpi"><div class="k">Pretrained models</div><div class="v">11</div></div>
+  <div class="kpi"><div class="k">PCA-reduced sets</div><div class="v">23</div></div>
+  <div class="kpi"><div class="k">Widths</div><div class="v">256&ndash;7,425</div></div>
+</div>
+
+<p>Twenty-three of the 27 catalyst sets are generic molecular representations: five classical sets
+computed without a trained model, and eighteen frozen embeddings from eleven pretrained models. None was
+built for NHC catalysis, and none has seen a yield. Each set is also stored in a PCA-reduced version.
+The remaining four sets are hand-built quantum-chemical tables and are described in Part III.</p>
+
+<h3>1. Fingerprints and classical descriptor sets</h3>
+
+<p>Four of the five read the molecular structure as a graph; one reads an optimised three-dimensional
+geometry.</p>
+
+<div class="scroll"><table>
+<tr><th class="lbl">Set</th><th class="lbl">Input</th><th>Width</th><th class="lbl">What a value is</th><th class="lbl">Settings</th><th class="lbl">Ref.</th></tr>
+<tr><td class="lbl"><code>ecfp4</code></td><td class="lbl">pre-catalyst structure</td><td>2,048</td><td class="lbl">count of a hashed circular substructure</td><td class="lbl">radius 2; 673 positions ever non-zero; maximum count 51</td><td class="lbl">[1]</td></tr>
+<tr><td class="lbl"><code>map4</code></td><td class="lbl">pre-catalyst structure</td><td>2,048</td><td class="lbl">presence of a hashed atom-pair shingle</td><td class="lbl">radius 2; 12.4% of positions set</td><td class="lbl">[2]</td></tr>
+<tr><td class="lbl"><code>mol2vec</code></td><td class="lbl">pre-catalyst structure</td><td>300</td><td class="lbl">learned substructure embedding component</td><td class="lbl">unit vector length</td><td class="lbl">[3]</td></tr>
+<tr><td class="lbl"><code>mordred</code></td><td class="lbl">pre-catalyst structure</td><td>427</td><td class="lbl">a named physicochemical or topological descriptor</td><td class="lbl">1,613 computed, 427 kept; standardised</td><td class="lbl">[4]</td></tr>
+<tr><td class="lbl"><code>soap</code></td><td class="lbl">free-carbene geometry</td><td>7,425</td><td class="lbl">power-spectrum component of the local atomic density</td><td class="lbl">cutoff 6.0 &Aring;; 6 radial, 4 angular</td><td class="lbl">[5], [6]</td></tr>
+</table></div>
+
+<p><b>ecfp4.</b> Each atom receives an initial identifier from its element and immediate properties.
+That identifier is hashed together with those of its neighbours, and the process is repeated. Collecting
+the identifiers produced at every iteration, rather than only the final ones, separates this from the
+classical Morgan algorithm, and is why the fingerprint reports substructures at every radius up to the
+limit. Two iterations give a circular environment of radius 2, which by the diameter convention of the
+name is ECFP4. The fingerprint is stored as counts rather than presence bits, each position holding how
+many times its environment occurs. Counts make the MinMax kernel meaningful, MinMax on counts being the
+multiset generalisation of Tanimoto on bits, and this is one of two catalyst sets for which those ratio
+kernels are chemically appropriate.</p>
+
+<p><b>map4.</b> MAP4 merges the substructure and atom-pair fingerprint families. For every pair of atoms
+it writes the circular substructures at radius 1 and radius 2 around both atoms and combines each such
+pair with the number of bonds separating the two central atoms. The resulting atom-pair molecular
+shingles carry both local chemical identity and long-range topological separation. They are hashed,
+MinHashed and stored as a folded 2,048-bit vector. The method was introduced because substructure
+fingerprints work well on small molecules and atom-pair fingerprints on large ones, with neither
+performing well on both.</p>
+
+<div class="win">
+<h4>map4 cannot see a halide counterion</h4>
+<p class="small" style="margin:4px 0">Four pairs of catalysts receive an identical <code>map4</code>
+vector. C17 and C28 are the same molecule. The other three, C24/C29 (iodide and chloride),
+C32/C154 (bromide and iodide) and C68/C150 (chloride and bromide), differ only in the halide, which the
+shingles built around an isolated monatomic anion do not distinguish. <code>ecfp4</code> separates all
+three. Conversely, <code>map4</code> gives ten other pairs of identical molecules different vectors
+(section 32).</p>
+</div>
+
+<p><b>mol2vec.</b> Mol2vec applies the word-embedding construction to chemistry. Morgan substructure
+identifiers are treated as words and a molecule as a sentence, and an unsupervised model trained on a
+large compound corpus learns a dense vector for each substructure such that related substructures point
+in similar directions. A molecule is the sum of its substructure vectors, normalised to unit length.
+This removes the two structural weaknesses of a folded fingerprint, extreme sparseness and hash
+collisions, at the cost of any direct interpretation of a single dimension. Substructures absent from
+the pretraining corpus fall back to one generic vector, and the azolium salts in this library contain
+substructures well outside a typical drug-like corpus.</p>
+
+<p><b>mordred.</b> Mordred computes a large catalogue of molecular descriptors: constitutional counts,
+topological and connectivity indices, autocorrelation functions, estimated charges and
+polarisabilities, ring and aromaticity measures. Restricted to descriptors that need no
+three-dimensional structure, it returns 1,613 values per molecule. The raw output is noisy and heavily
+collinear, so one fixed filter runs over the whole library. A descriptor is discarded if it is undefined
+or non-finite for any catalyst, if it takes the same value for every catalyst, or if its variance after
+standardisation is negligible. Where two descriptors correlate above 0.95 in absolute value, only the
+more variable one is kept, and the survivors are standardised across the library. Four hundred and
+twenty-seven survive. Every surviving column has a name and a definition, so this set sits between the
+opaque fingerprints and the quantum-chemical tables in interpretability.</p>
+
+<p><b>soap.</b> SOAP describes the environment of an atom as a smooth density built from a Gaussian on
+each neighbouring atom, expands that density on a radial and spherical-harmonic basis, and forms the
+rotationally invariant power spectrum from the expansion coefficients. The construction is invariant to
+rotation, reflection, translation and permutation of identical atoms, and varies smoothly as atoms move,
+which makes it a usable geometric descriptor rather than only a similarity measure. Averaging the
+coefficients over all atoms before forming the power spectrum gives one vector per molecule. The width
+follows from the basis and the elements present: nine elements occur (H, C, N, O, F, S, Cl, Br, I), and
+with six radial and four angular functions including cross-element terms this gives 7,425 components,
+1.5 times the next widest set. It is the only classical set computed from three-dimensional structure,
+and it uses the same GFN2-xTB free-carbene geometries as the interpretable sets (section 17).</p>
+
+<h3>2. Pretrained language and contrastive models</h3>
+
+<p>Six sets come from four large pretrained models. Every model is used frozen: no weight is updated,
+and the embedding it produces is read off as a fixed descriptor vector and normalised to unit length.
+Part II describes how each model works.</p>
+
+<div class="scroll"><table>
+<tr><th class="lbl">Set</th><th class="lbl">Molecule shown</th><th class="lbl">Model and checkpoint</th><th class="lbl">Read-out</th><th>Width</th><th class="lbl">Ref.</th></tr>
+<tr><td class="lbl"><code>molformer_xl_precat</code></td><td class="lbl">pre-catalyst</td><td class="lbl">MolFormer-XL, 10% subset checkpoint</td><td class="lbl">mean over the final token representations</td><td>768</td><td class="lbl">[21]</td></tr>
+<tr><td class="lbl"><code>molformer_xl_carbene</code></td><td class="lbl">free carbene</td><td class="lbl">as above</td><td class="lbl">as above</td><td>768</td><td class="lbl">[21]</td></tr>
+<tr><td class="lbl"><code>chembert2</code></td><td class="lbl">pre-catalyst</td><td class="lbl">ChemBERTa-2, 77M multi-task-regression checkpoint</td><td class="lbl">mean over the final token representations</td><td>384</td><td class="lbl">[22]</td></tr>
+<tr><td class="lbl"><code>clamp</code></td><td class="lbl">pre-catalyst</td><td class="lbl">CLAMP, pretrained</td><td class="lbl">molecule-tower embedding of an 8,192-bit Morgan and RDKit count fingerprint</td><td>768</td><td class="lbl">[23]</td></tr>
+<tr><td class="lbl"><code>unimol</code></td><td class="lbl">free carbene</td><td class="lbl">Uni-Mol2, 1.1 billion parameters</td><td class="lbl">whole-molecule token</td><td>1,536</td><td class="lbl">[24], [25]</td></tr>
+<tr><td class="lbl"><code>grover</code></td><td class="lbl">pre-catalyst</td><td class="lbl">GROVER<sub>large</sub>, about 100 million parameters</td><td class="lbl">concatenated atom and bond fingerprints</td><td>5,000</td><td class="lbl">[26]</td></tr>
+</table></div>
+
+<p>Five of the six use no geometry. <code>unimol</code> consumes
+three-dimensional coordinates and generates its own conformer by distance geometry followed by
+force-field relaxation, so its geometry differs from the quantum-chemical geometries used elsewhere. The
+two MolFormer sets and <code>chembert2</code> are mean-pooled over every token position of an inference
+batch, padding included, so a molecule's vector also depends on the longest string in its batch
+(section 32).</p>
+
+<div class="win">
+<h4>Two points of model provenance</h4>
+<p class="small" style="margin:4px 0"><b>MolFormer-XL is not the model its paper evaluates.</b> The
+published model was trained on 1.1 billion molecules and was not released. The only public checkpoint,
+used here, was trained on a 10% subset. The paper's benchmark results belong to the unreleased model and
+do not transfer to these two sets.</p>
+<p class="small" style="margin:4px 0"><b>ChemBERTa-2 is a compact model.</b> The "77M" in its name
+counts pretraining molecules, not parameters. The checkpoint has a 384-unit hidden layer, which is why
+this set is 384 wide rather than the 768 of a base-sized transformer.</p>
+</div>
+
+<h3>3. Pretrained graph neural networks</h3>
+
+<p>Twelve sets come from six graph models, each applied to the pre-catalyst and to the free carbene.
+All are frozen and normalised to unit length, and both variants of a model share a width.</p>
+
+<div class="scroll"><table>
+<tr><th class="lbl">Model</th><th class="lbl">Sets</th><th class="lbl">Read-out</th><th>Width</th><th class="lbl">Three-dimensional input</th><th class="lbl">Ref.</th></tr>
+<tr><td class="lbl">MiniMol</td><td class="lbl"><code>minimol_precat</code>, <code>minimol_carbene</code></td><td class="lbl">pooled atom embeddings</td><td>512</td><td class="lbl">none, graph only</td><td class="lbl">[27]</td></tr>
+<tr><td class="lbl">SCAGE</td><td class="lbl"><code>scage_precat</code>, <code>scage_carbene</code></td><td class="lbl">whole-molecule token of the pretrained encoder</td><td>512</td><td class="lbl">force-field conformer, generated internally</td><td class="lbl">[28]</td></tr>
+<tr><td class="lbl">Graphormer</td><td class="lbl"><code>graphormer_precat</code>, <code>graphormer_carbene</code></td><td class="lbl">virtual-node token</td><td>768</td><td class="lbl">none, graph only</td><td class="lbl">[29]</td></tr>
+<tr><td class="lbl">3D Infomax</td><td class="lbl"><code>infomax3d_precat</code>, <code>infomax3d_carbene</code></td><td class="lbl">graph read-out</td><td>256</td><td class="lbl">none at inference; geometry distilled during pretraining</td><td class="lbl">[30]</td></tr>
+<tr><td class="lbl">Frad</td><td class="lbl"><code>frad_precat</code>, <code>frad_carbene</code></td><td class="lbl">per-atom features, averaged</td><td>256</td><td class="lbl">distance-geometry conformer, force-field relaxed</td><td class="lbl">[31]</td></tr>
+<tr><td class="lbl">Transformer-M</td><td class="lbl"><code>transformerm_precat</code>, <code>transformerm_carbene</code></td><td class="lbl">whole-molecule token</td><td>768</td><td class="lbl">distance-geometry conformer, force-field relaxed</td><td class="lbl">[32]</td></tr>
+</table></div>
+
+<p>The family spans how much three-dimensional information a representation carries. Graphormer and
+MiniMol are purely topological. SCAGE, Frad and Transformer-M each receive a conformer generated by
+distance geometry and relaxed with a force field. 3D Infomax sits between: geometry entered during its
+pretraining and is retained implicitly in the weights, but at inference the model sees only the graph.
+MolE is not in the set because it publishes no pretrained weights and so cannot serve as a frozen
+featurizer.</p>
+
+<div class="win">
+<h4>Three sources of geometry</h4>
+<p class="small" style="margin:4px 0">The interpretable sets and <code>soap</code> use geometries
+optimised with GFN2-xTB and implicit toluene solvation (section 17). <code>unimol</code> and the SCAGE,
+Frad and Transformer-M sets use force-field conformers generated by the model's own pipeline. Every other
+set uses no geometry. <b>A comparison between a quantum-chemical and a force-field set varies the
+geometry as well as the representation.</b></p>
+</div>
+
+<h3>4. PCA-reduced variants</h3>
+
+<p>Every catalyst set except the four interpretable tables is also stored in a reduced form,
+<code>&lt;name&gt;_pca</code>. The reduction is a PCA of the standardised full set, fitted once over all
+161 catalysts and never shown a yield, so it leaks no outcome into a cross-validation fold. It does use
+the untested catalysts' features, the same transductive convention every other descriptor set follows.
+The number of components is the Kneedle knee of the explained-variance curve (sensitivity 1); a set
+with no knee would fall back to 80 percent cumulative variance, and none does. The interpretable sets are
+not reduced because their value is that a lengthscale maps to a named physical quantity.</p>
+
+<p class="small">Full: width of the source set. Knee: components kept. Variance: cumulative explained
+variance at the knee. 90% at: components needed to reach 90 percent.</p>
+
+<div class="scroll"><table>
+<tr><th class="lbl">Reduced set</th><th>Full</th><th>Knee</th><th>Variance</th><th>90% at</th></tr>
+<tr><td class="lbl"><code>ecfp4_pca</code></td><td>2,048</td><td>19</td><td class="bad">43.7%</td><td>69</td></tr>
+<tr><td class="lbl"><code>frad_precat_pca</code></td><td>256</td><td>9</td><td class="bad">53.4%</td><td>55</td></tr>
+<tr><td class="lbl"><code>map4_pca</code></td><td>2,048</td><td>29</td><td class="bad">59.5%</td><td>83</td></tr>
+<tr><td class="lbl"><code>minimol_precat_pca</code></td><td>512</td><td>11</td><td>64.9%</td><td>41</td></tr>
+<tr><td class="lbl"><code>transformerm_precat_pca</code></td><td>768</td><td>14</td><td>65.5%</td><td>54</td></tr>
+<tr><td class="lbl"><code>molformer_xl_precat_pca</code></td><td>768</td><td>16</td><td>70.7%</td><td>45</td></tr>
+<tr><td class="lbl"><code>molformer_xl_carbene_pca</code></td><td>768</td><td>15</td><td>75.0%</td><td>35</td></tr>
+<tr><td class="lbl"><code>transformerm_carbene_pca</code></td><td>768</td><td>16</td><td>76.3%</td><td>36</td></tr>
+<tr><td class="lbl"><code>minimol_carbene_pca</code></td><td>512</td><td>15</td><td>76.4%</td><td>34</td></tr>
+<tr><td class="lbl"><code>mordred_pca</code></td><td>427</td><td>17</td><td>83.1%</td><td>25</td></tr>
+<tr><td class="lbl"><code>graphormer_carbene_pca</code></td><td>768</td><td>6</td><td>83.2%</td><td>14</td></tr>
+<tr><td class="lbl"><code>graphormer_precat_pca</code></td><td>768</td><td>7</td><td>85.1%</td><td>14</td></tr>
+<tr><td class="lbl"><code>scage_precat_pca</code></td><td>512</td><td>19</td><td>86.7%</td><td>23</td></tr>
+<tr><td class="lbl"><code>clamp_pca</code></td><td>768</td><td>23</td><td>87.5%</td><td>26</td></tr>
+<tr><td class="lbl"><code>chembert2_pca</code></td><td>384</td><td>16</td><td>88.1%</td><td>19</td></tr>
+<tr><td class="lbl"><code>frad_carbene_pca</code></td><td>256</td><td>19</td><td>88.1%</td><td>22</td></tr>
+<tr><td class="lbl"><code>soap_pca</code></td><td>7,425</td><td>18</td><td>91.0%</td><td>17</td></tr>
+<tr><td class="lbl"><code>unimol_pca</code></td><td>1,536</td><td>11</td><td>91.0%</td><td>10</td></tr>
+<tr><td class="lbl"><code>scage_carbene_pca</code></td><td>512</td><td>22</td><td>91.8%</td><td>20</td></tr>
+<tr><td class="lbl"><code>infomax3d_carbene_pca</code></td><td>256</td><td>19</td><td>92.0%</td><td>18</td></tr>
+<tr><td class="lbl"><code>grover_pca</code></td><td>5,000</td><td>16</td><td>92.4%</td><td>14</td></tr>
+<tr><td class="lbl"><code>mol2vec_pca</code></td><td>300</td><td>16</td><td>92.4%</td><td>14</td></tr>
+<tr><td class="lbl"><code>infomax3d_precat_pca</code></td><td>256</td><td>22</td><td class="good">94.4%</td><td>18</td></tr>
+</table></div>
+
+<p><b>The knee keeps 6 to 29 components, and the variance it retains ranges from 43.7 percent
+(<code>ecfp4</code>) to 94.4 percent (<code>infomax3d_precat</code>), so a reduced set is not a fixed
+information budget.</b></p>
+
+<p>The sparse fingerprints and the pre-catalyst variants of Frad and Transformer-M have the flattest
+spectra: <code>map4</code> needs 83 components for 90 percent of its variance, against 10 for
+<code>unimol</code>. A comparison along the reduction axis therefore mixes the effect of reducing with
+the amount of the set that survives the reduction, and the retained variance above is the number to
+read it against.</p>
+
+<h2>Part II &middot; How the pretrained encoders work</h2>
+
+<p>For each of the eleven frozen encoders: the problem it addresses, the mechanism by which structure
+enters the model, the chemistry that mechanism encodes, the pretraining objective and the read-out taken
+here. Dataset sizes, parameter counts and benchmark results in this Part are the source papers' own and
+describe the published models; widths, checkpoints and read-outs of the sets used here are in sections 2
+and 3. The eight schematics are drawn from the mechanisms described in the cited papers and are not
+reproductions of the authors' figures.</p>
+
+<div class="scroll"><table>
+<tr><th class="lbl">Model</th><th class="lbl">Family</th><th class="lbl">Venue</th><th class="lbl">What the model sees</th><th class="lbl">Pretraining</th><th class="lbl">Checkpoint used</th></tr>
+<tr><td class="lbl">MolFormer-XL</td><td class="lbl">SMILES sequence</td><td class="lbl">Nat. Mach. Intell. 2022</td><td class="lbl">SMILES string</td><td class="lbl">1.1 billion SMILES (PubChem, ZINC), masked tokens</td><td class="lbl">10% subset model</td></tr>
+<tr><td class="lbl">ChemBERTa-2</td><td class="lbl">SMILES sequence</td><td class="lbl">arXiv 2022</td><td class="lbl">SMILES string</td><td class="lbl">up to 77 million PubChem compounds, multi-task regression</td><td class="lbl">77M-MTR, 384-unit hidden layer</td></tr>
+<tr><td class="lbl">CLAMP</td><td class="lbl">SMILES sequence</td><td class="lbl">ICML 2023</td><td class="lbl">8,192-bit count fingerprint</td><td class="lbl">contrastive molecule and assay text</td><td class="lbl">molecule tower, 768 wide</td></tr>
+<tr><td class="lbl">Graphormer</td><td class="lbl">graph transformer</td><td class="lbl">NeurIPS 2021</td><td class="lbl">2D graph as attention bias</td><td class="lbl">PCQM4M HOMO-LUMO gap</td><td class="lbl">base, PCQM4Mv2</td></tr>
+<tr><td class="lbl">Transformer-M</td><td class="lbl">graph transformer</td><td class="lbl">ICLR 2023</td><td class="lbl">2D graph, 3D distances, or both</td><td class="lbl">PCQM4Mv2, 3.4 million molecules, gap and 3D denoising</td><td class="lbl">12-layer</td></tr>
+<tr><td class="lbl">SCAGE</td><td class="lbl">graph transformer</td><td class="lbl">Nat. Commun. 2025</td><td class="lbl">2D graph, distance-masked attention</td><td class="lbl">about 5 million drug-like compounds, four tasks</td><td class="lbl">pretrained encoder</td></tr>
+<tr><td class="lbl">GROVER</td><td class="lbl">message passing</td><td class="lbl">NeurIPS 2020</td><td class="lbl">2D graph</td><td class="lbl">10 million molecules, self-supervised</td><td class="lbl">GROVER<sub>large</sub>, 100 million parameters</td></tr>
+<tr><td class="lbl">MiniMol</td><td class="lbl">message passing</td><td class="lbl">arXiv 2024</td><td class="lbl">2D graph with positional encodings</td><td class="lbl">about 6 million molecules, 526 million labels, about 3,300 tasks</td><td class="lbl">about 10 million parameters</td></tr>
+<tr><td class="lbl">Uni-Mol2</td><td class="lbl">3D structure</td><td class="lbl">ICLR 2023; scaled 2024</td><td class="lbl">3D coordinates</td><td class="lbl">209 million conformations of 19 million molecules</td><td class="lbl">1.1 billion parameters</td></tr>
+<tr><td class="lbl">3D Infomax</td><td class="lbl">3D structure</td><td class="lbl">ICML 2022</td><td class="lbl">2D graph; 3D only in pretraining</td><td class="lbl">contrastive 2D-to-3D</td><td class="lbl">pretrained 2D network</td></tr>
+<tr><td class="lbl">Frad</td><td class="lbl">3D structure</td><td class="lbl">ICML 2023</td><td class="lbl">3D coordinates</td><td class="lbl">fractional denoising on conformers</td><td class="lbl">TorchMD-NET backbone</td></tr>
+</table></div>
+
+<p>The families differ in how structure reaches the model. The two SMILES transformers read text, and
+CLAMP sees only a fingerprint. A plain transformer treats its input as a set, so the three graph
+transformers supply graph structure as bias terms on the attention logits. GROVER and MiniMol are built
+on message passing and learn from unlabelled or multi-task data. The last three use three-dimensional
+structure: Uni-Mol is 3D-native, 3D Infomax distils 3D into a 2D network, and Frad turns denoising into
+force-field learning.</p>
+
+<h3>5. MolFormer-XL</h3>
+
+<p>A SMILES string is a lossless serialisation of a molecular graph, so reading it as text discards
+nothing in principle, and text is the modality where scaling recipes are best understood. The obstacle
+is cost: standard self-attention is quadratic in sequence length, and 1.1 billion sequences lie far
+beyond what a BERT-style pretraining run absorbs directly. MolFormer-XL is as much an efficiency result as
+a chemistry one.</p>
+
+<p>Two substitutions make the scale reachable. <b>Linear attention</b> replaces the softmax kernel with a
+factorisable feature map, making the cost of an attention layer linear in sequence length.
+<b>Rotary position embeddings</b> encode position by rotating the query and key vectors through an angle
+proportional to their index, so the attention logit depends on relative rather than absolute position.
+The second choice matters for SMILES, because one molecule has many valid strings and a representation
+keyed on absolute character offsets would treat them as unrelated inputs.</p>
+
+<div class="win">
+<h4>Chemistry encoded</h4>
+<p class="small" style="margin:4px 0">The model receives no coordinates, no bond graph and no conformer.
+Two bonded atoms can sit many characters apart in the string because of ring-closure digits and branch
+parentheses. The paper's attention analysis nevertheless shows the learned attention concentrating on
+atom pairs that are close in three dimensions, including pairs distant in the string. The representation
+is best read as an implicit statistical model of structure learned from serialisation regularities:
+strong on the substructure grammar of drug-like chemistry, with no mechanism for stereochemistry beyond
+what the SMILES spells out.</p>
+</div>
+
+<div class="win hi">
+<h4>The released checkpoint is not the model the paper evaluates</h4>
+<p class="small" style="margin:4px 0">The headline model trained on all 1.1 billion molecules was not
+released. The 10% subset checkpoint, the only public variant and the one loaded here, is trained on a 10
+percent subset of both corpora. <b>The paper's benchmark results belong to the unreleased model and do
+not transfer to <code>molformer_xl_precat</code> or <code>molformer_xl_carbene</code>.</b></p>
+</div>
+
+<p>Because the model reads nothing but the string, the pre-catalyst and free-carbene variants differ in
+the input and in nothing else, which makes this pair the cleanest test of whether decoupling the form
+from the structure helps. The padding dependence of the pooled vector (section 32) adds noise of its own
+to both variants.</p>
+
+<h3>6. ChemBERTa-2</h3>
+
+<p>ChemBERTa-2 leaves the RoBERTa architecture essentially untouched and studies the question underneath
+it: for molecules, what should the pretraining objective be, and how much data does it need. Labelled
+molecular data is scarce and unlabelled SMILES are effectively free; the first ChemBERTa established
+that the transfer recipe works, but not which self-supervised objective gives a representation worth
+transferring.</p>
+
+<p>The two candidates behave differently. <b>Masked language modelling</b> hides tokens and predicts
+them, which on SMILES is close to trivial because a handful of atoms dominate the vocabulary.
+<b>Multi-task regression</b> instead predicts a vector of roughly 200 cheaply computed RDKit descriptors
+for the whole molecule, a denser and more chemically directed target. Across the sweep, multi-task
+regression gives the better downstream representation on most MoleculeNet tasks, and gains from more
+pretraining data do not scale smoothly, which the authors read as evidence that molecular pretraining
+has not yet found its scaling law.</p>
+
+<div class="win">
+<h4>Chemistry encoded</h4>
+<p class="small" style="margin:4px 0">Because the multi-task target is a descriptor vector, an
+MTR-pretrained ChemBERTa is trained to be a compressed calculator of what a classical descriptor set
+returns: molecular weight, topological polar surface area, logP, ring and rotatable-bond counts and the
+rest of the RDKit 2D block. Its embedding should correlate with <code>mordred</code>, which is computed
+from the same family of quantities, and a head-to-head between the two compares two routes to similar
+information.</p>
+</div>
+
+<h3>7. CLAMP</h3>
+
+<p>Activity-prediction models must be retrained or fine-tuned for every new target, which is where
+labels are scarcest. Scientific language models can in principle be prompted about a new task, but their
+predictive quality on activity is poor. CLAMP keeps the predictive machinery numeric while making the
+task specifiable in language: it learns a joint space in which an assay description and the molecules
+active in that assay lie close together, so a new assay can be scored zero-shot from its text.</p>
+
+<p>The molecule tower takes a concatenation of Morgan count and RDKit count fingerprints through a
+multilayer perceptron. The assay tower embeds the assay's textual description with a language encoder.
+Training uses a contrastive loss over (molecule, assay) activity records, so both encoders are shaped by
+the pairing rather than by a structural objective.</p>
+
+<div class="win hi">
+<h4>CLAMP is a re-mixed fingerprint</h4>
+<p class="small" style="margin:4px 0">The read-out is an 8,192-bit combined Morgan and RDKit count
+fingerprint passed through the molecule tower, giving a 768-dimensional embedding. CLAMP performs no
+message passing, no attention over atoms and no geometry; its entire view of a molecule is the
+fingerprint it is handed. <b>In representation space <code>clamp</code> sits closer to
+<code>ecfp4</code> than to any graph or 3D model</b>, and what it adds over the bare fingerprint is a
+supervision signal drawn from bioassay text.</p>
+</div>
+
+<div class="win">
+<h4>Chemistry encoded</h4>
+<p class="small" style="margin:4px 0">Substructure presence, filtered through what predicts biological
+activity. Nothing in CLAMP's training relates to organocatalytic yield, carbene nucleophilicity or steric
+bulk at a reactive centre. It is in the scan as a well-defined point in representation space, a learned
+re-mixing of a count fingerprint under a biological prior, not because its pretraining domain matches the
+reaction.</p>
+</div>
+
+<h3>8. Graphormer</h3>
+
+<p>Self-attention computes a similarity between every pair of tokens but is permutation-invariant and
+blind to position. In language this is repaired with positional encodings that exploit the natural order
+of words. A molecule has no such order: its atoms live on a graph, position means location in the bonding
+topology, and two atoms three bonds apart can be far apart in any atom numbering. Graphormer asks what the
+minimal set of structural signals is that a pure transformer needs, and answers with three encodings, two
+of which modify the attention score and one the input features.</p>
+
+<div class="win">
+<h4>Figure 1 &middot; Graphormer's three structural encodings</h4>
+<svg style="display:block;width:100%;height:auto;margin:6px 0" viewBox="0 0 720 330" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Graphormer's three structural encodings">
+                <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" font-weight="700" fill="#173f5f" x="20" y="24">Input molecular graph</text>
+        <circle cx="70" cy="80" r="15" fill="#eef3f8" stroke="#1f6091" stroke-width="1.4"/><text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="15" font-weight="600" fill="#111111" x="70" y="85" text-anchor="middle">1</text>
+        <circle cx="150" cy="60" r="15" fill="#eef3f8" stroke="#1f6091" stroke-width="1.4"/><text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="15" font-weight="600" fill="#111111" x="150" y="65" text-anchor="middle">2</text>
+        <circle cx="150" cy="130" r="15" fill="#eef3f8" stroke="#1f6091" stroke-width="1.4"/><text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="15" font-weight="600" fill="#111111" x="150" y="135" text-anchor="middle">3</text>
+        <circle cx="225" cy="95" r="15" fill="#eef3f8" stroke="#1f6091" stroke-width="1.4"/><text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="15" font-weight="600" fill="#111111" x="225" y="100" text-anchor="middle">4</text>
+        <circle cx="225" cy="170" r="15" fill="#eef3f8" stroke="#1f6091" stroke-width="1.4"/><text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="15" font-weight="600" fill="#111111" x="225" y="175" text-anchor="middle">5</text>
+        <line x1="83" y1="74" x2="137" y2="64" stroke="#4a4a48" stroke-width="1.7" fill="none" stroke-linecap="round"/>
+        <line x1="83" y1="86" x2="137" y2="124" stroke="#4a4a48" stroke-width="1.7" fill="none" stroke-linecap="round"/>
+        <line x1="163" y1="64" x2="212" y2="90" stroke="#4a4a48" stroke-width="1.7" fill="none" stroke-linecap="round"/>
+        <line x1="163" y1="126" x2="212" y2="100" stroke="#4a4a48" stroke-width="1.7" fill="none" stroke-linecap="round"/>
+        <line x1="225" y1="110" x2="225" y2="155" stroke="#4a4a48" stroke-width="1.7" fill="none" stroke-linecap="round"/>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6f6e6a" x="20" y="210">degree(node&nbsp;4) = 3</text>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6f6e6a" x="20" y="230">shortest path 1→5 = 3 hops</text>
+
+                <path d="M275 110 L320 110" stroke="#6f6e6a" stroke-width="1.8" fill="none" marker-end="url(#ah1)"/>
+        <defs><marker id="ah1" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 z" fill="#6f6e6a"/></marker></defs>
+
+                <rect x="330" y="22" width="372" height="80" rx="9" fill="#ffffff" stroke="#c2beb4"/>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" font-weight="700" x="345" y="44" fill="#0e7c66">① Centrality encoding</text>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" fill="#4a4a48" x="345" y="64">learnable vector per node degree,</text>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" fill="#4a4a48" x="345" y="82">added to atom features at the input:</text>
+        <text font-family="ui-monospace,Menlo,Consolas,monospace" font-size="12" fill="#1f6091" x="345" y="98">h⁰ᵢ = xᵢ + z_deg(i)</text>
+
+        <rect x="330" y="114" width="372" height="92" rx="9" fill="#ffffff" stroke="#c2beb4"/>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" font-weight="700" x="345" y="136" fill="#2d5d82">② Spatial encoding</text>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" fill="#4a4a48" x="345" y="156">learnable scalar bias indexed by</text>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" fill="#4a4a48" x="345" y="174">shortest-path distance φ(i,j),</text>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" fill="#4a4a48" x="345" y="192">added inside the attention score.</text>
+
+        <rect x="330" y="218" width="372" height="92" rx="9" fill="#ffffff" stroke="#c2beb4"/>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" font-weight="700" x="345" y="240" fill="#b5740f">③ Edge encoding</text>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" fill="#4a4a48" x="345" y="260">average of (bond-feature · learnable)</text>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" fill="#4a4a48" x="345" y="278">dot-products along the i→j path,</text>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" fill="#4a4a48" x="345" y="296">added inside the attention score.</text>
+
+                <rect x="20" y="250" width="265" height="60" rx="9" fill="#eef3f8" stroke="#1f6091" stroke-width="1.4"/>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6f6e6a" x="33" y="270">attention logit Aᵢⱼ =</text>
+        <text font-family="ui-monospace,Menlo,Consolas,monospace" font-size="12" fill="#1f6091" x="33" y="292">(QᵢᵀKⱼ)/√d + b_φ(i,j) + cᵢⱼ</text>
+      </svg>
+<p class="small" style="margin:4px 0">Node degree is added to the atom features at the input. Shortest-path distance and bond-path edge information are added as bias terms to the attention logit, so graph structure reaches the model without changing the transformer block.</p>
+</div>
+
+<p><b>Centrality encoding.</b> Self-attention scores nodes by feature similarity, so two atoms with
+similar local chemistry are indistinguishable to it even when one is a hub and the other a leaf.
+Graphormer adds a learnable vector indexed by a node's degree to its input features,
+<code>h<sub>i</sub><sup>(0)</sup> = x<sub>i</sub> + z<sub>deg(i)</sub></code>, which separates a
+quaternary carbon from a terminal methyl before any message has moved.</p>
+
+<p><b>Spatial encoding.</b> For every ordered pair the model computes the shortest-path distance on the
+graph and looks up one learnable scalar, shared across layers, which is added to the attention
+logit.</p>
+
+<p class="small" style="margin:6px 0 4px;text-align:center">
+<code>A<sub>ij</sub> = (h<sub>i</sub>W<sub>Q</sub>)(h<sub>j</sub>W<sub>K</sub>)<sup>T</sup> / &radic;d + b<sub>&phi;(i,j)</sub></code></p>
+
+<p>Because the bias is a free function of hop distance, the model can learn to attend strongly to near
+neighbours and weakly to distant atoms, recovering the locality of a message-passing network, or do the
+opposite where the chemistry demands it. Every atom still sees every other atom in a single layer; the
+bias only reports how far away each one is.</p>
+
+<p><b>Edge encoding.</b> Bonds carry bond order, conjugation and aromaticity. For each pair, Graphormer
+takes the shortest path between the two atoms, dots each bond's feature vector with a position-specific
+learnable vector, averages along the path, and adds the scalar to the attention logit as well, so
+attention between two atoms is modulated by the kind of bonds between them.</p>
+
+<p>A graph-level vector comes from a virtual node connected to every atom, the graph analogue of BERT's
+classification token, whose final representation is the molecule embedding. A distinct spatial-encoding
+value marks the virtual connections, so a connection through the supernode is not confused with a real
+one-bond distance. The authors show that with suitable weights the spatial and edge encodings reproduce
+the aggregate-and-combine step of GIN, GCN and GraphSAGE, and that the global receptive field lets
+Graphormer distinguish graphs the 1-Weisfeiler-Lehman test cannot, while avoiding the over-smoothing
+that limits deep message-passing stacks.</p>
+
+<div class="win">
+<h4>Chemistry encoded</h4>
+<p class="small" style="margin:4px 0">Graphormer's structural priors are purely topological:
+connectivity through degree, graph distance through shortest paths, and bond type along those paths. It
+has no representation of geometry, conformers or stereochemistry, so two stereoisomers with the same bond
+graph map to the same vector. It captures the substructure grammar of molecules well: rings, branches,
+conjugation patterns, and the difference between a buried and an exposed atom.</p>
+</div>
+
+<h3>9. Transformer-M</h3>
+
+<p>Most molecular models commit to one data format. A 2D model cannot use a conformer when one is
+available, and a 3D model is unusable when only a SMILES string is. The two views describe the same atoms
+and differ only in whether structure is given through bonds or through Euclidean distances. Transformer-M
+builds two structural channels on one shared transformer and activates whichever the input provides,
+which adding structure as bias terms makes natural.</p>
+
+<div class="win">
+<h4>Figure 2 &middot; Two structural channels feeding one backbone</h4>
+<svg style="display:block;width:100%;height:auto;margin:6px 0" viewBox="0 0 720 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Transformer-M's two structural channels">
+                <rect x="20" y="30" width="300" height="118" rx="11" fill="#ffffff" stroke="#c2beb4" />
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" font-weight="700" x="38" y="55" fill="#b23a30">2D channel  (graph)</text>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" fill="#4a4a48" x="38" y="78">• degree encoding → atom features</text>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" fill="#4a4a48" x="38" y="100">• shortest-path-distance → attn bias</text>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" fill="#4a4a48" x="38" y="122">• bond-path edge encoding → attn bias</text>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6f6e6a" x="38" y="141">(the Graphormer encodings)</text>
+
+                <rect x="20" y="166" width="300" height="118" rx="11" fill="#ffffff" stroke="#c2beb4" />
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" font-weight="700" x="38" y="191" fill="#5b4b8a">3D channel  (geometry)</text>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" fill="#4a4a48" x="38" y="214">• pairwise Euclidean distance ‖rᵢ−rⱼ‖</text>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" fill="#4a4a48" x="38" y="236">• → Gaussian-basis kernel encoding</text>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" fill="#4a4a48" x="38" y="258">• pair bias + per-atom sum → features</text>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6f6e6a" x="38" y="277">(rotation/translation invariant)</text>
+
+                <path d="M320 89 C 370 89 370 150 408 150" stroke="#6f6e6a" stroke-width="1.8" fill="none" marker-end="url(#ah2)"/>
+        <path d="M320 225 C 370 225 370 168 408 168" stroke="#6f6e6a" stroke-width="1.8" fill="none" marker-end="url(#ah2)"/>
+        <defs><marker id="ah2" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 z" fill="#6f6e6a"/></marker></defs>
+
+        <rect x="412" y="96" width="150" height="128" rx="11" fill="#eef3f8" stroke="#1f6091" stroke-width="1.5"/>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" font-weight="700" fill="#173f5f" x="487" y="150" text-anchor="middle">Shared</text>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" font-weight="700" fill="#173f5f" x="487" y="170" text-anchor="middle">Transformer</text>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6f6e6a" x="487" y="190" text-anchor="middle">(one set of weights)</text>
+
+        <path d="M562 160 L606 160" stroke="#6f6e6a" stroke-width="1.8" fill="none" marker-end="url(#ah2)"/>
+        <rect x="610" y="120" width="92" height="80" rx="11" fill="#ffffff" stroke="#c2beb4"/>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" font-weight="700" fill="#173f5f" x="656" y="155" text-anchor="middle">repr.</text>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6f6e6a" x="656" y="175" text-anchor="middle">→ tasks</text>
+
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6f6e6a" x="412" y="248">switch: 2D-only → only red bias active;</text>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6f6e6a" x="412" y="266">3D-only → only purple; both → both.</text>
+      </svg>
+<p class="small" style="margin:4px 0">The 2D channel reuses Graphormer's degree, shortest-path and edge encodings. The 3D channel encodes pairwise Euclidean distances through a Gaussian-basis kernel. Each is activated only when that modality is present, and all backbone weights are shared.</p>
+</div>
+
+<p>The 2D channel is Graphormer: degree encoding added to atom features, shortest-path and bond-path
+encodings added as attention biases. The 3D channel encodes the only rotation- and translation-invariant
+quantity available from coordinates, the pairwise distances. Each distance
+<code>&Vert;r<sub>i</sub> &minus; r<sub>j</sub>&Vert;</code> passes through a set of Gaussian basis
+kernels, a soft one-hot over distance ranges with learnable centre and width per atom-pair type, and is
+projected to a scalar bias per pair. For each atom the 3D encodings to all others are summed and added to
+its input features.</p>
+
+<div class="win">
+<h4>Why a Gaussian basis for distance</h4>
+<p class="small" style="margin:4px 0">A raw distance is a single scalar and hard for a network to use
+non-linearly. Expanding it onto <code>K</code> Gaussian bumps
+<code>exp(&minus;&frac12;((d &minus; &mu;<sub>k</sub>)/&sigma;<sub>k</sub>)&sup2;)</code> turns it into a
+smooth localised feature vector, so the model can respond differently to 1.4 &Aring;, an aromatic C&ndash;C
+distance, and 2.8 &Aring; without assuming the response is linear in distance. Learnable centres and
+widths indexed by atom-pair type let the model resolve distance where the chemistry varies.</p>
+</div>
+
+<p>Apart from the two structural encoders, all backbone weights are shared across modalities. Training
+mixes batches: a 2D-only batch activates the 2D channel, a 3D-only batch the 3D channel, a paired batch
+both. 2D and 3D data may therefore come from different databases, with no need for paired examples. The
+model is trained on PCQM4Mv2 to predict the DFT HOMO-LUMO gap, with an added 3D denoising task on the 3D
+data.</p>
+
+<div class="win">
+<h4>Chemistry encoded</h4>
+<p class="small" style="margin:4px 0">Through the 2D channel Transformer-M inherits Graphormer's
+topological grammar. Through the 3D channel it reads genuine geometry: bond lengths, through-space
+contacts, and the spatial arrangement that sets steric bulk and many quantum properties. Because the
+channels share a backbone, 3D knowledge acquired in pretraining is partly retained when the model is
+later given only a graph, the idea 3D Infomax is built on.</p>
+</div>
+
+<h3>10. SCAGE</h3>
+
+<p>Two problems in structure-activity modelling motivate SCAGE. <b>Activity cliffs</b> are pairs of
+nearly identical molecules with sharply different activity, precisely where structure-blind models fail.
+<b>Interpretability</b> matters because a prediction is more useful when the model can point at the
+functional group responsible. Its design serves both while folding in conformational information
+without making the backbone a full 3D network.</p>
+
+<div class="win">
+<h4>Figure 3 &middot; SCAGE: distance-masked attention and four pretraining tasks</h4>
+<svg style="display:block;width:100%;height:auto;margin:6px 0" viewBox="0 0 720 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="SCAGE distance-masked multiscale attention and four pretraining tasks">
+                <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" font-weight="700" fill="#173f5f" x="20" y="24">Multiscale distance-masked attention</text>
+                <circle cx="110" cy="120" r="58" fill="none" stroke="#6f6e6a" stroke-width="1.3" stroke-dasharray="4 4"/>
+        <circle cx="110" cy="120" r="34" fill="none" stroke="#0e7c66" stroke-width="1.4" stroke-dasharray="3 3"/>
+        <circle cx="110" cy="120" r="6" fill="#12633c"/>
+        <circle cx="86" cy="104" r="5" fill="#1f6091"/><circle cx="132" cy="100" r="5" fill="#1f6091"/>
+        <circle cx="138" cy="140" r="5" fill="#1f6091"/><circle cx="80" cy="146" r="5" fill="#1f6091"/>
+        <circle cx="158" cy="86" r="5" fill="#95231f"/><circle cx="64" cy="80" r="5" fill="#95231f"/>
+        <circle cx="160" cy="160" r="5" fill="#95231f"/>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6f6e6a" x="110" y="200" text-anchor="middle">inner scale (~30%)</text>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6f6e6a" x="110" y="217" text-anchor="middle">outer scale (~60%) attend further</text>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6f6e6a" x="110" y="234" text-anchor="middle">masked = no covariance through attn</text>
+
+                <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" font-weight="700" fill="#173f5f" x="300" y="24">M4 pre-training: four tasks at once</text>
+        <rect x="300" y="38" width="190" height="48" rx="9" fill="#ffffff" stroke="#c2beb4"/><text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" fill="#4a4a48" x="312" y="58">① Morgan fingerprint</text><text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6f6e6a" x="312" y="76">predict ECFP-style bits</text>
+        <rect x="300" y="94" width="190" height="48" rx="9" fill="#ffffff" stroke="#c2beb4"/><text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" fill="#4a4a48" x="312" y="114">② Functional-group / atom</text><text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6f6e6a" x="312" y="132">each atom → its FG label</text>
+        <rect x="510" y="38" width="190" height="48" rx="9" fill="#ffffff" stroke="#c2beb4"/><text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" fill="#4a4a48" x="522" y="58">③ 2D atomic distance</text><text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6f6e6a" x="522" y="76">graph distance matrix</text>
+        <rect x="510" y="94" width="190" height="48" rx="9" fill="#ffffff" stroke="#c2beb4"/><text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" fill="#4a4a48" x="522" y="114">④ 3D bond angle</text><text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6f6e6a" x="522" y="132">angles between bonds</text>
+
+        <rect x="300" y="158" width="400" height="56" rx="9" fill="#eef3f8" stroke="#1f6091" stroke-width="1.5"/>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" font-weight="700" x="500" y="180" text-anchor="middle" fill="#b5740f">Dynamic Adaptive Multi-Task Learning</text>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6f6e6a" x="500" y="200" text-anchor="middle">re-weights the four losses each step from decline-rate + range</text>
+
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6f6e6a" x="300" y="246">structures → functions, in one model</text>
+      </svg>
+<p class="small" style="margin:4px 0">Left: attention is masked by interatomic distance at several scales, so atoms outside a scale's radius are blocked. Right: four objectives are optimised together, with an adaptive controller reweighting their losses each iteration.</p>
+</div>
+
+<p>The backbone is a graph transformer over the 2D graph. The distinctive component is
+<b>multiscale conformational learning</b>: SCAGE generates a conformer with the Merck molecular force
+field, takes the lowest-energy geometry, derives interatomic-distance thresholds from it and uses them to
+mask the attention scores. At one scale an atom attends only to its nearest neighbours by distance, at
+another to a wider shell, and stacking the scales gives a data-driven receptive field rather than a
+hand-designed cutoff.</p>
+
+<p>Pretraining optimises four objectives together, spanning structure to function: reproducing the
+Morgan fingerprint, predicting per-atom functional-group annotations derived from motif databases,
+recovering the 2D shortest-path distance matrix, and predicting bond angles from the MMFF geometry. Four
+losses on different scales rarely descend in step, so a controller reweights each loss every iteration
+from its recent rate of decline and its value range, in place of hand-tuned weights.</p>
+
+<div class="win">
+<h4>Chemistry encoded</h4>
+<p class="small" style="margin:4px 0">The functional-group task forces atom representations to carry
+chemical role, distinguishing a carbon in an ester from a nitrogen in an amide. The bond-angle and
+distance-masking tasks add conformational geometry, and the fingerprint task anchors a global
+substructure signature. The functional-group annotation supports attribution of a prediction to
+substructures and underlies the model's results on activity-cliff benchmarks, where the discriminating
+change is usually one functional group.</p>
+</div>
+
+<div class="win">
+<h4>Geometry provenance</h4>
+<p class="small" style="margin:4px 0">SCAGE's 3D signal comes from a single lowest-energy MMFF
+conformer: a force-field estimate rather than an ensemble or a quantum-chemical geometry. It does not
+represent conformational flexibility, and the 3D signal is only as good as MMFF is on this chemistry.
+SCAGE is also the most complex of the eleven models, combining four pretraining tasks, adaptive loss
+weighting and multiscale masking.</p>
+</div>
+
+<h3>11. GROVER</h3>
+
+<p>Two obstacles limit supervised graph networks on molecules: labels are scarce because each is a
+wet-lab measurement, and models generalise poorly to new chemical space. Self-supervision is the remedy,
+but NLP recipes transfer badly. Masked-atom prediction is weak because the atom vocabulary is small and
+dominated by carbon, nitrogen and oxygen. Graph-level pretraining on supervised property labels risks
+<b>negative transfer</b>, degrading downstream tasks whose objectives conflict. GROVER contributes two
+self-supervised tasks that avoid both, and an architecture expressive enough to use them.</p>
+
+<div class="win">
+<h4>Figure 4 &middot; The GROVER block and its two self-supervised tasks</h4>
+<svg style="display:block;width:100%;height:auto;margin:6px 0" viewBox="0 0 720 290" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="GROVER GTransformer block and dynamic message passing">
+        <rect x="20" y="40" width="150" height="70" rx="10" fill="#ffffff" stroke="#c2beb4"/>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" font-weight="700" fill="#173f5f" x="95" y="70" text-anchor="middle">Input graph</text>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6f6e6a" x="95" y="90" text-anchor="middle">atoms + bonds</text>
+
+        <path d="M170 75 L210 75" stroke="#6f6e6a" stroke-width="1.8" fill="none" marker-end="url(#ahg)"/>
+        <defs><marker id="ahg" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 z" fill="#6f6e6a"/></marker></defs>
+
+        <rect x="212" y="32" width="170" height="86" rx="10" fill="#ffffff" stroke="#0e7c66"/>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" font-weight="700" x="297" y="56" text-anchor="middle" fill="#0e7c66">dyMPN (local)</text>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6f6e6a" x="297" y="76" text-anchor="middle">message passing with a</text>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6f6e6a" x="297" y="92" text-anchor="middle">random # of hops K each</text>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6f6e6a" x="297" y="108" text-anchor="middle">epoch → random field</text>
+
+        <path d="M382 75 L422 75" stroke="#6f6e6a" stroke-width="1.8" fill="none" marker-end="url(#ahg)"/>
+        <rect x="424" y="32" width="180" height="86" rx="10" fill="#ffffff" stroke="#2d5d82"/>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" font-weight="700" x="514" y="56" text-anchor="middle" fill="#2d5d82">Self-attention (global)</text>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6f6e6a" x="514" y="76" text-anchor="middle">GNN outputs become</text>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6f6e6a" x="514" y="92" text-anchor="middle">Q, K, V over the fully</text>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6f6e6a" x="514" y="108" text-anchor="middle">connected graph</text>
+
+        <path d="M604 75 L648 75" stroke="#6f6e6a" stroke-width="1.8" fill="none" marker-end="url(#ahg)"/>
+        <rect x="650" y="50" width="52" height="50" rx="9" fill="#eef3f8" stroke="#1f6091" stroke-width="1.4"/>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6f6e6a" x="676" y="80" text-anchor="middle">node /</text>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6f6e6a" x="676" y="95" text-anchor="middle">edge h</text>
+
+                <path d="M95 110 C 95 175 514 175 514 122" stroke="#6f6e6a" stroke-width="1.3" stroke-dasharray="4 4" fill="none" marker-end="url(#ahg)"/>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" x="300" y="172" text-anchor="middle" fill="#b5740f">single long-range residual (input → late layers): fights over-smoothing</text>
+
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" font-weight="700" fill="#173f5f" x="20" y="215">Two self-supervised targets</text>
+        <rect x="20" y="226" width="330" height="48" rx="9" fill="#ffffff" stroke="#c2beb4"/>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" fill="#4a4a48" x="34" y="246">Contextual property (node/edge)</text>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6f6e6a" x="34" y="264">predict local-subgraph "C_N-DOUBLE1_O-SINGLE1" key</text>
+        <rect x="370" y="226" width="332" height="48" rx="9" fill="#ffffff" stroke="#c2beb4"/>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" fill="#4a4a48" x="384" y="246">Graph-level motif</text>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6f6e6a" x="384" y="264">predict which functional-group motifs (RDKit) are present</text>
+      </svg>
+<p class="small" style="margin:4px 0">A dynamic message-passing network supplies the queries, keys and values for global attention, and a long-range residual counters over-smoothing. Pretraining predicts contextual subgraph properties at the node level and functional-group motifs at the graph level.</p>
+</div>
+
+<p>An attention block needs vectors as queries, keys and values. GROVER produces them with a
+message-passing network that reads the local graph and emits per-node and per-edge embeddings, which
+become the Q, K and V of multi-head attention over the fully connected graph. The message-passing network
+captures local subgraph structure and the transformer captures long-range relations on top.</p>
+
+<div class="win">
+<h4>Dynamic message passing and the long-range residual</h4>
+<p class="small" style="margin:4px 0">The number of message-passing hops sets a network's receptive
+field, and a fixed choice rarely suits every molecule. GROVER draws the hop count for a layer from a
+distribution every epoch, giving each node a random receptive field over training, which acts as a
+structural regulariser. It also replaces the transformer's many short residual connections with one
+long-range residual from the input to the final layers, which eases gradient flow and counters
+over-smoothing in the deep stack.</p>
+</div>
+
+<p><b>Contextual property prediction</b> works at node and edge level. Rather than predict a masked atom's
+bare element, GROVER extracts the k-hop neighbourhood, counts neighbour-atom and bond-type pairs, and
+serialises them into a key such as <code>C_N-DOUBLE1_O-SINGLE1</code>. Predicting that key from the atom
+embedding forces the representation to encode the chemical surroundings rather than the element alone.
+<b>Graph-level motif prediction</b> uses recurrent subgraphs, typically functional groups detected with
+RDKit, as a multi-label target on the molecule embedding. Because the labels come from a pattern matcher
+rather than from experiment, the task scales to any unlabelled molecule without the negative-transfer
+risk.</p>
+
+<div class="win">
+<h4>Chemistry encoded</h4>
+<p class="small" style="margin:4px 0">GROVER is two-dimensional throughout, but its self-supervision is
+chemically pointed. The contextual task teaches local bonding environments and the motif task teaches
+functional-group awareness, pushing the representation toward the way chemists describe molecules, as
+assemblies of recognisable groups in characteristic neighbourhoods.</p>
+</div>
+
+<h3>12. MiniMol</h3>
+
+<p>MiniMol argues against scale for molecular models. A graph already respects the molecule's
+symmetries, permutation invariance and freedom from SMILES ambiguity, so a model with those symmetries
+built in needs far less capacity. The stated reference point is ULTRA, a 177,000-parameter
+knowledge-graph model that outperformed much larger baselines by respecting graph symmetry. The target is
+a model cheap enough to run as a routine fingerprint generator.</p>
+
+<p>The backbone is a message-passing network, by default a graph isomorphism network with edge features,
+chosen because that family matches the 1-Weisfeiler-Lehman test in expressiveness and the edge-feature
+variant uses bond information. Sixteen layers bring the total near 10 million parameters. Each atom's
+input concatenates RDKit atom features with Laplacian eigenvectors and eigenvalues, a graph analogue of
+Fourier positions, and random-walk return probabilities. A global node connected to every atom routes
+information between distant parts of the graph and serves as the graph-level read-out.</p>
+
+<div class="win">
+<h4>Figure 5 &middot; MiniMol as a fingerprint extractor</h4>
+<svg style="display:block;width:100%;height:auto;margin:6px 0" viewBox="0 0 720 270" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="MiniMol featurization, GNN stack, fingerprint extraction">
+                <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" font-weight="700" fill="#173f5f" x="20" y="24">Node features (concatenated)</text>
+        <rect x="20" y="34" width="150" height="30" rx="7" fill="#ffffff" stroke="#c2beb4"/><text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6f6e6a" x="95" y="54" text-anchor="middle">RDKit atom feats</text>
+        <rect x="20" y="70" width="150" height="30" rx="7" fill="#ffffff" stroke="#c2beb4"/><text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6f6e6a" x="95" y="90" text-anchor="middle">Laplacian eig-vec/val</text>
+        <rect x="20" y="106" width="150" height="30" rx="7" fill="#ffffff" stroke="#c2beb4"/><text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6f6e6a" x="95" y="126" text-anchor="middle">random-walk probs</text>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6f6e6a" x="20" y="156">+ global node (router &amp; readout)</text>
+
+        <path d="M178 85 L214 85" stroke="#6f6e6a" stroke-width="1.8" fill="none" marker-end="url(#ahm)"/>
+        <defs><marker id="ahm" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 z" fill="#6f6e6a"/></marker></defs>
+
+        <rect x="216" y="46" width="150" height="78" rx="10" fill="#eef3f8" stroke="#1f6091" stroke-width="1.5"/>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" font-weight="700" fill="#173f5f" x="291" y="78" text-anchor="middle">16× GINE</text>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6f6e6a" x="291" y="98" text-anchor="middle">message passing</text>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6f6e6a" x="291" y="114" text-anchor="middle">≈10M params</text>
+
+        <path d="M368 85 L404 85" stroke="#6f6e6a" stroke-width="1.8" fill="none" marker-end="url(#ahm)"/>
+        <rect x="406" y="52" width="120" height="66" rx="10" fill="#ffffff" stroke="#0e7c66"/>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" font-weight="700" x="466" y="80" text-anchor="middle" fill="#0e7c66">pool nodes</text>
+        <text font-family="ui-monospace,Menlo,Consolas,monospace" font-size="12" fill="#1f6091" x="466" y="100" text-anchor="middle">ψ = Σ hᵢ</text>
+
+        <path d="M528 85 L564 85" stroke="#6f6e6a" stroke-width="1.8" fill="none" marker-end="url(#ahm)"/>
+        <rect x="566" y="52" width="136" height="66" rx="10" fill="#ffffff" stroke="#c2beb4"/>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" font-weight="700" fill="#173f5f" x="634" y="80" text-anchor="middle">fingerprint ψ</text>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6f6e6a" x="634" y="100" text-anchor="middle">→ small MLP / task</text>
+
+                <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" font-weight="700" fill="#173f5f" x="20" y="196">Multi-task pre-training (Graphium LargeMix)</text>
+        <rect x="20" y="206" width="165" height="44" rx="9" fill="#ffffff" stroke="#c2beb4"/><text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6f6e6a" x="102" y="226" text-anchor="middle">PCQM4M G25 + N4</text><text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6f6e6a" x="102" y="242" text-anchor="middle">quantum, MAE</text>
+        <rect x="195" y="206" width="120" height="44" rx="9" fill="#ffffff" stroke="#c2beb4"/><text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6f6e6a" x="255" y="226" text-anchor="middle">PCBA</text><text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6f6e6a" x="255" y="242" text-anchor="middle">bio, BCE</text>
+        <rect x="325" y="206" width="120" height="44" rx="9" fill="#ffffff" stroke="#c2beb4"/><text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6f6e6a" x="385" y="226" text-anchor="middle">L1000</text><text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6f6e6a" x="385" y="242" text-anchor="middle">transcriptomic</text>
+        <rect x="455" y="206" width="247" height="44" rx="9" fill="#eef3f8" stroke="#1f6091" stroke-width="1.4"/><text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6f6e6a" x="578" y="226" text-anchor="middle">~3300 sparse tasks · 526M labels</text><text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6f6e6a" x="578" y="242" text-anchor="middle">graph- and node-level, jointly</text>
+      </svg>
+<p class="small" style="margin:4px 0">Rich node features, combining RDKit atom features with Laplacian and random-walk positional encodings, feed a 16-layer message-passing stack. Node embeddings are pooled into a fingerprint that downstream tasks consume through a small MLP.</p>
+</div>
+
+<p>Pretraining uses the Graphium LargeMix dataset: about 6 million molecules and 526 million labels over
+about 3,300 sparsely defined graph- and node-level tasks, blending quantum-chemistry targets with
+biological assays and transcriptomic signatures. The loss is a weighted sum over these objectives, with a
+scaling constant that stops the largest dataset from dominating. Training on quantum and biological
+signals together is deliberate: the model learns physics it can lend to biology, where labels are
+scarcer.</p>
+
+<div class="win">
+<h4>Fingerprint extraction rather than fine-tuning</h4>
+<p class="small" style="margin:4px 0">MiniMol is designed to be used as chemists use ECFP. A fixed
+embedding <code>&psi; = &Sigma;<sub>i</sub> h<sub>i</sub><sup>final</sup></code> is computed once per
+molecule and a cheap task head is fitted on top. Embeddings are cached and reused across tasks and
+sweeps, the downstream model has few parameters and overfits less on small datasets, and the foundation
+model is never touched. This is the frozen-featurizer pattern under which every model in the scan is
+used.</p>
+</div>
+
+<div class="win">
+<h4>Chemistry encoded</h4>
+<p class="small" style="margin:4px 0">MiniMol is graph-based with no coordinates, but the Laplacian and
+random-walk features give it a strong sense of graph shape, of which atoms are central and how
+substructures connect, and the quantum tasks in pretraining push it to encode electronic and energetic
+properties implicitly. Its representation is broad rather than specialised: it has seen molecules
+through about 3,300 property lenses.</p>
+</div>
+
+<h3>13. Uni-Mol and Uni-Mol2</h3>
+
+<p>Uni-Mol is the only model here for which 3D is the primary input. Molecular properties are largely
+set by three-dimensional structure, yet most representation models start from strings or graphs and
+treat geometry as auxiliary, which leaves them unable to take 3D positions as input or produce 3D outputs
+such as binding poses. Uni-Mol is a backbone that is 3D end to end while remaining cheap enough to
+pretrain at scale.</p>
+
+<p>Atoms are fully connected, so long-range interactions are captured directly, and two problems have to
+be solved: feeding continuous coordinates into an order-blind transformer, and doing so invariantly to
+rotation and translation. The answer keeps two coupled representations. The <b>atom representation</b>
+starts from atom-type embeddings, one token per atom plus a classification token at the geometric centre.
+The <b>pair representation</b> starts from the pairwise Euclidean distances passed through a
+pair-type-aware Gaussian kernel, which is invariant to global rotation and translation because it is
+built from distances.</p>
+
+<div class="win">
+<h4>Figure 6 &middot; Uni-Mol's coupled atom and pair representations</h4>
+<svg style="display:block;width:100%;height:auto;margin:6px 0" viewBox="0 0 720 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Uni-Mol atom and pair representations, position recovery pretraining">
+                <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" font-weight="700" fill="#173f5f" x="20" y="22">Inputs</text>
+        <rect x="20" y="32" width="150" height="40" rx="8" fill="#ffffff" stroke="#c2beb4"/><text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6f6e6a" x="95" y="56" text-anchor="middle">atom types → atom repr</text>
+        <rect x="20" y="80" width="150" height="48" rx="8" fill="#ffffff" stroke="#c2beb4"/><text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6f6e6a" x="95" y="100" text-anchor="middle">coords → pairwise ‖rᵢ−rⱼ‖</text><text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6f6e6a" x="95" y="118" text-anchor="middle">→ Gaussian kernel → pair repr</text>
+
+                <rect x="210" y="44" width="200" height="92" rx="11" fill="#eef3f8" stroke="#1f6091" stroke-width="1.5"/>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" font-weight="700" fill="#173f5f" x="310" y="68" text-anchor="middle">SE(3)-invariant</text>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" font-weight="700" fill="#173f5f" x="310" y="86" text-anchor="middle">Transformer block ×N</text>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6f6e6a" x="310" y="108" text-anchor="middle">atom→pair: Q·Kᵀ updates pair</text>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6f6e6a" x="310" y="124" text-anchor="middle">pair→atom: pair = attn bias</text>
+        <path d="M170 60 L206 72" stroke="#6f6e6a" stroke-width="1.8" fill="none" marker-end="url(#ahu)"/>
+        <path d="M170 104 L206 110" stroke="#6f6e6a" stroke-width="1.8" fill="none" marker-end="url(#ahu)"/>
+        <defs><marker id="ahu" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 z" fill="#6f6e6a"/></marker></defs>
+
+        <path d="M410 90 L446 90" stroke="#6f6e6a" stroke-width="1.8" fill="none" marker-end="url(#ahu)"/>
+        <rect x="448" y="44" width="120" height="92" rx="11" fill="#ffffff" stroke="#c2beb4"/>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6f6e6a" x="508" y="74" text-anchor="middle">[CLS] atom</text>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6f6e6a" x="508" y="92" text-anchor="middle">(centre) =</text>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6f6e6a" x="508" y="110" text-anchor="middle">molecule repr</text>
+
+                <path d="M508 136 L508 168" stroke="#6f6e6a" stroke-width="1.8" fill="none" marker-end="url(#ahu)"/>
+        <rect x="430" y="170" width="280" height="40" rx="9" fill="#ffffff" stroke="#5b4b8a"/>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" x="570" y="195" text-anchor="middle" fill="#5b4b8a">SE(3)-equivariant head → predicts Δ-coordinates</text>
+
+                <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" font-weight="700" fill="#173f5f" x="20" y="180">Pre-training: 3D position recovery</text>
+        <rect x="20" y="190" width="190" height="92" rx="9" fill="#ffffff" stroke="#c2beb4"/>
+        <circle cx="55" cy="225" r="5" fill="#1f6091"/><circle cx="85" cy="240" r="5" fill="#1f6091"/><circle cx="70" cy="262" r="5" fill="#1f6091"/>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6f6e6a" x="120" y="222">+ uniform noise (±1 Å)</text>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6f6e6a" x="120" y="242">to coordinates; mask</text>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6f6e6a" x="120" y="262">some atom types</text>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6f6e6a" x="30" y="298">predict: clean coords · pair-distances · atom types</text>
+      </svg>
+<p class="small" style="margin:4px 0">Pairwise distances pass through a Gaussian kernel to initialise the pair representation, which biases the attention logits of an SE(3)-invariant transformer. A lightweight equivariant head predicts coordinate displacements. Pretraining corrupts atomic positions and recovers them.</p>
+</div>
+
+<p>The two representations exchange information every layer. The query-key products update the pair
+representation, and the pair representation is added as a bias inside the attention logit, the
+Graphormer mechanism carrying genuine geometry. The geometry shapes the atom embeddings and the atom
+embeddings refine the geometry.</p>
+
+<div class="win">
+<h4>Invariant body, equivariant head</h4>
+<p class="small" style="margin:4px 0">An <b>invariant</b> representation does not change when the
+molecule is rotated or translated, which suits scalar predictions such as energy. An <b>equivariant</b>
+output rotates with the input, which is required to predict coordinates. Uni-Mol keeps the heavy backbone
+invariant and attaches a light SE(3)-equivariant head at the end: it predicts each atom's displacement as
+a sum over pairs of <code>(r<sub>i</sub> &minus; r<sub>j</sub>)</code>, an equivariant direction, scaled
+by a learned function of the invariant pair representation. Valid 3D geometry is produced without the cost
+of an equivariant backbone.</p>
+</div>
+
+<p>A continuous coordinate cannot be masked like a token, so pretraining adds roughly
+&plusmn;1 &Aring; of uniform noise to each atom and trains the model to undo it through two heads, one
+predicting the clean positions and one the clean pairwise distances; some atom types are masked and
+predicted as well. The conformations come from RDKit: 19 million molecules with about 11 ETKDG and MMFF
+conformers each, roughly 209 million structures. Uni-Mol2 keeps the architecture and studies how it
+scales, releasing checkpoints from 84 million to 1.1 billion parameters; the 1.1 billion checkpoint is the
+one used here.</p>
+
+<div class="win">
+<h4>Chemistry encoded</h4>
+<p class="small" style="margin:4px 0">Uni-Mol encodes geometry directly: bond lengths, angles,
+through-space distances and the spatial arrangement of atoms, which is why it performs well on
+geometry-dominated properties such as solvation free energy and on 3D tasks such as pose prediction. It
+needs a conformer, and its output is bounded by the quality of that geometry. A single ETKDG and MMFF
+conformer is a fast approximation rather than an ensemble, and for flexible molecules the choice of
+conformer moves the embedding, so conformer generation is part of the representation (section 32).</p>
+</div>
+
+<h3>14. 3D Infomax</h3>
+
+<p>Conformer generation is expensive. Accurate methods such as metadynamics or CREST take hours per
+drug-like molecule, and even fast machine-learned generators are too slow for virtual screens of millions
+of compounds, so at inference usually only the 2D graph is available. 3D Infomax trains a 2D network to
+produce 3D-informed representations from a 2D input by borrowing geometry during a one-time pretraining
+phase; the authors report a mean MAE reduction of about 22 percent on QM9.</p>
+
+<p>Pretraining runs two networks side by side. A 2D network, the one retained, embeds the molecular
+graph; a 3D network embeds the molecule's conformers. The objective maximises the mutual information
+between the two embeddings of the same molecule through a contrastive loss, pulling representations of
+the same molecule together and pushing those of different molecules in the batch apart.</p>
+
+<div class="win">
+<h4>Figure 7 &middot; Distillation of geometry by mutual information</h4>
+<svg style="display:block;width:100%;height:auto;margin:6px 0" viewBox="0 0 720 280" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="3D Infomax contrastive pretraining and transfer">
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" font-weight="700" fill="#173f5f" x="20" y="22">Pre-training (3D available)</text>
+                <rect x="20" y="40" width="120" height="40" rx="8" fill="#ffffff" stroke="#c2beb4"/><text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6f6e6a" x="80" y="64" text-anchor="middle">2D graph G</text>
+        <path d="M140 60 L176 60" stroke="#6f6e6a" stroke-width="1.8" fill="none" marker-end="url(#ahi)"/>
+        <defs><marker id="ahi" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 z" fill="#6f6e6a"/></marker></defs>
+        <rect x="178" y="40" width="110" height="40" rx="8" fill="#ffffff" stroke="#2d5d82"/><text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6f6e6a" x="233" y="64" text-anchor="middle">2D net fᵃ → zᵃ</text>
+                <rect x="20" y="120" width="120" height="40" rx="8" fill="#ffffff" stroke="#c2beb4"/><text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6f6e6a" x="80" y="144" text-anchor="middle">conformer R</text>
+        <path d="M140 140 L176 140" stroke="#6f6e6a" stroke-width="1.8" fill="none" marker-end="url(#ahi)"/>
+        <rect x="178" y="120" width="110" height="40" rx="8" fill="#ffffff" stroke="#5b4b8a"/><text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6f6e6a" x="233" y="144" text-anchor="middle">3D net fᵇ → zᵇ</text>
+
+                <rect x="320" y="64" width="180" height="72" rx="11" fill="#eef3f8" stroke="#1f6091" stroke-width="1.5"/>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" font-weight="700" x="410" y="92" text-anchor="middle" fill="#0e7c66">maximize MI(zᵃ, zᵇ)</text>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6f6e6a" x="410" y="112" text-anchor="middle">same molecule → pull together</text>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6f6e6a" x="410" y="128" text-anchor="middle">others in batch → push apart</text>
+        <path d="M288 60 C 305 70 305 90 318 92" stroke="#6f6e6a" stroke-width="1.8" fill="none" marker-end="url(#ahi)"/>
+        <path d="M288 140 C 305 130 305 110 318 110" stroke="#6f6e6a" stroke-width="1.8" fill="none" marker-end="url(#ahi)"/>
+
+                <path d="M410 136 L410 168" stroke="#6f6e6a" stroke-width="1.8" fill="none" marker-end="url(#ahi)"/>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" font-weight="700" fill="#173f5f" x="20" y="200">Fine-tuning &amp; inference (no 3D)</text>
+        <rect x="20" y="212" width="120" height="40" rx="8" fill="#ffffff" stroke="#c2beb4"/><text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6f6e6a" x="80" y="236" text-anchor="middle">2D graph G</text>
+        <path d="M140 232 L176 232" stroke="#6f6e6a" stroke-width="1.8" fill="none" marker-end="url(#ahi)"/>
+        <rect x="178" y="212" width="150" height="40" rx="8" fill="#ffffff" stroke="#2d5d82"/><text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6f6e6a" x="253" y="236" text-anchor="middle">transferred fᵃ (frozen-ish)</text>
+        <path d="M328 232 L364 232" stroke="#6f6e6a" stroke-width="1.8" fill="none" marker-end="url(#ahi)"/>
+        <rect x="366" y="212" width="180" height="40" rx="8" fill="#ffffff" stroke="#c2beb4"/><text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6f6e6a" x="456" y="236" text-anchor="middle">implicit-3D repr → property</text>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6f6e6a" x="360" y="186">discard fᵇ; keep only the 2D net's weights</text>
+      </svg>
+<p class="small" style="margin:4px 0">During pretraining the 2D network is required to agree with a 3D network on the same molecule. Afterwards the 3D network is discarded and the 2D network carries implicit geometry into 2D-only inference.</p>
+</div>
+
+<div class="win">
+<h4>Contrastive distillation</h4>
+<p class="small" style="margin:4px 0">The 2D network is a student and the 3D network a teacher. The
+only way the student scores high mutual information with the teacher is to predict, from topology alone,
+what the teacher sees in the geometry, which requires internalising the regularities that link a bond
+graph to its likely shape. After training only the student is kept, so geometry costs nothing at
+inference. Unlike augmentation-based self-supervision, which perturbs the graph and assumes the property
+is unchanged, the supervisory signal is real physical structure.</p>
+</div>
+
+<p>The 3D encoder must produce an SE(3)-invariant vector, so it works from pairwise distances, which
+also makes it reflection-invariant: it cannot distinguish enantiomers. Distances are expanded with sine
+and cosine Fourier features, which help resolve small differences between bond lengths, and a
+message-passing network runs on the fully connected graph with those distances as edge features.
+Because a molecule often has several low-energy conformers, the loss treats all conformers of one
+molecule as mutual positives.</p>
+
+<div class="win">
+<h4>Chemistry encoded</h4>
+<p class="small" style="margin:4px 0">The pretrained 2D network carries implicit three-dimensional
+information, a learned prior over how graphs fold into space, rather than coordinates. The gains are
+largest on quantum-mechanical properties, those most determined by geometry, and the authors report no
+negative transfer and good generalisation even where pretraining and fine-tuning molecules differ
+markedly in size.</p>
+</div>
+
+<h3>15. Frad</h3>
+
+<p>Frad is a pretraining objective rather than an architecture, and rests on an equivalence between
+denoising and force-field learning. Equilibrium conformers sit at energy minima. Modelling their
+distribution as a Gaussian centred on each equilibrium makes the score of that distribution,
+<code>&nabla;<sub>x&#771;</sub> log p(x&#771;)</code>, equal to
+<code>&minus;&nabla;<sub>x&#771;</sub>E(x&#771;)</code>, the force on each atom. Denoising score matching
+shows that a network trained to predict the noise added to a structure learns that score up to a
+constant, so adding Gaussian noise to a relaxed geometry and predicting it back teaches the forces
+implicitly. The authors report state-of-the-art results on 9 of 12 QM9 targets and 7 of 8 MD17
+molecules.</p>
+
+<div class="win">
+<h4>Two failure modes of plain coordinate denoising</h4>
+<p class="small" style="margin:4px 0"><b>Low sampling coverage.</b> To avoid absurd structures such as
+distorted aromatic rings, coordinate noise must be small, so the model only sees geometries close to
+equilibrium and learns the force field nowhere else. <b>Isotropic force field.</b> Plain coordinate
+noise has the same variance in every direction, which assumes the energy rises equally steeply along
+every coordinate. Real molecules are anisotropic: rings and double bonds are stiff while rotatable
+single bonds are soft.</p>
+</div>
+
+<p>Frad uses <b>hybrid noise</b>: a large Gaussian perturbation of the dihedral angles of rotatable
+bonds, applied with RDKit so that it never produces an invalid structure, then a small Gaussian
+perturbation of all coordinates. The noise distribution is wide along flexible torsions and narrow on
+rigid parts, which both covers more low-energy structures and matches the shape of the energy basin.</p>
+
+<div class="win">
+<h4>Figure 8 &middot; Chemistry-aware noise in Frad</h4>
+<svg style="display:block;width:100%;height:auto;margin:6px 0" viewBox="0 0 720 280" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Frad hybrid noise: dihedral plus coordinate, fractional denoising">
+                <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" font-weight="700" fill="#173f5f" x="20" y="22">A molecule has rigid &amp; flexible parts</text>
+                <polygon points="70,70 100,55 130,70 130,104 100,119 70,104" fill="none" stroke="#4a4a48" stroke-width="1.7" stroke-linecap="round"/>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" x="100" y="140" text-anchor="middle" fill="#b23a30">rigid ring (stiff)</text>
+                <line x1="130" y1="87" x2="185" y2="87" stroke="#4a4a48" stroke-width="1.7" fill="none" stroke-linecap="round"/>
+        <circle cx="185" cy="87" r="6" fill="#1f6091"/>
+        <line x1="185" y1="87" x2="225" y2="64" stroke="#4a4a48" stroke-width="1.7" fill="none" stroke-linecap="round"/>
+        <path d="M150 87 a 30 30 0 0 1 12 -22" stroke="#6f6e6a" stroke-width="1.3" stroke-dasharray="4 4" fill="none"/>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" x="210" y="120" text-anchor="middle" fill="#0e7c66">rotatable bond (floppy)</text>
+
+                <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" font-weight="700" fill="#173f5f" x="300" y="22">Hybrid noise → anisotropic</text>
+        <rect x="300" y="34" width="400" height="44" rx="9" fill="#ffffff" stroke="#0e7c66"/>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" fill="#4a4a48" x="314" y="54">① large noise on rotatable dihedrals (RDKit)</text>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6f6e6a" x="314" y="72">explores floppy directions, stays chemically valid</text>
+        <rect x="300" y="86" width="400" height="44" rx="9" fill="#ffffff" stroke="#b23a30"/>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" fill="#4a4a48" x="314" y="106">② small noise on all coordinates</text>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6f6e6a" x="314" y="124">keeps rigid parts near equilibrium</text>
+
+                <rect x="300" y="146" width="400" height="60" rx="10" fill="#eef3f8" stroke="#1f6091" stroke-width="1.5"/>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" font-weight="700" x="500" y="170" text-anchor="middle" fill="#b5740f">Fractional denoising</text>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6f6e6a" x="500" y="190" text-anchor="middle">add hybrid noise, but predict back only the</text>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6f6e6a" x="500" y="206" text-anchor="middle">coordinate part → provably = anisotropic force field</text>
+
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6f6e6a" x="20" y="190">isotropic basin:</text>
+        <circle cx="110" cy="225" r="26" fill="none" stroke="#6f6e6a" stroke-width="1.3" stroke-dasharray="4 4"/>
+        <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="12" fill="#6f6e6a" x="20" y="250">anisotropic basin:</text>
+        <ellipse cx="110" cy="252" rx="40" ry="14" fill="none" stroke="#0e7c66" stroke-width="1.4"/>
+      </svg>
+<p class="small" style="margin:4px 0">Large noise on rotatable dihedrals combined with small coordinate noise produces an anisotropic energy basin, stiff along rings and soft along torsions. Frad denoises only the coordinate fraction, which preserves the equivalence to force-field learning.</p>
+</div>
+
+<p>Hybrid noise breaks the original equivalence, because the covariance now depends on the input
+conformation. <b>Fractional denoising</b> restores it: the full hybrid noise is added, but the model
+predicts back only the coordinate fraction. The authors prove that this learns the anisotropic force
+field exactly while keeping the coverage and validity benefits. Frad wraps a 3D backbone, here the
+equivariant TorchMD-NET, and is used both as a pretraining task on a large conformer set and as an
+auxiliary task during fine-tuning.</p>
+
+<div class="win">
+<h4>Chemistry encoded</h4>
+<p class="small" style="margin:4px 0">Frad builds in the central fact of molecular flexibility:
+torsions are soft while bonds, angles and rings are stiff. Perturbing exactly the rotatable bonds
+respects chemical constraints by construction, and the learned anisotropic force field captures how
+energy varies around a conformer, the basis for energies, forces and geometry-sensitive properties. Like
+Uni-Mol, it depends on the input geometry.</p>
+</div>
+
+<h2>Part III &middot; Interpretable quantum-chemical descriptors</h2>
+
+<p>Four hand-built tables in which every column is a named chemical quantity: a distance in &Aring;, an
+orbital energy in eV, a binding energy in kcal/mol, a percentage of occupied volume. A fitted lengthscale
+then points at a physical property of the catalyst rather than at an anonymous embedding dimension.</p>
+
+<div class="scroll"><table>
+<tr><th class="lbl">Set</th><th>Width</th><th class="lbl">What it contains</th></tr>
+<tr><td class="lbl"><code>interpretable_steric</code></td><td>10</td><td class="lbl">Substituent bulk around the ring, aggregated so that it is defined on every topology. No electronics, no form columns.</td></tr>
+<tr><td class="lbl"><code>interpretable_light</code></td><td>21</td><td class="lbl">Form and ring type, backbone saturation, whole-ligand bulk along the coordination axis, overall buried volume and its asymmetry, frontier orbital energies and dipole moment, molecular size.</td></tr>
+<tr><td class="lbl"><code>interpretable</code></td><td>30</td><td class="lbl">As <code>interpretable_light</code>, with buried volume resolved into quadrants, electronic structure at the carbene carbon, two probe binding energies and molecular polarisability.</td></tr>
+<tr><td class="lbl"><code>interpretable_dG</code></td><td>30</td><td class="lbl">The same 30 columns with a conformer-averaged free energy of deprotonation in place of the proton binding energy.</td></tr>
+</table></div>
+
+<h3>16. Ring topology</h3>
+
+<p>The library is not topologically uniform, and a descriptor defined by ring position would be
+undefined for a large part of it.</p>
+
+<div class="scroll"><table>
+<tr><th class="lbl">Ring type</th><th>Tested</th><th>Scope only</th><th>Total</th><th class="lbl">Character</th></tr>
+<tr><td class="lbl">Imidazolylidene</td><td>4</td><td>72</td><td>76</td><td class="lbl">Five-membered, two nitrogens, unsaturated backbone</td></tr>
+<tr><td class="lbl">Imidazolinylidene</td><td>11</td><td>18</td><td>29</td><td class="lbl">As above with a saturated backbone, a stronger donor</td></tr>
+<tr><td class="lbl">Triazolinylidene</td><td>4</td><td>24</td><td>28</td><td class="lbl">Three nitrogens, the weakest donor of the four, usually ring-fused</td></tr>
+<tr><td class="lbl">Thiazolylidene</td><td>3</td><td>13</td><td>16</td><td class="lbl">One nitrogen and one sulfur, the thiamine-type catalyst</td></tr>
+<tr><td class="lbl">Other</td><td>0</td><td>12</td><td>12</td><td class="lbl">Includes the acyclic diaminocarbene C83</td></tr>
+<tr><td class="lbl">Total</td><td>22</td><td>139</td><td>161</td><td class="lbl"></td></tr>
+</table></div>
+
+<p>Thiazolylidenes and triazolinylidenes together account for 44 of 161 catalysts, and 7 of the 22
+tested catalysts carry one of these rings. A thiazolylidene has no second ring nitrogen, so a descriptor
+named for the substituent on N3 has no value for it, and the acyclic C83 has no ring positions at all.
+Every descriptor below is therefore defined by chemical role rather than by ring position, and aggregated
+so that it is meaningful on every topology.</p>
+
+<h3>17. Geometries</h3>
+
+<p>All four tables, and <code>soap</code>, are computed on one set of 161 optimised free-carbene
+geometries. Each pre-catalyst is converted to its free carbene, given a starting structure by distance
+geometry with experimentally derived torsion preferences (ETKDGv3 [11]), and relaxed with MMFF94 [12].
+The structure is then optimised with GFN2-xTB [7], a self-consistent semiempirical tight-binding method
+with multipole electrostatics and density-dependent dispersion, using the ALPB implicit solvation model
+[8] parameterised for toluene to match the reaction medium. Every later single-point and adduct
+calculation uses the same method and solvent, so no descriptor mixes solvation treatments.</p>
+
+<p>A doubly strapped cyclophane cannot be embedded by the torsion-driven method and is embedded by plain
+distance geometry instead. All 161 catalysts reached a force-field-relaxed starting structure, and none
+needed a preliminary low-level relaxation before the main optimisation.</p>
+
+<h3>18. Substituent bulk</h3>
+
+<p>Sterimol parameters [9] describe a substituent by three lengths: <b>L</b>, its extent along the bond
+to the parent atom, and <b>B1</b> and <b>B5</b>, its minimum and maximum widths perpendicular to that
+bond. They are the standard steric descriptors of physical organic chemistry; the conformer-aware
+treatment is that of Breth&oacute;m&eacute; and co-workers [10].</p>
+
+<p>For <code>interpretable_steric</code>, every ring atom other than the carbene carbon is assigned by
+element to a nitrogen block or a carbon block, and the substituent it carries contributes one set of
+Sterimol values to that block. Each block is reduced to five numbers that do not depend on the order of
+the substituents: how many there are, the largest L, the sum of L, the largest B5 and the smallest B1. An
+empty block contributes zeros, and the two blocks give ten columns. The largest L and B5 report the most
+demanding substituent, the sum of L reports total encumbrance, and the smallest B1 reports how thin the
+least demanding substituent is, which decides whether a substrate can approach at all. The pair of block
+sizes also encodes topology: two nitrogen and two carbon substituents mark an imidazol(in)ylidene, one
+and two a thiazolylidene, two and one a ring-fused triazolinylidene.</p>
+
+<div class="win">
+<h4>Hydrogen substituents use literature values</h4>
+<p class="small" style="margin:4px 0">The Sterimol code perceives bonds by interatomic distance. For a
+single-hydrogen substituent that criterion reaches past the hydrogen to ring atoms beyond it and returns
+inflated values for what is physically the smallest possible substituent, which would ruin the
+"smallest B1" column. The canonical Verloop values for hydrogen, L = 2.06, B1 = 1.00 and
+B5 = 1.00 &Aring;, are used instead.</p>
+</div>
+
+<h3>19. Whole-ligand bulk and buried volume</h3>
+
+<p>The columns <code>lp_L</code>, <code>lp_B1</code> and <code>lp_B5</code> apply the Sterimol
+measurement to the whole ligand. The lone-pair direction at the carbene is taken opposite the average of
+the vectors to its ring heteroatoms, pointing out of the open coordination site. A dummy atom is placed
+1.5 &Aring; along that direction, where a metal or a bound substrate would sit, and the whole ligand is
+measured as one substituent on that dummy. <code>lp_L</code> is the depth of the ligand along the
+approach axis, and <code>lp_B1</code> and <code>lp_B5</code> its narrowest and widest extents across
+it.</p>
+
+<p>Percent buried volume [13] is the fraction of a sphere centred at the binding site that the ligand
+occupies. A dummy atom is placed 2.0 &Aring; from the carbene along the lone-pair axis, the standard
+metal-position convention, and the occupied fraction of a 3.5 &Aring; sphere around it is computed with
+hydrogens included. The sphere is divided into octants and pair-averaged above and below the ring plane
+into four quadrants, <code>vbur_q1</code> to <code>vbur_q4</code>. A single buried volume reports how
+crowded the site is; the quadrants report where the crowding sits, which separates a symmetric catalyst
+from one with a single large flanking group. <code>interpretable_light</code> compresses them to their
+mean (<code>vbur_scalar</code>) and the difference between the largest and smallest quadrant
+(<code>vbur_asymmetry</code>).</p>
+
+<div class="win">
+<h4>The quadrant frame is reproducible but not chirality-aware</h4>
+<p class="small" style="margin:4px 0">The reference direction that fixes the quadrant frame is chosen
+deterministically, so repeated calculations agree. It is not a chirality canonicalisation: mirror-image
+structures can exchange quadrant 1 with 2 and quadrant 3 with 4. The library contains no enantiomeric
+pairs, so no value is affected, but a chiral scope candidate must be checked by hand before its quadrants
+are compared with anything.</p>
+</div>
+
+<h3>20. Whole-molecule electronic properties</h3>
+
+<div class="scroll"><table>
+<tr><th class="lbl">Column</th><th class="lbl">Unit</th><th class="lbl">Meaning</th></tr>
+<tr><td class="lbl"><code>xtb_homo_eV</code></td><td class="lbl">eV</td><td class="lbl">Highest occupied orbital energy; for a typical NHC the carbene lone pair, tracking &sigma;-donor strength</td></tr>
+<tr><td class="lbl"><code>xtb_lumo_eV</code></td><td class="lbl">eV</td><td class="lbl">Lowest unoccupied orbital energy; tracks &pi;-acceptor character at the carbene</td></tr>
+<tr><td class="lbl"><code>xtb_gap_eV</code></td><td class="lbl">eV</td><td class="lbl">Separation between the two, a measure of electronic stability</td></tr>
+<tr><td class="lbl"><code>xtb_dipole_D</code></td><td class="lbl">Debye</td><td class="lbl">Molecular dipole moment, a proxy for charge separation and interaction with a polar medium</td></tr>
+<tr><td class="lbl"><code>xtb_polarizability_angst3</code></td><td class="lbl">&Aring;&sup3;</td><td class="lbl">Isotropic polarisability, how readily the electron cloud distorts; correlates with dispersion interactions</td></tr>
+</table></div>
+
+<p>All five are read from the optimised free carbene. The three orbital columns were corrected on
+2026-09-19 (section 34).</p>
+
+<h3>21. Properties at the carbene carbon</h3>
+
+<p>The whole-molecule properties describe the catalyst as an object. These describe the reactive atom
+that attacks the aldehyde.</p>
+
+<div class="scroll"><table>
+<tr><th class="lbl">Column</th><th class="lbl">Unit</th><th class="lbl">How it is obtained and what it means</th></tr>
+<tr><td class="lbl"><code>fukui_plus_c2</code></td><td class="lbl">electrons</td><td class="lbl">Change in charge at the carbene when an electron is added, at fixed geometry. Susceptibility to nucleophilic attack at that atom.</td></tr>
+<tr><td class="lbl"><code>fukui_minus_c2</code></td><td class="lbl">electrons</td><td class="lbl">Change in charge when an electron is removed, at fixed geometry. Susceptibility to electrophilic attack, and so the nucleophilic character that drives the first step of the cycle.</td></tr>
+<tr><td class="lbl"><code>homo_weight_c2</code></td><td class="lbl">fraction</td><td class="lbl">Fraction of the highest occupied orbital on the carbene carbon. Near one when the frontier orbital is the carbene lone pair.</td></tr>
+<tr><td class="lbl"><code>mulliken_charge_c2</code></td><td class="lbl">e</td><td class="lbl">Partial charge on the carbene carbon, the simplest measure of its electron richness.</td></tr>
+<tr><td class="lbl"><code>delta_e_h_plus</code></td><td class="lbl">kcal/mol</td><td class="lbl">Energy released on binding a bare proton at the carbene. A sterically blind measure of intrinsic &sigma;-donor strength.</td></tr>
+<tr><td class="lbl"><code>delta_e_bh3</code></td><td class="lbl">kcal/mol</td><td class="lbl">Energy released on binding borane, referenced to free borane. Reports donor strength combined with accessible volume at the carbene.</td></tr>
+</table></div>
+
+<p>The two probes are complementary. A proton is a point charge and reports electronics alone; borane
+has three hydrogens and a real steric demand, so the difference between the probes carries information
+about accessibility that neither gives separately.</p>
+
+<div class="win hi">
+<h4>Four catalysts do not have a carbene-centred frontier orbital</h4>
+<p class="small" style="margin:4px 0">The library median of <code>homo_weight_c2</code> is 0.84, so the
+highest occupied orbital is normally the carbene lone pair. For four catalysts a substituent is more
+electron-rich than the carbene and the orbital is delocalised onto it: C78 (bis-imidazolylidene, 0.005),
+C9 (<i>p</i>-methoxyaryl, 0.008), C31 (anionic backbone, 0.035) and C126 (pyrazine-fused, 0.272).
+<b>For these four the column reports where the frontier orbital is, not how much lone pair sits on the
+carbene</b>, and <code>xtb_homo_eV</code> describes the substituent orbital.</p>
+</div>
+
+<h3>22. Free energy of deprotonation</h3>
+
+<p><code>interpretable_dG</code> differs from <code>interpretable</code> in one column: it carries
+<code>xtb_deltaG_deprot</code>, the free energy of removing the C2 proton from the azolium at 298.15 K in
+toluene, in place of the proton binding energy. The two are the same chemistry at different levels of care. The proton
+binding energy is an electronic energy from a single geometry derived from the carbene. The free energy of
+deprotonation treats the azolium and the carbene independently, because the two can prefer different
+conformations.</p>
+
+<p>For each species up to 20 conformers are generated, pruned at 0.5 &Aring; RMSD, optimised with MMFF
+and kept if within 10 kcal/mol of the best. Each survivor is optimised with GFN2-xTB and its frequencies
+computed, giving a rigid-rotor harmonic-oscillator free energy. A conformer is kept only if it converged,
+has no imaginary mode below &minus;50 cm<sup>&minus;1</sup>, and still carries the expected number of
+hydrogens on the carbene carbon; the last check is geometric, so a proton that migrated during
+optimisation is caught. Conformers within 0.1 kcal/mol and 0.1 &Aring; RMSD of each other are merged as
+one minimum before Boltzmann averaging at 298.15 K, so a minimum reached from several starts is counted
+once. The free-proton term is omitted: it is the same constant for every catalyst and cancels in any
+comparison, so the column is comparable across the library but is not an absolute basicity.</p>
+
+<p>All 161 catalysts completed without a quality failure, and values span 98.9 to 152.2 kcal/mol with a
+median of 131.2.</p>
+
+<div class="win">
+<h4>Why the column replaces the proton binding energy rather than joining it</h4>
+<p class="small" style="margin:4px 0">Across the library the two are near-collinear: Pearson
+r = &minus;0.945 and Spearman &minus;0.955 over 161 catalysts, negative because one is a protonation
+energy and the other a deprotonation energy. Carrying both would put two near-duplicate columns in one
+block, and a comparison against <code>interpretable</code> would ask only whether the free energy adds
+anything on top of a column it correlates with at 0.95. <b>Replacing makes the two tables differ in
+exactly one column and tests whether the conformer ensemble and the thermal correction are worth their
+cost.</b> Only this column is conformer-averaged; the other 29 come from the single optimised geometry,
+so <code>interpretable_dG</code> is a set with one conformer-aware column, not a conformer-aware set.</p>
+</div>
+
+<h3>23. Structural and size descriptors</h3>
+
+<p>The remaining columns carry no quantum chemistry. A four-column indicator gives the pre-catalyst form
+(salt, free carbene, CO&#8322; adduct, bicarbonate). A five-column indicator gives the ring type of
+section 16. One flag records whether the backbone is saturated, which separates imidazolylidenes from
+imidazolinylidenes and is the main electronic difference within that pair. Molecular weight and
+heavy-atom count give overall size.</p>
+
+<p>Categorical variables are expanded into indicators rather than integer codes. The kernels measure
+real-valued distances, so an integer code would place the fourth category three times further from the
+first than the second is, which means nothing for an unordered variable; indicator columns place every
+category at the same distance from every other. Formal charge is absent: every pre-catalyst is
+net-neutral, so the column would be constant.</p>
+
+<h2>Part IV &middot; Solvent, base and reaction conditions</h2>
+
+<h3>24. Solvent descriptor sets</h3>
+
+<p>Five sets cover the 14 solvents. Three are competing physical accounts of what makes a solvent
+matter, kept separate so that the scan reports which account the model needs rather than handing it a
+pooled table. One is a control with no chemistry, and one is a structural fingerprint.</p>
+
+<div class="scroll"><table>
+<tr><th class="lbl">Set</th><th>Width</th><th class="lbl">Descriptors</th><th class="lbl">What it asserts matters</th></tr>
+<tr><td class="lbl"><code>solvent_KT</code></td><td>3</td><td class="lbl">&alpha;, &beta;, &pi;*</td><td class="lbl">Specific hydrogen bonding and overall polarity, measured on the solvent's effect on a dye</td></tr>
+<tr><td class="lbl"><code>solvent_Hansen</code></td><td>4</td><td class="lbl">&delta;D, &delta;P, &delta;H, log P</td><td class="lbl">Cohesive energy split into dispersion, polar and hydrogen-bonding parts, plus partition behaviour</td></tr>
+<tr><td class="lbl"><code>solvent_Gutmann</code></td><td>2</td><td class="lbl">donor number, relative permittivity</td><td class="lbl">Lewis basicity towards a cation, and bulk ability to separate charge</td></tr>
+<tr><td class="lbl"><code>solvent_OHE</code></td><td>14</td><td class="lbl">identity indicator</td><td class="lbl">Nothing; the control every other set has to beat</td></tr>
+<tr><td class="lbl"><code>solvent_map</code></td><td>2,048</td><td class="lbl">atom-pair shingles, radius 1</td><td class="lbl">Molecular structure, with no physical property</td></tr>
+</table></div>
+
+<p><b>Kamlet-Taft parameters</b> are solvatochromic: each is the shift of a dye's absorption in the
+solvent relative to a reference dye chosen to isolate one interaction. &alpha; [17] measures
+hydrogen-bond donation, &beta; [16] hydrogen-bond acceptance, and &pi;* [18] combined dipolarity and
+polarisability. For this reaction &beta; is the parameter of most obvious mechanistic interest, since the
+solvent competes with the catalyst for protons in the proton-transfer steps of the cycle.</p>
+
+<p><b>Hansen parameters</b> [20] decompose the cohesive energy density of the liquid into dispersion,
+permanent-dipole and hydrogen-bonding contributions; two liquids close together in this space dissolve
+each other. The octanol-water partition coefficient is carried alongside for its related partition
+character. <b>Gutmann donor number</b> is the enthalpy released when the solvent coordinates a reference
+Lewis acid, so it reports Lewis basicity towards a cation. Relative permittivity accompanies it as the
+bulk measure of how well the medium separates charge, which matters for a mechanism with charged
+intermediates.</p>
+
+<p>The nine continuous values are standardised per column across all 14 solvents before being split into
+blocks, so a block does not depend on which other blocks exist.</p>
+
+<h3>25. Sources of the solvent values</h3>
+
+<p>The Kamlet-Taft values were checked against the compilation of Marcus [15], which tabulates these
+scales for more than 170 solvents. They match exactly for 12 of the 14 solvents: THF, propylene
+carbonate, toluene, ethyl acetate, heptane, <i>m</i>-xylene, water, ethanol, DMF, dichloromethane,
+1,4-dioxane and HFIP.</p>
+
+<div class="scroll"><table>
+<tr><th class="lbl">Solvent</th><th class="lbl">Value</th><th>Carried</th><th>Marcus</th></tr>
+<tr><td class="lbl">2-Me-THF</td><td class="lbl">&beta;</td><td class="bad">0.52</td><td>0.45</td></tr>
+<tr><td class="lbl">2-Me-THF</td><td class="lbl">&pi;*</td><td class="bad">0.53</td><td>none</td></tr>
+<tr><td class="lbl">2-Me-THF</td><td class="lbl">donor number</td><td class="bad">18.0</td><td>12.0</td></tr>
+<tr><td class="lbl">Dimethoxyethane</td><td class="lbl">&pi;*</td><td class="bad">0.41</td><td>0.53</td></tr>
+<tr><td class="lbl">Dimethoxyethane</td><td class="lbl">donor number</td><td class="bad">24.0</td><td>20.0</td></tr>
+<tr><td class="lbl">1,4-Dioxane</td><td class="lbl">donor number</td><td>14.8</td><td>14.3</td></tr>
+<tr><td class="lbl">Toluene, <i>m</i>-xylene, dichloromethane</td><td class="lbl">donor number</td><td>0.0</td><td>small or none</td></tr>
+</table></div>
+
+<p><b>Five values, for 2-Me-THF and dimethoxyethane, have a different and unrecorded origin.</b> The
+milder differences are a donor number of 14.8 against 14.3 for 1,4-dioxane, and a donor number of exactly zero for three
+non-donor solvents where the compilation gives small non-zero values or none; zero for a non-donor is a
+defensible modelling choice, but it is a choice rather than a transcription.</p>
+
+<p>Donor numbers are attributed to Marcus [19] rather than to Gutmann's monograph [33]. Gutmann
+originated the concept and the calorimetry behind it, but the tabulated scale covering arbitrary organic
+solvents, extended by correlation with other basicity scales, is Marcus's. Relative permittivity and
+partition coefficient carry no recorded source (section 35).</p>
+
+<h3>26. Solvent fingerprint</h3>
+
+<p><code>solvent_map</code> applies the catalyst atom-pair shingle construction [2] at radius 1 rather
+than 2, the appropriate scale for molecules the size of THF, where radius 2 would span most of the
+molecule. All 14 solvents receive distinct vectors, so the set is an identity encoding with structural
+similarity on top, strictly more than the indicator control provides. It is the solvent representation
+used by <code>pablo/main.py</code>.</p>
+
+<h3>27. Base descriptor sets</h3>
+
+<p>Four sets cover the 8 bases. The base is a reaction component only for salt pre-catalysts, so each
+set describes the base alone and the all-zero block for base-free experiments is applied when the model
+is built.</p>
+
+<div class="scroll"><table>
+<tr><th class="lbl">Set</th><th>Width</th><th class="lbl">Descriptors</th><th class="lbl">What it asserts matters</th></tr>
+<tr><td class="lbl"><code>base_thermo</code></td><td>3</td><td class="lbl">proton affinity, two-column organic/inorganic indicator</td><td class="lbl">Thermodynamic strength, and whether the conjugate acid is a soluble ammonium or a lattice-bound alkali salt</td></tr>
+<tr><td class="lbl"><code>base_steric</code></td><td>3</td><td class="lbl">Sterimol L, B1, B5 at the basic atom</td><td class="lbl">How accessible the basic site is</td></tr>
+<tr><td class="lbl"><code>base_OHE</code></td><td>8</td><td class="lbl">identity indicator</td><td class="lbl">Nothing; the control</td></tr>
+<tr><td class="lbl"><code>base_map</code></td><td>2,048</td><td class="lbl">atom-pair shingles over the full salt, radius 1</td><td class="lbl">Molecular structure, counterion included</td></tr>
+</table></div>
+
+<div class="win">
+<h4>Why the organic flag is a two-column indicator</h4>
+<p class="small" style="margin:4px 0">Experiments without a base carry an all-zero base block. With two
+indicator columns, all-zero is unambiguously "no base" and cannot be confused with either real class. A
+single flag would make "no base" indistinguishable from "inorganic", and an integer code could avoid that
+only by reserving a magic value.</p>
+</div>
+
+<h3>28. Proton affinities</h3>
+
+<p>Proton affinity is the energy released when the base binds a proton in the gas phase, the cleanest
+measure of intrinsic basicity, free of solvent and counterion. For an ionic base the relevant species is
+the anion that performs the deprotonation, so the quantity is the proton affinity of that anion, which
+equals the gas-phase acidity of its conjugate acid. The table compares the carried values with the
+evaluated NIST compilation [34] and the primary measurements it draws on.</p>
+
+<div class="scroll"><table>
+<tr><th class="lbl">Base</th><th class="lbl">Species protonated</th><th>Carried (kJ/mol)</th><th>Literature (kJ/mol)</th><th>Difference</th><th class="lbl">Source</th></tr>
+<tr><td class="lbl">Et&#8323;N</td><td class="lbl">Et&#8323;N</td><td>981.8</td><td>981.8</td><td class="good">0</td><td class="lbl">Hunter &amp; Lias [34]</td></tr>
+<tr><td class="lbl"><i>N</i>(<i>i</i>Pr)&#8322;Et</td><td class="lbl"><i>N</i>(<i>i</i>Pr)&#8322;Et</td><td>994.3</td><td>994.3</td><td class="good">0</td><td class="lbl">Hunter &amp; Lias [34]</td></tr>
+<tr><td class="lbl">DBU</td><td class="lbl">DBU</td><td>1,028.0</td><td>1,047.9</td><td class="bad">&minus;19.9</td><td class="lbl">Hunter &amp; Lias [34]</td></tr>
+<tr><td class="lbl">KHMDS</td><td class="lbl">[N(SiMe&#8323;)&#8322;]<sup>&minus;</sup></td><td>1,475.0</td><td>1,490 &plusmn; 8.8</td><td class="bad">&minus;15</td><td class="lbl">Grimm &amp; Bartmess [35]</td></tr>
+<tr><td class="lbl">KO<i>t</i>Bu</td><td class="lbl"><i>t</i>BuO<sup>&minus;</sup></td><td>1,575.0</td><td>1,568 &plusmn; 4.2</td><td>+7</td><td class="lbl">Ramond et al. [36]</td></tr>
+<tr><td class="lbl">NaO<i>t</i>Bu</td><td class="lbl"><i>t</i>BuO<sup>&minus;</sup></td><td>1,575.0</td><td>1,568 &plusmn; 4.2</td><td>+7</td><td class="lbl">Ramond et al. [36]</td></tr>
+<tr><td class="lbl">Rb&#8322;CO&#8323;</td><td class="lbl">CO&#8323;<sup>2&minus;</sup></td><td>1,500.0</td><td>none exists</td><td class="bad">unverifiable</td><td class="lbl">section 35</td></tr>
+<tr><td class="lbl">Cs&#8322;CO&#8323;</td><td class="lbl">CO&#8323;<sup>2&minus;</sup></td><td>1,500.0</td><td>none exists</td><td class="bad">unverifiable</td><td class="lbl">section 35</td></tr>
+</table></div>
+
+<p>Two values reproduce the evaluated compilation exactly. Four sit within 7 to 20 kJ/mol of it, which
+preserves the ordering of the column but not its magnitudes. The two carbonates reference a quantity with
+no evaluated value: the proton affinity of a dianion is not a standard gas-phase observable, because small
+dianions are generally unbound with respect to electron loss in the gas phase.</p>
+
+<div class="win hi">
+<h4>Two pairs of bases are indistinguishable to both physical sets</h4>
+<p class="small" style="margin:4px 0">Rubidium and caesium carbonate carry the same proton affinity, and
+so do the two <i>tert</i>-butoxides. That is chemically correct, because proton affinity is a property of
+the shared anion. Each pair also shares its organic/inorganic class and its basic-site fragment, so
+<b>both <code>base_thermo</code> and <code>base_steric</code> resolve only 6 of the 8 bases</b>. The
+counterion, the one thing that differs within each pair and a plausible influence on solubility and on
+alkoxide aggregation, is invisible to them.</p>
+</div>
+
+<h3>29. Basic-site sterics and the base fingerprint</h3>
+
+<p>For <code>base_steric</code> each base is reduced to the fragment that performs the deprotonation:
+the anion for the ionic bases, the neutral amine otherwise. A measurement axis runs from a reference atom
+to the basic atom, nitrogen for the amines, DBU and KHMDS, oxygen for the alkoxides and carbonates. One
+conformer is generated and force-field optimised, and Sterimol L, B1 and B5 are measured about that axis.
+With a single seeded conformer the values are reproducible but are a property of the generated structure
+as much as of the molecule, and read as an ordering of accessibility rather than as precise
+geometry.</p>
+
+<p><code>base_map</code> is computed over the full salt, counterion included, so in principle it can
+separate the pairs the physical sets cannot. It separates one of the two: potassium and sodium
+<i>tert</i>-butoxide receive different vectors, rubidium and caesium carbonate identical ones.</p>
+
+<div class="scroll"><table>
+<tr><th class="lbl">Set</th><th>Distinct bases</th><th class="lbl">Not separated</th></tr>
+<tr><td class="lbl"><code>base_thermo</code></td><td class="bad">6</td><td class="lbl">Rb&#8322;CO&#8323; with Cs&#8322;CO&#8323;; KO<i>t</i>Bu with NaO<i>t</i>Bu</td></tr>
+<tr><td class="lbl"><code>base_steric</code></td><td class="bad">6</td><td class="lbl">the same two pairs</td></tr>
+<tr><td class="lbl"><code>base_map</code></td><td>7</td><td class="lbl">Rb&#8322;CO&#8323; with Cs&#8322;CO&#8323;</td></tr>
+<tr><td class="lbl"><code>base_OHE</code></td><td class="good">8</td><td class="lbl">none</td></tr>
+</table></div>
+
+<p><b>A result that appears to separate two bases a descriptor set cannot tell apart is separating
+something else in the design.</b></p>
+
+<h3>30. Reaction conditions</h3>
+
+<p>The four continuous variables are mapped onto [&minus;1, 1] with fixed design bounds rather than the
+observed spread, so the encoding is interpretable and does not shift when data is added.</p>
+
+<p class="small" style="margin:6px 0 4px;text-align:center">
+<code>z = 2 (x &minus; lo) / (hi &minus; lo) &minus; 1</code></p>
+
+<div class="scroll"><table>
+<tr><th class="lbl">Variable</th><th class="lbl">Meaning</th><th>Design range</th><th>Observed</th></tr>
+<tr><td class="lbl">Formaldehyde ratio</td><td class="lbl">Equivalents of formaldehyde relative to nonanal</td><td>1.0 to 3.0 eq</td><td>1.18 to 2.99</td></tr>
+<tr><td class="lbl">Catalyst loading</td><td class="lbl">Catalyst relative to limiting substrate</td><td>0.5 to 10.0</td><td>1.14 to 9.02</td></tr>
+<tr><td class="lbl">Temperature</td><td class="lbl">Reaction temperature</td><td>25 to 100 &deg;C</td><td>51 to 100</td></tr>
+<tr><td class="lbl">Time</td><td class="lbl">Reaction time</td><td>1 to 24 h</td><td class="bad">16 to 20</td></tr>
+</table></div>
+
+<p>Every experiment so far ran between 16 and 20 hours, 4 of the 23 hours of the design range, and
+<code>pablo/main.py</code> pins time to 20 hours during acquisition. The effective continuous search is
+three-dimensional over a four-dimensional space, while the fourth variable is still encoded and still
+carries a lengthscale.</p>
+
+<h2>Part V &middot; Properties of the data that affect interpretation</h2>
+
+<h3>31. The library holds 150 distinct pre-catalysts and 113 distinct carbenes</h3>
+
+<p>The 161 entries are not 161 molecules. Eleven pairs are the same pre-catalyst written as two
+different SMILES strings: C2/C45, C5/C44, C6/C72, C11/C74, C12/C34, C13/C37, C14/C41, C16/C40, C17/C28,
+C18/C56 and C21/C109. In every pair the first entry is one of the 22 tested catalysts and the second
+a scope entry, so half of the tested catalysts reappear, unrecognised, among the 139 scope candidates.
+Removing the mask collapses the library further: the 161 entries reduce to 113
+distinct free carbenes, in 26 groups covering 74 entries, the largest of which is seven entries with
+one carbene. Within a group the members are the same carbene as a different salt, a CO&#8322; adduct or a
+bicarbonate, or the same pre-catalyst entered twice.</p>
+
+<p>A descriptor computed on the pre-catalyst should give identical vectors to an identical pair, and a
+descriptor computed on the free carbene should give identical vectors within a carbene group. Form,
+molecular weight and heavy-atom count are the exceptions: they describe the entry, and a CO&#8322; adduct
+genuinely has a different molecular weight from the salt of the same carbene.</p>
+
+<h3>32. Identical molecules receive different vectors in eleven descriptor sets</h3>
+
+<div class="win hi">
+<h4>Duplicate distance</h4>
+<p class="small" style="margin:4px 0">For a descriptor set, the distance between the vectors of two
+entries that should be identical, divided by the median, over the library, of each catalyst's Euclidean
+distance to its nearest chemically distinct neighbour.</p>
+<p class="small" style="margin:6px 0 4px;text-align:center">
+<code>ratio = &Vert;x<sub>a</sub> &minus; x<sub>b</sub>&Vert; / median<sub>i</sub> min<sub>j distinct from i</sub> &Vert;x<sub>i</sub> &minus; x<sub>j</sub>&Vert;</code></p>
+<p class="small" style="margin:4px 0"><b>A ratio of 0 means the duplicates coincide; a ratio of 1 means
+the set puts two copies of one molecule as far apart as a typical catalyst is from its closest different
+catalyst.</b> For pre-catalyst sets the duplicates are the 11 identical pairs and "distinct" means a
+different pre-catalyst; for free-carbene sets they are the 26 carbene groups and "distinct" means a
+different carbene.</p>
+</div>
+
+<p>Every set should give duplicates a ratio of zero. Sixteen sets do, to within 10<sup>&minus;6</sup>:
+<code>ecfp4</code>, <code>mordred</code>, <code>mol2vec</code>, <code>clamp</code>, <code>grover</code>,
+both variants of MiniMol, Graphormer and 3D Infomax, <code>frad_carbene</code>,
+<code>transformerm_carbene</code>, and the three harmonised interpretable sets (section 33). Eleven do
+not.</p>
+
+<div class="scroll"><table>
+<tr><th class="lbl">Set</th><th class="lbl">Duplicates compared</th><th>Differing</th><th>Largest ratio</th><th class="lbl">Cause</th></tr>
+<tr><td class="lbl"><code>unimol</code></td><td class="lbl">26 carbene groups</td><td>12</td><td class="bad">20.01</td><td class="lbl">conformer generated per entry</td></tr>
+<tr><td class="lbl"><code>molformer_xl_carbene</code></td><td class="lbl">26 carbene groups</td><td>18</td><td class="bad">2.84</td><td class="lbl">pooling over padding tokens</td></tr>
+<tr><td class="lbl"><code>chembert2</code></td><td class="lbl">11 identical pairs</td><td>11</td><td class="bad">2.73</td><td class="lbl">different string; pooling over padding tokens</td></tr>
+<tr><td class="lbl"><code>molformer_xl_precat</code></td><td class="lbl">11 identical pairs</td><td>11</td><td class="bad">1.87</td><td class="lbl">different string; pooling over padding tokens</td></tr>
+<tr><td class="lbl"><code>transformerm_precat</code></td><td class="lbl">11 identical pairs</td><td>11</td><td class="bad">1.85</td><td class="lbl">conformer generated per entry</td></tr>
+<tr><td class="lbl"><code>frad_precat</code></td><td class="lbl">11 identical pairs</td><td>11</td><td class="bad">1.52</td><td class="lbl">conformer generated per entry</td></tr>
+<tr><td class="lbl"><code>map4</code></td><td class="lbl">11 identical pairs</td><td>10</td><td class="bad">1.17</td><td class="lbl">shingles depend on the written SMILES</td></tr>
+<tr><td class="lbl"><code>scage_carbene</code></td><td class="lbl">26 carbene groups</td><td>17</td><td>0.38</td><td class="lbl">conformer generated per entry</td></tr>
+<tr><td class="lbl"><code>scage_precat</code></td><td class="lbl">11 identical pairs</td><td>11</td><td>0.27</td><td class="lbl">conformer generated per entry</td></tr>
+<tr><td class="lbl"><code>interpretable_steric</code></td><td class="lbl">26 carbene groups</td><td>2</td><td>0.07</td><td class="lbl">geometry optimised per entry, not harmonised</td></tr>
+<tr><td class="lbl"><code>soap</code></td><td class="lbl">26 carbene groups</td><td>10</td><td>0.04</td><td class="lbl">geometry optimised per entry, not harmonised</td></tr>
+</table></div>
+
+<p><b>In seven sets two copies of one molecule can sit further apart than a typical catalyst sits from
+its closest different catalyst, so part of the distance these sets report is not chemistry.</b></p>
+
+<p>The causes are in the code that produced the vectors. The two MolFormer sets and
+<code>chembert2</code> are mean-pooled over the whole padded batch (<code>features/foundation.py</code>
+takes <code>last_hidden_state.mean(dim=1)</code> with no attention mask), so a molecule's vector depends
+on the longest SMILES in its batch of 32 or 64; in <code>molformer_xl_carbene</code>, 17 of the 24 carbene
+groups whose members have the identical input string still receive different vectors. The string models
+also see a differently written SMILES as a different input. <code>map4</code> depends on how the SMILES
+was entered: ten of the identical pairs have a Tanimoto similarity between 0.555 and 0.947 rather than
+1. The conformer-based sets draw an independent conformer for every entry,
+and in <code>unimol</code> C8 and C80, the same carbene, lie 20 times the typical neighbour
+distance apart.</p>
+
+<p>The spurious distance matters most where it sits: each of the 11 identical pairs joins a tested
+catalyst to its untested copy. In the seven affected sets the GP treats the copy as a different catalyst
+at up to the distance of a real neighbour, so its prediction for the copy does not inherit the tested
+catalyst's measurements in full, and the copy can be proposed as a scope candidate. The pooling
+dependence also adds noise to every other catalyst in the string-model sets; the duplicates are only
+where it can be measured.</p>
+
+<h3>33. The interpretable sets are harmonised within carbene groups</h3>
+
+<p>Each entry was embedded and optimised independently, and six of the 26 carbene groups converged to
+slightly different local minima. The largest within-group disagreements were 0.81 percentage points in a
+buried-volume quadrant (<code>vbur_q4</code>, 7 percent of that column's spread across the library),
+0.52 kcal/mol in the deprotonation free energy, and 0.053 &Aring; in a Sterimol width.</p>
+
+<p>Since 2026-09-19, every group in <code>interpretable</code>, <code>interpretable_light</code> and
+<code>interpretable_dG</code> carries the values of its lowest-xTB-energy member, the members being the
+same molecule so that their energies are directly comparable. Nothing was recomputed: re-deriving the
+geometric columns from the chosen structure reproduces its stored values exactly. Scan results on these
+three sets computed before 2026-09-19 describe the per-entry values.</p>
+
+<div class="scroll"><table>
+<tr><th class="lbl">Sets</th><th class="lbl">Computed from</th><th class="lbl">Identical within a carbene group</th></tr>
+<tr><td class="lbl"><code>interpretable</code>, <code>interpretable_light</code>, <code>interpretable_dG</code></td><td class="lbl">optimised free-carbene geometry</td><td class="lbl good">yes, harmonised</td></tr>
+<tr><td class="lbl"><code>interpretable_steric</code>, <code>soap</code></td><td class="lbl">optimised free-carbene geometry</td><td class="lbl bad">no, not harmonised (section 32)</td></tr>
+<tr><td class="lbl"><code>minimol_carbene</code>, <code>graphormer_carbene</code>, <code>infomax3d_carbene</code>, <code>frad_carbene</code>, <code>transformerm_carbene</code></td><td class="lbl">free-carbene structure</td><td class="lbl good">yes</td></tr>
+<tr><td class="lbl"><code>molformer_xl_carbene</code>, <code>scage_carbene</code>, <code>unimol</code></td><td class="lbl">free-carbene structure</td><td class="lbl bad">no (section 32)</td></tr>
+<tr><td class="lbl">pre-catalyst sets</td><td class="lbl">pre-catalyst as stored</td><td class="lbl">not applicable: they describe the entry</td></tr>
+</table></div>
+
+<h3>34. Frontier orbital energies were corrected on 2026-09-19</h3>
+
+<p>Until 2026-09-19, <code>xtb_homo_eV</code>, <code>xtb_lumo_eV</code> and <code>xtb_gap_eV</code> were
+read from the property block xTB prints for the unrelaxed starting geometry, before optimisation. They
+now come from the converged structure, re-parsed from the stored xTB logs by
+<code>features/interpretable/repair_xtb_scalars.py</code>. The dipole moment and polarisability are
+printed only after convergence and were not affected: polarisability is unchanged and the dipole moment
+moves by at most 0.009 D.</p>
+
+<p class="small">Changes are corrected minus previous values over all 161 catalysts. Rank correlation is the
+Spearman correlation between the previous and the corrected column.</p>
+
+<div class="scroll"><table>
+<tr><th class="lbl">Column</th><th>Mean absolute change (eV)</th><th>Largest change (eV)</th><th>Range before (eV)</th><th>Range now (eV)</th><th>Rank correlation</th></tr>
+<tr><td class="lbl"><code>xtb_homo_eV</code></td><td>0.23</td><td>1.59</td><td>&minus;10.71 to &minus;6.36</td><td>&minus;10.72 to &minus;7.47</td><td>0.89</td></tr>
+<tr><td class="lbl"><code>xtb_lumo_eV</code></td><td>0.65</td><td>2.40</td><td>&minus;9.36 to &minus;5.51</td><td>&minus;9.16 to &minus;4.10</td><td>0.85</td></tr>
+<tr><td class="lbl"><code>xtb_gap_eV</code></td><td class="bad">0.87</td><td class="bad">3.00</td><td>0.85 to 2.89</td><td>1.54 to 4.66</td><td class="bad">0.45</td></tr>
+</table></div>
+
+<p><b>The rank correlation between the old and the corrected gap is 0.45, so any ordering of catalysts by
+gap computed on the old column does not survive.</b> Scan results on <code>interpretable</code>,
+<code>interpretable_light</code> and <code>interpretable_dG</code> computed before 2026-09-19 describe the
+unrelaxed orbital energies.</p>
+
+<h3>35. Values with no established source</h3>
+
+<div class="scroll"><table>
+<tr><th class="lbl">Values</th><th class="lbl">Set</th><th class="lbl">Status</th></tr>
+<tr><td class="lbl">Proton affinity of carbonate</td><td class="lbl"><code>base_thermo</code></td><td class="lbl">Not a measurable gas-phase observable for a dianion, so no reference value exists. The carried value is an estimate.</td></tr>
+<tr><td class="lbl">Proton affinity of DBU, KHMDS and the two butoxides</td><td class="lbl"><code>base_thermo</code></td><td class="lbl">Evaluated values exist and differ by 7 to 20 kJ/mol (section 28). The carried values preserve the ordering but not the magnitudes, and no source is recorded for them.</td></tr>
+<tr><td class="lbl">Relative permittivity, all 14 solvents</td><td class="lbl"><code>solvent_Gutmann</code></td><td class="lbl">Standard handbook values, individually unremarkable, with no source recorded.</td></tr>
+<tr><td class="lbl">Partition coefficient, all 14 solvents</td><td class="lbl"><code>solvent_Hansen</code></td><td class="lbl">Attributed to a database and an estimation method rather than to a record. A per-solvent database identifier would make the column citable.</td></tr>
+<tr><td class="lbl">2-Me-THF and dimethoxyethane parameters</td><td class="lbl"><code>solvent_KT</code>, <code>solvent_Gutmann</code></td><td class="lbl">Five values do not match the compilation they are attributed to (section 25). Origin unknown.</td></tr>
+<tr><td class="lbl">Measurement axes for the base Sterimol values</td><td class="lbl"><code>base_steric</code></td><td class="lbl">Assigned by hand, chemically reasonable and internally consistent, with no external reference. For the carbonates the choice between equivalent oxygens is arbitrary.</td></tr>
+</table></div>
+
+<div class="win hi">
+<h4>What this means for <code>base_thermo</code></h4>
+<p class="small" style="margin:4px 0">Six of the eight proton affinities are unsourced, four of the six
+that can be compared diverge from the evaluated literature, and the set resolves only six of the eight
+bases. A result that turns on <code>base_thermo</code> turns on those values. <b>A thermodynamic cell
+that does not beat <code>base_OHE</code> is not evidence about basicity, and one that does should be
+re-checked against sourced values before it is written up.</b></p>
+</div>
+
+<h2>Part VI &middot; Methods and references</h2>
+
+<h3>36. Inventory of all descriptor sets</h3>
+
+<p class="small">Family rows group the sets. &dagger;: computed on the free carbene; four form columns are appended when the model is built, so the model sees the width plus 4. Every catalyst set except the interpretable tables also exists as <code>&lt;name&gt;_pca</code> (section 4).</p>
+
+<div class="scroll"><table>
+<tr><th class="lbl">Set</th><th class="lbl">Input</th><th class="lbl">Three-dimensional structure</th><th>Width</th><th class="lbl">Ref.</th></tr>
+<tr><td class="lbl" colspan="5"><b>Catalyst, classical</b></td></tr>
+<tr><td class="lbl"><code>ecfp4</code></td><td class="lbl">pre-catalyst structure</td><td class="lbl">none</td><td>2,048</td><td class="lbl">[1]</td></tr>
+<tr><td class="lbl"><code>map4</code></td><td class="lbl">pre-catalyst structure</td><td class="lbl">none</td><td>2,048</td><td class="lbl">[2]</td></tr>
+<tr><td class="lbl"><code>mol2vec</code></td><td class="lbl">pre-catalyst structure</td><td class="lbl">none</td><td>300</td><td class="lbl">[3]</td></tr>
+<tr><td class="lbl"><code>mordred</code></td><td class="lbl">pre-catalyst structure</td><td class="lbl">none</td><td>427</td><td class="lbl">[4]</td></tr>
+<tr><td class="lbl"><code>soap</code></td><td class="lbl">free-carbene geometry</td><td class="lbl">GFN2-xTB, toluene</td><td>7,425</td><td class="lbl">[5], [6]</td></tr>
+<tr><td class="lbl" colspan="5"><b>Catalyst, pretrained language and contrastive</b></td></tr>
+<tr><td class="lbl"><code>molformer_xl_precat</code></td><td class="lbl">pre-catalyst string</td><td class="lbl">none</td><td>768</td><td class="lbl">[21]</td></tr>
+<tr><td class="lbl"><code>molformer_xl_carbene</code> &dagger;</td><td class="lbl">free-carbene string</td><td class="lbl">none</td><td>768</td><td class="lbl">[21]</td></tr>
+<tr><td class="lbl"><code>chembert2</code></td><td class="lbl">pre-catalyst string</td><td class="lbl">none</td><td>384</td><td class="lbl">[22]</td></tr>
+<tr><td class="lbl"><code>clamp</code></td><td class="lbl">pre-catalyst fingerprint</td><td class="lbl">none</td><td>768</td><td class="lbl">[23]</td></tr>
+<tr><td class="lbl"><code>unimol</code> &dagger;</td><td class="lbl">free-carbene geometry</td><td class="lbl">force-field conformer, model-internal</td><td>1,536</td><td class="lbl">[24], [25]</td></tr>
+<tr><td class="lbl"><code>grover</code></td><td class="lbl">pre-catalyst graph</td><td class="lbl">none</td><td>5,000</td><td class="lbl">[26]</td></tr>
+<tr><td class="lbl" colspan="5"><b>Catalyst, pretrained graph</b></td></tr>
+<tr><td class="lbl"><code>minimol_precat</code></td><td class="lbl">pre-catalyst graph</td><td class="lbl">none</td><td>512</td><td class="lbl">[27]</td></tr>
+<tr><td class="lbl"><code>minimol_carbene</code> &dagger;</td><td class="lbl">free-carbene graph</td><td class="lbl">none</td><td>512</td><td class="lbl">[27]</td></tr>
+<tr><td class="lbl"><code>scage_precat</code></td><td class="lbl">pre-catalyst graph and conformer</td><td class="lbl">force-field conformer, model-internal</td><td>512</td><td class="lbl">[28]</td></tr>
+<tr><td class="lbl"><code>scage_carbene</code> &dagger;</td><td class="lbl">free-carbene graph and conformer</td><td class="lbl">force-field conformer, model-internal</td><td>512</td><td class="lbl">[28]</td></tr>
+<tr><td class="lbl"><code>graphormer_precat</code></td><td class="lbl">pre-catalyst graph</td><td class="lbl">none</td><td>768</td><td class="lbl">[29]</td></tr>
+<tr><td class="lbl"><code>graphormer_carbene</code> &dagger;</td><td class="lbl">free-carbene graph</td><td class="lbl">none</td><td>768</td><td class="lbl">[29]</td></tr>
+<tr><td class="lbl"><code>infomax3d_precat</code></td><td class="lbl">pre-catalyst graph</td><td class="lbl">none at inference, distilled in pretraining</td><td>256</td><td class="lbl">[30]</td></tr>
+<tr><td class="lbl"><code>infomax3d_carbene</code> &dagger;</td><td class="lbl">free-carbene graph</td><td class="lbl">as above</td><td>256</td><td class="lbl">[30]</td></tr>
+<tr><td class="lbl"><code>frad_precat</code></td><td class="lbl">pre-catalyst geometry</td><td class="lbl">force-field conformer</td><td>256</td><td class="lbl">[31]</td></tr>
+<tr><td class="lbl"><code>frad_carbene</code> &dagger;</td><td class="lbl">free-carbene geometry</td><td class="lbl">force-field conformer</td><td>256</td><td class="lbl">[31]</td></tr>
+<tr><td class="lbl"><code>transformerm_precat</code></td><td class="lbl">pre-catalyst graph and conformer</td><td class="lbl">force-field conformer</td><td>768</td><td class="lbl">[32]</td></tr>
+<tr><td class="lbl"><code>transformerm_carbene</code> &dagger;</td><td class="lbl">free-carbene graph and conformer</td><td class="lbl">force-field conformer</td><td>768</td><td class="lbl">[32]</td></tr>
+<tr><td class="lbl" colspan="5"><b>Catalyst, interpretable</b></td></tr>
+<tr><td class="lbl"><code>interpretable_steric</code></td><td class="lbl">free-carbene geometry</td><td class="lbl">GFN2-xTB, toluene</td><td>10</td><td class="lbl">[7], [9]</td></tr>
+<tr><td class="lbl"><code>interpretable_light</code></td><td class="lbl">free-carbene geometry</td><td class="lbl">GFN2-xTB, toluene</td><td>21</td><td class="lbl">[7], [8], [13]</td></tr>
+<tr><td class="lbl"><code>interpretable</code></td><td class="lbl">free-carbene geometry</td><td class="lbl">GFN2-xTB, toluene</td><td>30</td><td class="lbl">[7], [13], [14]</td></tr>
+<tr><td class="lbl"><code>interpretable_dG</code></td><td class="lbl">free-carbene geometry; azolium and carbene ensembles</td><td class="lbl">GFN2-xTB with thermal corrections, conformer ensembles for one column</td><td>30</td><td class="lbl">[7], [8], [11], [12]</td></tr>
+<tr><td class="lbl" colspan="5"><b>Solvent</b></td></tr>
+<tr><td class="lbl"><code>solvent_KT</code></td><td class="lbl">tabulated constants</td><td class="lbl">none</td><td>3</td><td class="lbl">[15]&ndash;[18]</td></tr>
+<tr><td class="lbl"><code>solvent_Hansen</code></td><td class="lbl">tabulated constants</td><td class="lbl">none</td><td>4</td><td class="lbl">[20]</td></tr>
+<tr><td class="lbl"><code>solvent_Gutmann</code></td><td class="lbl">tabulated constants</td><td class="lbl">none</td><td>2</td><td class="lbl">[19], [33]</td></tr>
+<tr><td class="lbl"><code>solvent_OHE</code></td><td class="lbl">identity</td><td class="lbl">none</td><td>14</td><td class="lbl">control</td></tr>
+<tr><td class="lbl"><code>solvent_map</code></td><td class="lbl">solvent structure</td><td class="lbl">none</td><td>2,048</td><td class="lbl">[2]</td></tr>
+<tr><td class="lbl" colspan="5"><b>Base</b></td></tr>
+<tr><td class="lbl"><code>base_thermo</code></td><td class="lbl">tabulated proton affinity</td><td class="lbl">none</td><td>3</td><td class="lbl">[34]&ndash;[36]</td></tr>
+<tr><td class="lbl"><code>base_steric</code></td><td class="lbl">basic-site fragment</td><td class="lbl">single force-field conformer</td><td>3</td><td class="lbl">[9], [14]</td></tr>
+<tr><td class="lbl"><code>base_OHE</code></td><td class="lbl">identity</td><td class="lbl">none</td><td>8</td><td class="lbl">control</td></tr>
+<tr><td class="lbl"><code>base_map</code></td><td class="lbl">full salt structure</td><td class="lbl">none</td><td>2,048</td><td class="lbl">[2]</td></tr>
+<tr><td class="lbl" colspan="5"><b>Reaction conditions</b></td></tr>
+<tr><td class="lbl"><code>continuous</code></td><td class="lbl">experimental record</td><td class="lbl">none</td><td>4</td><td class="lbl">design bounds</td></tr>
+</table></div>
+
+<h3>37. Methods and settings</h3>
+
+<div class="scroll"><table>
+<tr><th class="lbl">Step</th><th class="lbl">Method</th><th class="lbl">Settings</th></tr>
+<tr><td class="lbl">Starting geometries</td><td class="lbl">ETKDGv3 distance geometry, then MMFF94 relaxation</td><td class="lbl">Small-ring and macrocycle torsion terms enabled; seeded</td></tr>
+<tr><td class="lbl">Geometry optimisation</td><td class="lbl">GFN2-xTB with ALPB implicit solvation</td><td class="lbl">Toluene; charge set per catalyst from the free-carbene form</td></tr>
+<tr><td class="lbl">Frontier orbitals, dipole, polarisability</td><td class="lbl">Read from the converged optimisation</td><td class="lbl">Same method and solvent</td></tr>
+<tr><td class="lbl">Fukui indices</td><td class="lbl">Vertical single points at one added and one removed electron</td><td class="lbl">Fixed geometry</td></tr>
+<tr><td class="lbl">Probe binding energies</td><td class="lbl">Optimisation of the proton and borane adducts against the free carbene</td><td class="lbl">Probe placed along the lone-pair axis; free borane optimised once as reference</td></tr>
+<tr><td class="lbl">Deprotonation free energy</td><td class="lbl">Independent conformer ensembles of azolium and carbene, frequencies, Boltzmann average</td><td class="lbl">Up to 20 conformers per species, 10 kcal/mol MMFF window, 298.15 K, duplicate minima merged, free-proton term omitted</td></tr>
+<tr><td class="lbl">Buried volume</td><td class="lbl">Octant analysis about a dummy atom at the binding position</td><td class="lbl">3.5 &Aring; sphere, 2.0 &Aring; from the carbene, hydrogens included</td></tr>
+<tr><td class="lbl">Whole-ligand Sterimol</td><td class="lbl">Sterimol about a dummy atom on the lone-pair axis</td><td class="lbl">Dummy 1.5 &Aring; from the carbene</td></tr>
+<tr><td class="lbl">Substituent Sterimol</td><td class="lbl">Distance-based measurement along the substituent bond</td><td class="lbl">Verloop values for single-hydrogen substituents</td></tr>
+<tr><td class="lbl">Solvent and base tables</td><td class="lbl">Literature constants</td><td class="lbl">Standardised per column across each library</td></tr>
+<tr><td class="lbl">Model embeddings</td><td class="lbl">Frozen inference, no weight updates</td><td class="lbl">Normalised to unit vector length</td></tr>
+<tr><td class="lbl">PCA reduction</td><td class="lbl">PCA of the standardised set over all 161 catalysts</td><td class="lbl">Kneedle knee, sensitivity 1; seed 42</td></tr>
+</table></div>
+
+<p>All xTB calculations used GFN2-xTB 6.6.1. Each of the eighteen pretrained embeddings was produced with
+the model authors' released checkpoint and inference code, each model in its own environment.</p>
+
+<h3>38. References</h3>
+
+<div class="scroll"><table>
+<tr><th>No.</th><th class="lbl">Reference</th><th class="lbl">Used for</th></tr>
+<tr><td class="r">1</td><td class="lbl">D. Rogers, M. Hahn. Extended-Connectivity Fingerprints. <i>J. Chem. Inf. Model.</i> 50, 742&ndash;754 (2010). <a href="https://doi.org/10.1021/ci100050t">10.1021/ci100050t</a></td><td class="lbl"><code>ecfp4</code></td></tr>
+<tr><td class="r">2</td><td class="lbl">A. Capecchi, D. Probst, J.-L. Reymond. One molecular fingerprint to rule them all: drugs, biomolecules, and the metabolome. <i>J. Cheminform.</i> 12, 43 (2020). <a href="https://doi.org/10.1186/s13321-020-00445-4">10.1186/s13321-020-00445-4</a></td><td class="lbl"><code>map4</code> at radius 2; solvent and base fingerprints at radius 1</td></tr>
+<tr><td class="r">3</td><td class="lbl">S. Jaeger, S. Fulle, S. Turk. Mol2vec: Unsupervised Machine Learning Approach with Chemical Intuition. <i>J. Chem. Inf. Model.</i> 58, 27&ndash;35 (2018). <a href="https://doi.org/10.1021/acs.jcim.7b00616">10.1021/acs.jcim.7b00616</a></td><td class="lbl"><code>mol2vec</code></td></tr>
+<tr><td class="r">4</td><td class="lbl">H. Moriwaki, Y.-S. Tian, N. Kawashita, T. Takagi. Mordred: a molecular descriptor calculator. <i>J. Cheminform.</i> 10, 4 (2018). <a href="https://doi.org/10.1186/s13321-018-0258-y">10.1186/s13321-018-0258-y</a></td><td class="lbl"><code>mordred</code></td></tr>
+<tr><td class="r">5</td><td class="lbl">A. P. Bart&oacute;k, R. Kondor, G. Cs&aacute;nyi. On representing chemical environments. <i>Phys. Rev. B</i> 87, 184115 (2013). <a href="https://doi.org/10.1103/PhysRevB.87.184115">10.1103/PhysRevB.87.184115</a></td><td class="lbl"><code>soap</code></td></tr>
+<tr><td class="r">6</td><td class="lbl">L. Himanen, M. O. J. J&auml;ger, E. V. Morooka, F. Federici Canova, Y. S. Ranawat, D. Z. Gao, P. Rinke, A. S. Foster. DScribe: Library of descriptors for machine learning in materials science. <i>Comput. Phys. Commun.</i> 247, 106949 (2020). <a href="https://doi.org/10.1016/j.cpc.2019.106949">10.1016/j.cpc.2019.106949</a>; later additions in J. Laakso et al., <i>J. Chem. Phys.</i> 158, 234802 (2023), <a href="https://doi.org/10.1063/5.0151031">10.1063/5.0151031</a></td><td class="lbl"><code>soap</code> implementation</td></tr>
+<tr><td class="r">7</td><td class="lbl">C. Bannwarth, S. Ehlert, S. Grimme. GFN2-xTB: An Accurate and Broadly Parametrized Self-Consistent Tight-Binding Quantum Chemical Method with Multipole Electrostatics and Density-Dependent Dispersion Contributions. <i>J. Chem. Theory Comput.</i> 15, 1652&ndash;1671 (2019). <a href="https://doi.org/10.1021/acs.jctc.8b01176">10.1021/acs.jctc.8b01176</a></td><td class="lbl">every quantum-chemical descriptor and optimised geometry</td></tr>
+<tr><td class="r">8</td><td class="lbl">S. Ehlert, M. Stahn, S. Spicher, S. Grimme. Robust and Efficient Implicit Solvation Model for Fast Semiempirical Methods. <i>J. Chem. Theory Comput.</i> 17, 4250&ndash;4261 (2021). <a href="https://doi.org/10.1021/acs.jctc.1c00471">10.1021/acs.jctc.1c00471</a></td><td class="lbl">toluene solvation throughout</td></tr>
+<tr><td class="r">9</td><td class="lbl">A. Verloop, W. Hoogenstraaten, J. Tipker. Development and Application of New Steric Substituent Parameters in Drug Design. In <i>Drug Design</i>, Vol. VII, ed. E. J. Ari&euml;ns. Academic Press, 165&ndash;207 (1976). <a href="https://doi.org/10.1016/B978-0-12-060307-7.50010-9">10.1016/B978-0-12-060307-7.50010-9</a></td><td class="lbl">L, B1, B5; hydrogen values</td></tr>
+<tr><td class="r">10</td><td class="lbl">A. Breth&oacute;m&eacute;, S. P. Fletcher, R. S. Paton. Conformational Effects on Physical-Organic Descriptors: The Case of Sterimol Steric Parameters. <i>ACS Catal.</i> 9, 2313&ndash;2323 (2019). <a href="https://doi.org/10.1021/acscatal.8b04043">10.1021/acscatal.8b04043</a>; measurement tool G. Luchini, T. Patterson, R. S. Paton, <i>DBSTEP</i>, <a href="https://doi.org/10.5281/zenodo.4702097">10.5281/zenodo.4702097</a></td><td class="lbl">Sterimol workflow and code</td></tr>
+<tr><td class="r">11</td><td class="lbl">S. Riniker, G. A. Landrum. Better Informed Distance Geometry: Using What We Know To Improve Conformation Generation. <i>J. Chem. Inf. Model.</i> 55, 2562&ndash;2574 (2015). <a href="https://doi.org/10.1021/acs.jcim.5b00654">10.1021/acs.jcim.5b00654</a>; small-ring and macrocycle terms: S. Wang, J. Witek, G. A. Landrum, S. Riniker, <i>J. Chem. Inf. Model.</i> 60, 2044&ndash;2058 (2020), <a href="https://doi.org/10.1021/acs.jcim.0c00025">10.1021/acs.jcim.0c00025</a></td><td class="lbl">starting geometries (ETKDGv3)</td></tr>
+<tr><td class="r">12</td><td class="lbl">T. A. Halgren. Merck molecular force field. I. Basis, form, scope, parameterization, and performance of MMFF94. <i>J. Comput. Chem.</i> 17, 490&ndash;519 (1996). <a href="https://doi.org/10.1002/(SICI)1096-987X(199604)17:5/6&lt;490::AID-JCC1&gt;3.0.CO;2-P">10.1002/(SICI)1096-987X(199604)17:5/6&lt;490::AID-JCC1&gt;3.0.CO;2-P</a>; parts II to V in the same issue; implementation: P. Tosco, N. Stiefl, G. Landrum, <i>J. Cheminform.</i> 6, 37 (2014), <a href="https://doi.org/10.1186/s13321-014-0037-3">10.1186/s13321-014-0037-3</a></td><td class="lbl">force-field relaxation</td></tr>
+<tr><td class="r">13</td><td class="lbl">L. Falivene, Z. Cao, A. Petta, L. Serra, A. Poater, R. Oliva, V. Scarano, L. Cavallo. Towards the online computer-aided design of catalytic pockets. <i>Nat. Chem.</i> 11, 872&ndash;879 (2019). <a href="https://doi.org/10.1038/s41557-019-0319-5">10.1038/s41557-019-0319-5</a></td><td class="lbl">buried volume, quadrants, 3.5 &Aring; sphere, 2.0 &Aring; convention</td></tr>
+<tr><td class="r">14</td><td class="lbl">K. Jorner, L. Turcani et al. <i>morfeus: molecular features for machine learning</i>. <a href="https://doi.org/10.5281/zenodo.7017599">10.5281/zenodo.7017599</a></td><td class="lbl">buried-volume quadrants and base Sterimol values</td></tr>
+<tr><td class="r">15</td><td class="lbl">Y. Marcus. The properties of organic liquids that are relevant to their use as solvating solvents. <i>Chem. Soc. Rev.</i> 22, 409&ndash;416 (1993). <a href="https://doi.org/10.1039/CS9932200409">10.1039/CS9932200409</a></td><td class="lbl">reference for the solvent values</td></tr>
+<tr><td class="r">16</td><td class="lbl">M. J. Kamlet, R. W. Taft. The Solvatochromic Comparison Method. I. The &beta;-Scale of Solvent Hydrogen-Bond Acceptor (HBA) Basicities. <i>J. Am. Chem. Soc.</i> 98, 377&ndash;383 (1976). <a href="https://doi.org/10.1021/ja00418a009">10.1021/ja00418a009</a></td><td class="lbl">&beta;</td></tr>
+<tr><td class="r">17</td><td class="lbl">R. W. Taft, M. J. Kamlet. The Solvatochromic Comparison Method. 2. The &alpha;-Scale of Solvent Hydrogen-Bond Donor (HBD) Acidities. <i>J. Am. Chem. Soc.</i> 98, 2886&ndash;2894 (1976). <a href="https://doi.org/10.1021/ja00426a036">10.1021/ja00426a036</a></td><td class="lbl">&alpha;</td></tr>
+<tr><td class="r">18</td><td class="lbl">M. J. Kamlet, J. L. Abboud, R. W. Taft. The Solvatochromic Comparison Method. 6. The &pi;* Scale of Solvent Polarities. <i>J. Am. Chem. Soc.</i> 99, 6027&ndash;6038 (1977). <a href="https://doi.org/10.1021/ja00460a031">10.1021/ja00460a031</a></td><td class="lbl">&pi;*</td></tr>
+<tr><td class="r">19</td><td class="lbl">Y. Marcus. The effectivity of solvents as electron pair donors. <i>J. Solution Chem.</i> 13, 599&ndash;624 (1984). <a href="https://doi.org/10.1007/BF00650369">10.1007/BF00650369</a></td><td class="lbl">tabulated donor numbers</td></tr>
+<tr><td class="r">20</td><td class="lbl">C. M. Hansen. <i>Hansen Solubility Parameters: A User's Handbook</i>, 2nd edition. CRC Press (2007). <a href="https://doi.org/10.1201/9781420006834">10.1201/9781420006834</a></td><td class="lbl">&delta;D, &delta;P, &delta;H</td></tr>
+<tr><td class="r">21</td><td class="lbl">J. Ross, B. Belgodere, V. Chenthamarakshan, I. Padhi, Y. Mroueh, P. Das. Large-scale chemical language representations capture molecular structure and properties. <i>Nat. Mach. Intell.</i> 4, 1256&ndash;1264 (2022). <a href="https://doi.org/10.1038/s42256-022-00580-7">10.1038/s42256-022-00580-7</a></td><td class="lbl">MolFormer-XL; public checkpoint trained on a 10% subset</td></tr>
+<tr><td class="r">22</td><td class="lbl">W. Ahmad, E. Simon, S. Chithrananda, G. Grand, B. Ramsundar. ChemBERTa-2: Towards Chemical Foundation Models. arXiv (2022). <a href="https://doi.org/10.48550/arXiv.2209.01712">10.48550/arXiv.2209.01712</a></td><td class="lbl">ChemBERTa-2</td></tr>
+<tr><td class="r">23</td><td class="lbl">P. Seidl, A. Vall, S. Hochreiter, G. Klambauer. Enhancing Activity Prediction Models in Drug Discovery with the Ability to Understand Human Language. <i>ICML</i> (2023). <a href="https://arxiv.org/abs/2303.03363">arXiv:2303.03363</a></td><td class="lbl">CLAMP</td></tr>
+<tr><td class="r">24</td><td class="lbl">X. Ji, Z. Wang, Z. Gao, H. Zheng, L. Zhang, G. Ke, W. E. Uni-Mol2: Exploring Molecular Pretraining Model at Scale. arXiv (2024). <a href="https://doi.org/10.48550/arXiv.2406.14969">10.48550/arXiv.2406.14969</a></td><td class="lbl">the 1.1 billion parameter checkpoint</td></tr>
+<tr><td class="r">25</td><td class="lbl">G. Zhou, Z. Gao, Q. Ding, H. Zheng, H. Xu, Z. Wei, L. Zhang, G. Ke. Uni-Mol: A Universal 3D Molecular Representation Learning Framework. <i>ICLR</i> (2023). <a href="https://doi.org/10.26434/chemrxiv-2022-jjm0j">10.26434/chemrxiv-2022-jjm0j</a></td><td class="lbl">the architecture Uni-Mol2 scales</td></tr>
+<tr><td class="r">26</td><td class="lbl">Y. Rong, Y. Bian, T. Xu, W. Xie, Y. Wei, W. Huang, J. Huang. Self-Supervised Graph Transformer on Large-Scale Molecular Data. <i>NeurIPS</i> (2020). <a href="https://arxiv.org/abs/2007.02835">arXiv:2007.02835</a></td><td class="lbl">GROVER</td></tr>
+<tr><td class="r">27</td><td class="lbl">K. Kl&auml;ser, B. Banaszewski, S. Maddrell-Mander, C. McLean, L. M&uuml;ller, A. Parviz, S. Huang, A. Fitzgibbon. MiniMol: A Parameter-Efficient Foundation Model for Molecular Learning. arXiv (2024). <a href="https://doi.org/10.48550/arXiv.2404.14986">10.48550/arXiv.2404.14986</a></td><td class="lbl">MiniMol</td></tr>
+<tr><td class="r">28</td><td class="lbl">J. Qiao, J. Jin, D. Wang, S. Teng, J. Zhang, X. Yang, Y. Liu, Y. Wang, L. Cui, Q. Zou, R. Su, L. Wei. A self-conformation-aware pre-training framework for molecular property prediction with substructure interpretability. <i>Nat. Commun.</i> 16 (2025). <a href="https://doi.org/10.1038/s41467-025-59634-0">10.1038/s41467-025-59634-0</a></td><td class="lbl">SCAGE</td></tr>
+<tr><td class="r">29</td><td class="lbl">C. Ying, T. Cai, S. Luo, S. Zheng, G. Ke, D. He, Y. Shen, T.-Y. Liu. Do Transformers Really Perform Bad for Graph Representation? <i>NeurIPS</i> (2021). <a href="https://arxiv.org/abs/2106.05234">arXiv:2106.05234</a></td><td class="lbl">Graphormer</td></tr>
+<tr><td class="r">30</td><td class="lbl">H. St&auml;rk, D. Beaini, G. Corso, P. Tossou, C. Dallago, S. G&uuml;nnemann, P. Li&ograve;. 3D Infomax improves GNNs for Molecular Property Prediction. <i>ICML</i> (2022). <a href="https://arxiv.org/abs/2110.04126">arXiv:2110.04126</a></td><td class="lbl">3D Infomax</td></tr>
+<tr><td class="r">31</td><td class="lbl">S. Feng, Y. Ni, Y. Lan, Z.-M. Ma, W.-Y. Ma. Fractional Denoising for 3D Molecular Pre-training. <i>ICML</i> (2023). <a href="https://arxiv.org/abs/2307.10683">arXiv:2307.10683</a>; backbone TorchMD-NET, Th&ouml;lke &amp; De Fabritiis, <i>ICLR</i> 2022, <a href="https://arxiv.org/abs/2202.02541">arXiv:2202.02541</a></td><td class="lbl">Frad</td></tr>
+<tr><td class="r">32</td><td class="lbl">S. Luo, T. Chen, Y. Xu, S. Zheng, T.-Y. Liu, L. Wang, D. He. One Transformer Can Understand Both 2D &amp; 3D Molecular Data. <i>ICLR</i> (2023). <a href="https://arxiv.org/abs/2210.01765">arXiv:2210.01765</a></td><td class="lbl">Transformer-M</td></tr>
+<tr><td class="r">33</td><td class="lbl">V. Gutmann. <i>The Donor-Acceptor Approach to Molecular Interactions</i>. Plenum Press, New York (1978). <a href="https://doi.org/10.1007/978-1-4615-8825-2">10.1007/978-1-4615-8825-2</a></td><td class="lbl">origin of the donor number</td></tr>
+<tr><td class="r">34</td><td class="lbl">E. P. L. Hunter, S. G. Lias. Evaluated Gas Phase Basicities and Proton Affinities of Molecules: An Update. <i>J. Phys. Chem. Ref. Data</i> 27, 413&ndash;656 (1998). <a href="https://doi.org/10.1063/1.556018">10.1063/1.556018</a>; <a href="https://webbook.nist.gov/chemistry/">NIST Chemistry WebBook</a></td><td class="lbl">Et&#8323;N 981.8, <i>N</i>(<i>i</i>Pr)&#8322;Et 994.3, DBU 1,047.9 kJ/mol</td></tr>
+<tr><td class="r">35</td><td class="lbl">D. T. Grimm, J. E. Bartmess. Intrinsic (gas phase) basicity of some anionic bases commonly used in condensed-phase synthesis. <i>J. Am. Chem. Soc.</i> 114, 1227 (1992); as compiled in the <a href="https://webbook.nist.gov/cgi/cbook.cgi?ID=C999973&amp;Mask=20">NIST Chemistry WebBook</a></td><td class="lbl">HMDS acidity, 1,490 &plusmn; 8.8 kJ/mol</td></tr>
+<tr><td class="r">36</td><td class="lbl">T. M. Ramond, G. E. Davico et al. Vibronic structure of alkoxy radicals via photoelectron spectroscopy. <i>J. Chem. Phys.</i> 112, 1158&ndash;1169 (2000); as compiled in the <a href="https://webbook.nist.gov/cgi/cbook.cgi?ID=C75650&amp;Mask=20">NIST Chemistry WebBook</a></td><td class="lbl"><i>tert</i>-butanol acidity, 1,568 &plusmn; 4.2 kJ/mol</td></tr>
+</table></div>
+
+<footer>Sources, all under <code>pablo/featurization_and_kernel_scan/</code>:
+<code>data/libraries/catalysts.parquet</code> (161 rows), <code>solvents.parquet</code> (14),
+<code>bases.parquet</code> (8), <code>experiments.parquet</code> (69);
+<code>data/featurizations/&lt;set&gt;/descriptors.parquet</code> and <code>metadata.json</code> for all 36
+full sets and 23 <code>_pca</code> sets; <code>data/featurizations/continuous/</code> (65 condition rows
+after replicate collapse); <code>data/xtb/outputs/</code> (161 GFN2-xTB 6.6.1 logs);
+<code>core/config.py</code> (form-indicator appending); <code>features/foundation.py</code> (MolFormer and
+ChemBERTa pooling); <code>features/interpretable/descriptors.py</code> (probe, buried-volume and
+deprotonation settings); <code>features/interpretable/canonicalize_duplicates.py</code> and
+<code>repair_xtb_scalars.py</code> (the 2026-09-19 repairs); <code>features/components.py</code>
+(solvent constants); <code>pablo/main.py</code> (production solvent set, time pinned to 20 h).
+Duplicates are identified by RDKit canonical SMILES of the pre-catalyst and of the free carbene; the
+duplicate-distance ratio uses Euclidean distance on the stored <code>descriptors.parquet</code>, without
+the form columns appended at build time. Literature values in Part II are the source papers' own.</footer>
+
+</body></html>

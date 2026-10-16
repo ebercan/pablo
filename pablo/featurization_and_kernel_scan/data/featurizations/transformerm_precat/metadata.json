@@ -1,0 +1,14 @@
+{
+  "n_molecules": 161,
+  "label": "Transformer-M-precat",
+  "raw_model_output_file": "raw_model_output.parquet",
+  "raw_model_dim": 768,
+  "repo": "lsj2408/Transformer-M",
+  "checkpoint": "/home/enis/Desktop/transformer_m/L12.pt",
+  "embedding": "graph/virtual token (768-d)",
+  "embedding_dim": 768,
+  "free_carbene": false,
+  "form_onehot_appended": false,
+  "n_features": 768,
+  "descriptors_file": "descriptors.parquet"
+}

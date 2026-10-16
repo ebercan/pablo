@@ -1,0 +1,23 @@
+{
+  "n_molecules": 8,
+  "n_features": 5000,
+  "label": "GROVERlarge",
+  "raw_model_output_file": "raw_model_output.parquet",
+  "descriptors_file": "descriptors.parquet",
+  "raw_model_dim": 5000,
+  "model": "grover_large",
+  "params": "100M",
+  "fingerprint_source": "both",
+  "checkpoint": "/home/enis/Py-VSCode/pablo/pablo/featurization_and_kernel_scan/data/weights/grover_large.pt",
+  "names": [
+    "Triethylamine",
+    "Potassium tert-butoxide",
+    "Rubidium carbonate",
+    "N-Ethyl-N-isopropylpropan-2-amine (H\u00fcnig's base)",
+    "Cesium carbonate",
+    "1,8-Diazabicyclo[5.4.0]undec-7-ene",
+    "Potassium bis(trimethylsilyl)amide",
+    "Sodium tert-butoxide"
+  ],
+  "input_smiles": "library SMILES, salts with counter-cations"
+}

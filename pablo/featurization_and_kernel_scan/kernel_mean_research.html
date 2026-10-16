@@ -1,0 +1,1271 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kernel structures and mean functions</title>
+<script>
+(function () {
+  var root = document.documentElement;
+  var saved = localStorage.getItem('pablo_theme');
+  var sys = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  root.setAttribute('data-theme', saved || sys);
+  root.setAttribute('data-sidebar', localStorage.getItem('pablo_sidebar') || 'open');
+  var w = parseInt(localStorage.getItem('pablo_sidebar_w'), 10);
+  if (w >= 220 && w <= 560) root.style.setProperty('--sidebar-w', w + 'px');
+})();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.19.0/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.19.0/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.19.0/dist/contrib/auto-render.min.js"></script>
+<style>
+:root{
+  --font-sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  --font-mono:'Fira Code','SFMono-Regular',Consolas,Monaco,monospace;
+  --sidebar-w:300px; --header-h:60px;
+  --radius-sm:5px; --radius-md:8px; --radius-lg:10px;
+}
+[data-theme="light"]{
+  color-scheme:light;
+  --bg-app:#F5F6F8; --bg-card:#FFFFFF; --bg-card-subtle:#F0F2F5; --bg-elevated:#E8EBF0;
+  --bg-header:rgba(255,255,255,.92); --bg-code:#1B2330; --code-ink:#E3E7ED; --grid-line:rgba(24,32,44,.03);
+  --border-subtle:#DADFE6; --border-strong:#C3CAD4;
+  --text-main:#18202C; --text-muted:#4B5563; --text-dim:#6B7280;
+  --red:#A23B32;    --red-rgb:162,59,50;
+  --orange:#AE5520; --orange-rgb:174,85,32;
+  --yellow:#8A6A12; --yellow-rgb:138,106,18;
+  --green:#2F6B45;  --green-rgb:47,107,69;
+  --teal:#1F6E6A;   --teal-rgb:31,110,106;
+  --blue:#1F5A99;   --blue-rgb:31,90,153;
+  --indigo:#43479A; --indigo-rgb:67,71,154;
+  --purple:#6B3F8F; --purple-rgb:107,63,143;
+  --slate:#4A5568;  --slate-rgb:74,85,104;
+  --tint:.07;
+  --shadow-card:0 1px 2px rgba(24,32,44,.06),0 2px 8px rgba(24,32,44,.04);
+}
+[data-theme="dark"]{
+  color-scheme:dark;
+  --bg-app:#0F1216; --bg-card:#161A20; --bg-card-subtle:#1B2027; --bg-elevated:#232932;
+  --bg-header:rgba(15,18,22,.92); --bg-code:#0B0D10; --code-ink:#D5DBE3; --grid-line:rgba(255,255,255,.02);
+  --border-subtle:#2A3039; --border-strong:#3A424E;
+  --text-main:#E6E9EE; --text-muted:#A7B0BC; --text-dim:#7C8692;
+  --red:#E3867B;    --red-rgb:227,134,123;
+  --orange:#E5A06A; --orange-rgb:229,160,106;
+  --yellow:#D6B862; --yellow-rgb:214,184,98;
+  --green:#82C29B;  --green-rgb:130,194,155;
+  --teal:#6FC0B7;   --teal-rgb:111,192,183;
+  --blue:#82A9DE;   --blue-rgb:130,169,222;
+  --indigo:#A0A4E4; --indigo-rgb:160,164,228;
+  --purple:#BC9DD9; --purple-rgb:188,157,217;
+  --slate:#A0AEC0;  --slate-rgb:160,174,192;
+  --tint:.11;
+  --shadow-card:0 1px 2px rgba(0,0,0,.4);
+}
+:root,[data-hue="0"]{--sec:var(--blue);--sec-rgb:var(--blue-rgb)}
+[data-hue="1"]{--sec:var(--teal);--sec-rgb:var(--teal-rgb)}
+[data-hue="2"]{--sec:var(--red);--sec-rgb:var(--red-rgb)}
+[data-hue="3"]{--sec:var(--green);--sec-rgb:var(--green-rgb)}
+[data-hue="4"]{--sec:var(--purple);--sec-rgb:var(--purple-rgb)}
+[data-hue="5"]{--sec:var(--orange);--sec-rgb:var(--orange-rgb)}
+[data-hue="6"]{--sec:var(--indigo);--sec-rgb:var(--indigo-rgb)}
+[data-hue="7"]{--sec:var(--yellow);--sec-rgb:var(--yellow-rgb)}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{font-size:15px;scroll-behavior:smooth;scroll-padding-top:calc(var(--header-h) + 24px)}
+body{background:var(--bg-app);color:var(--text-main);font-family:var(--font-sans);
+ line-height:1.65;-webkit-font-smoothing:antialiased;min-height:100vh;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+ background-image:linear-gradient(to right,var(--grid-line) 1px,transparent 1px),
+  linear-gradient(to bottom,var(--grid-line) 1px,transparent 1px);
+ background-size:40px 40px}
+
+header.app-header{position:fixed;top:0;left:0;right:0;height:var(--header-h);z-index:100;
+ background:var(--bg-header);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+ border-bottom:1px solid var(--border-subtle);display:flex;align-items:center;
+ justify-content:space-between;gap:1rem;padding:0 1.25rem}
+.brand-wrapper{display:flex;align-items:center;gap:.85rem;min-width:0}
+.brand-badge{font-family:var(--font-mono);font-size:.72rem;font-weight:600;letter-spacing:.06em;
+ text-transform:uppercase;padding:.25rem .6rem;border-radius:var(--radius-sm);white-space:nowrap;
+ color:var(--text-muted);border:1px solid var(--border-strong)}
+.brand-title{font-size:1rem;font-weight:650;letter-spacing:-.01em;color:var(--text-main);
+ white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brand-title .dim{color:var(--text-muted);font-weight:400}
+.header-controls{display:flex;align-items:center;gap:.75rem}
+.reading-progress-track{position:absolute;bottom:-1px;left:0;width:100%;height:2px}
+.reading-progress-bar{height:100%;width:0;background:var(--blue);transition:width .1s ease-out}
+.btn-icon{background:transparent;border:1px solid var(--border-subtle);color:var(--text-muted);
+ width:36px;height:36px;border-radius:var(--radius-sm);display:inline-flex;align-items:center;
+ justify-content:center;cursor:pointer;transition:all .15s ease;flex:none}
+.btn-icon:hover{color:var(--text-main);border-color:var(--border-strong);background:var(--bg-card-subtle)}
+.btn-icon.sm{width:32px;height:32px}
+.btn-icon .moon{display:none}
+[data-theme="light"] .btn-icon .sun{display:none}
+[data-theme="light"] .btn-icon .moon{display:block}
+[data-sidebar="open"] #sidebarToggleBtn{color:var(--blue);border-color:rgba(var(--blue-rgb),.45);background:rgba(var(--blue-rgb),var(--tint))}
+
+.layout-container{display:flex;position:relative;margin-top:var(--header-h);z-index:1}
+aside.app-sidebar{width:var(--sidebar-w);position:fixed;top:var(--header-h);bottom:0;left:0;z-index:50;
+ background:var(--bg-card);border-right:1px solid var(--border-subtle);display:flex;flex-direction:column;
+ transition:transform .25s ease}
+[data-sidebar="closed"] aside.app-sidebar{transform:translateX(-100%)}
+.sidebar-resizer{position:absolute;top:0;right:-4px;width:8px;bottom:0;cursor:col-resize;z-index:2}
+.sidebar-resizer::after{content:"";position:absolute;top:0;bottom:0;left:3px;width:2px;background:var(--blue);
+ opacity:0;transition:opacity .2s}
+.sidebar-resizer:hover::after,.resizing .sidebar-resizer::after{opacity:1}
+.resizing,.resizing *{cursor:col-resize!important;user-select:none!important;transition:none!important}
+.sidebar-toolbar{display:flex;gap:.5rem;align-items:center;padding:1rem 1rem .75rem;
+ border-bottom:1px solid var(--border-subtle)}
+.search-input{flex:1;min-width:0;padding:.45rem .7rem;background:var(--bg-card-subtle);
+ border:1px solid var(--border-subtle);border-radius:var(--radius-sm);color:var(--text-main);
+ font:inherit;font-size:.85rem;outline:none}
+.search-input:focus{border-color:var(--blue);box-shadow:0 0 0 2px rgba(var(--blue-rgb),.18)}
+#expandAllBtn svg{transition:transform .2s}
+#expandAllBtn.all-open svg{transform:rotate(180deg)}
+.nav-links-scroll{flex:1;overflow-y:auto;padding:.75rem .75rem 2rem}
+.nav-group-title{font-size:.68rem;text-transform:uppercase;letter-spacing:.1em;font-weight:650;
+ color:var(--text-dim);padding:.6rem .5rem .35rem}
+.nav-group{margin-bottom:2px}
+.nav-row{display:flex;align-items:stretch;border-radius:var(--radius-sm);border-left:2px solid transparent}
+.nav-row:hover{background:var(--bg-card-subtle)}
+.nav-item{flex:1;min-width:0;display:flex;align-items:baseline;gap:.6rem;padding:.45rem .4rem .45rem .55rem;
+ color:var(--text-muted);text-decoration:none;font-size:.86rem;font-weight:500}
+.nav-row:hover .nav-item{color:var(--text-main)}
+.nav-badge-num{font-family:var(--font-mono);font-size:.7rem;font-weight:600;color:var(--sec);min-width:1.9rem;flex:none}
+.nav-group.active .nav-row{background:rgba(var(--sec-rgb),var(--tint));border-left-color:var(--sec)}
+.nav-group.active .nav-item{color:var(--text-main);font-weight:600}
+.nav-caret{flex:none;width:30px;background:none;border:none;color:var(--text-dim);cursor:pointer;
+ display:flex;align-items:center;justify-content:center;border-radius:var(--radius-sm)}
+.nav-caret:hover{color:var(--text-main)}
+.nav-caret svg{transition:transform .2s}
+.nav-group.open .nav-caret svg{transform:rotate(90deg)}
+.nav-sub{display:none;margin:2px 0 6px 1.4rem;padding-left:.6rem;border-left:1px solid var(--border-strong)}
+.nav-group.open .nav-sub{display:block}
+.nav-subitem{display:block;padding:.28rem .55rem;font-size:.8rem;line-height:1.4;color:var(--text-muted);
+ text-decoration:none;border-radius:4px}
+.nav-subitem:hover{color:var(--text-main);background:var(--bg-card-subtle)}
+.nav-subitem.active{color:var(--sec);font-weight:600}
+.sidebar-hint{padding:.6rem 1rem;border-top:1px solid var(--border-subtle);font-size:.7rem;color:var(--text-dim)}
+.sidebar-hint kbd{font-family:var(--font-mono);font-size:.68rem;border:1px solid var(--border-strong);
+ border-radius:3px;padding:0 .3rem;background:var(--bg-card-subtle)}
+.sidebar-backdrop{display:none}
+
+main.app-main{margin-left:var(--sidebar-w);flex:1;padding:3rem 4rem 6rem;max-width:calc(1240px + var(--sidebar-w));
+ min-width:0;transition:margin-left .25s ease}
+[data-sidebar="closed"] main.app-main{margin-inline:auto;max-width:1240px}
+.hero-header{margin-bottom:3.25rem;padding-bottom:2rem;border-bottom:1px solid var(--border-strong)}
+.hero-meta{display:flex;align-items:center;gap:.75rem;margin-bottom:1rem;flex-wrap:wrap}
+.hero-tag{font-family:var(--font-mono);font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;
+ color:var(--blue);padding:.2rem .6rem;border:1px solid rgba(var(--blue-rgb),.4);border-radius:var(--radius-sm)}
+.hero-date{font-family:var(--font-mono);font-size:.8rem;color:var(--text-dim)}
+.hero-title{font-size:2.5rem;font-weight:800;letter-spacing:-.03em;line-height:1.12;margin-bottom:.9rem;color:var(--text-main)}
+.hero-subtitle{font-size:1.05rem;color:var(--text-muted);max-width:950px;line-height:1.55}
+
+section.content-section{margin-bottom:4.25rem;scroll-margin-top:calc(var(--header-h) + 30px)}
+.section-header-block{margin-bottom:1.6rem;padding-left:1rem;border-left:3px solid var(--sec)}
+.section-num-tag{display:block;font-family:var(--font-mono);font-size:.74rem;font-weight:600;color:var(--sec);
+ text-transform:uppercase;letter-spacing:.1em;margin-bottom:.35rem}
+.section-heading{font-size:1.75rem;font-weight:750;letter-spacing:-.02em;line-height:1.25;margin-bottom:.55rem}
+.section-lead{font-size:1.05rem;color:var(--text-muted);line-height:1.6;max-width:90ch;margin-bottom:0}
+h3.subheading{font-size:1.25rem;font-weight:650;margin:2.25rem 0 .9rem;letter-spacing:-.01em;
+ display:flex;align-items:baseline;gap:.6rem;scroll-margin-top:calc(var(--header-h) + 24px)}
+h3.subheading::before{content:"";flex:none;width:8px;height:8px;border-radius:2px;background:var(--sec);transform:translateY(-2px)}
+h4.tertiary-heading{font-size:1rem;font-weight:650;color:var(--text-main);margin:1.5rem 0 .6rem}
+p{margin-bottom:1.1rem;max-width:90ch}
+p.muted,.small{color:var(--text-muted)}
+.small{font-size:.88rem}
+strong,b{font-weight:650}
+code{font-family:var(--font-mono);font-size:.84em;color:var(--text-main);background:var(--bg-card-subtle);
+ border:1px solid var(--border-subtle);padding:.05rem .35rem;border-radius:4px}
+
+.card{background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:var(--radius-lg);
+ padding:1.4rem 1.5rem;box-shadow:var(--shadow-card);margin-bottom:1.5rem}
+.card > :last-child,.callout > :last-child{margin-bottom:0}
+.grid-2,.grid-3{display:grid;gap:1.25rem;margin-bottom:1.5rem}
+.grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.grid-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.grid-2 > .card,.grid-3 > .card{margin-bottom:0}
+
+.callout{--c:var(--blue);--c-rgb:var(--blue-rgb);
+ border-radius:0 var(--radius-md) var(--radius-md) 0;padding:1rem 1.3rem;margin:1.5rem 0;
+ border-left:3px solid var(--c);background:rgba(var(--c-rgb),var(--tint));max-width:90ch}
+.callout-title{font-weight:650;font-size:.78rem;margin-bottom:.45rem;text-transform:uppercase;letter-spacing:.07em;color:var(--c)}
+.callout-insight{--c:var(--green);--c-rgb:var(--green-rgb)}
+.callout-math{--c:var(--indigo);--c-rgb:var(--indigo-rgb)}
+.callout-warning{--c:var(--yellow);--c-rgb:var(--yellow-rgb)}
+.callout-danger{--c:var(--red);--c-rgb:var(--red-rgb)}
+.callout-arch{--c:var(--blue);--c-rgb:var(--blue-rgb)}
+
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.75rem;margin:1.5rem 0}
+.kpi{background:var(--bg-card);border:1px solid var(--border-subtle);border-top:2px solid var(--sec);
+ border-radius:var(--radius-md);padding:.75rem 1rem;box-shadow:var(--shadow-card)}
+.kpi .k{font-size:.7rem;font-weight:650;text-transform:uppercase;letter-spacing:.07em;color:var(--text-dim)}
+.kpi .v{font-size:1.55rem;font-weight:750;letter-spacing:-.02em;color:var(--text-main);font-variant-numeric:tabular-nums}
+
+.table-responsive{width:100%;overflow-x:auto;margin:1.5rem 0;border-radius:var(--radius-md);
+ border:1px solid var(--border-subtle);background:var(--bg-card)}
+table.data-table{width:100%;border-collapse:collapse;text-align:left;font-size:.9rem}
+table.data-table th{background:var(--bg-card-subtle);color:var(--text-muted);padding:.65rem 1rem;font-weight:650;
+ font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;border-bottom:2px solid var(--sec);
+ white-space:nowrap;position:sticky;top:0}
+table.data-table td{padding:.55rem 1rem;border-bottom:1px solid var(--border-subtle);vertical-align:top}
+table.data-table tbody tr:hover td{background:var(--bg-card-subtle)}
+table.data-table tr:last-child td{border-bottom:none}
+table.data-table .num{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+table.data-table td.r{color:var(--text-dim)}
+table.data-table td.good{background:rgba(var(--green-rgb),calc(var(--tint) * 1.6))!important;color:var(--green);font-weight:650}
+table.data-table td.bad{background:rgba(var(--red-rgb),calc(var(--tint) * 1.6))!important;color:var(--red);font-weight:650}
+
+.chip{display:inline-flex;align-items:center;padding:.08rem .45rem;border-radius:4px;font-family:var(--font-mono);
+ font-size:.72rem;font-weight:600;margin:.1rem;--c:var(--slate);--c-rgb:var(--slate-rgb);
+ color:var(--c);background:rgba(var(--c-rgb),var(--tint));border:1px solid rgba(var(--c-rgb),.35)}
+.chip-red{--c:var(--red);--c-rgb:var(--red-rgb)} .chip-orange{--c:var(--orange);--c-rgb:var(--orange-rgb)}
+.chip-yellow{--c:var(--yellow);--c-rgb:var(--yellow-rgb)} .chip-green{--c:var(--green);--c-rgb:var(--green-rgb)}
+.chip-teal{--c:var(--teal);--c-rgb:var(--teal-rgb)} .chip-blue{--c:var(--blue);--c-rgb:var(--blue-rgb)}
+.chip-indigo{--c:var(--indigo);--c-rgb:var(--indigo-rgb)} .chip-purple{--c:var(--purple);--c-rgb:var(--purple-rgb)}
+.chip-slate{--c:var(--slate);--c-rgb:var(--slate-rgb)}
+
+.math-display{overflow-x:auto;overflow-y:hidden;padding:.35rem 1.25rem;margin:.9rem 0;background:var(--bg-card);
+ border:1px solid var(--border-subtle);border-radius:var(--radius-md);font-size:1.1rem}
+.katex{font-size:1.06em}
+.katex-display{margin:.6em 0}
+.katex-error{color:var(--red)!important;background:rgba(var(--red-rgb),.12);padding:0 .3rem;border-radius:3px}
+.diagram-wrapper{background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:var(--radius-lg);
+ padding:1.5rem;margin:1.5rem 0}
+.diagram-wrapper svg{display:block;max-width:100%;height:auto;margin:0 auto}
+.diagram-caption{margin-top:.9rem;font-size:.82rem;color:var(--text-dim);text-align:center}
+pre.code-block{background:var(--bg-code);border:1px solid var(--border-subtle);border-radius:var(--radius-md);
+ padding:1rem 1.1rem;overflow-x:auto;font-family:var(--font-mono);font-size:.83rem;line-height:1.5;
+ color:var(--code-ink);margin:1rem 0}
+pre.code-block code{color:inherit;background:none;border:none;padding:0}
+
+footer.report-footer{margin-top:3rem;padding-top:1.1rem;border-top:1px solid var(--border-strong);
+ color:var(--text-dim);font-size:.85rem}
+
+@media (max-width:1100px){.grid-2,.grid-3{grid-template-columns:1fr}}
+@media (max-width:900px){
+  aside.app-sidebar{width:min(86vw,340px);transform:translateX(-100%);box-shadow:0 8px 30px rgba(0,0,0,.25)}
+  [data-sidebar-mobile="open"] aside.app-sidebar{transform:none}
+  [data-sidebar-mobile="open"] .sidebar-backdrop{display:block;position:fixed;inset:var(--header-h) 0 0 0;
+   z-index:40;background:rgba(0,0,0,.4)}
+  .sidebar-resizer,.sidebar-hint{display:none}
+  main.app-main,[data-sidebar="closed"] main.app-main{margin-left:0;padding:2rem 16px 5rem}
+  header.app-header{padding:0 12px}
+  .header-controls .chip,.brand-badge{display:none}
+  .hero-title{font-size:1.9rem}
+  .section-heading{font-size:1.45rem}
+}
+@media print{
+  header.app-header,aside.app-sidebar,body::before{display:none}
+  .layout-container{margin-top:0}
+  main.app-main{margin-left:0;padding:0;max-width:none}
+  .card,.kpi{box-shadow:none}
+  table.data-table th{position:static}
+}
+</style></head>
+<body>
+
+<header class="app-header">
+  <div class="brand-wrapper">
+    <button id="sidebarToggleBtn" class="btn-icon" onclick="toggleSidebar()" title="Show or hide contents ( [ )" aria-label="Toggle contents">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><line x1="9" y1="4" x2="9" y2="20"/></svg>
+    </button>
+    <span class="brand-badge">pablo</span>
+    <div class="brand-title">Kernel structures and means <span class="dim">&middot; diagnosis, literature, proposals</span></div>
+  </div>
+  <div class="header-controls">
+    <span class="chip chip-slate">elimination &middot; cross_1</span>
+    <button id="themeToggleBtn" class="btn-icon" onclick="toggleTheme()" title="Switch theme" aria-label="Switch theme">
+      <svg class="sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      <svg class="moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
+  </div>
+  <div class="reading-progress-track"><div id="progressBar" class="reading-progress-bar"></div></div>
+</header>
+
+<div class="layout-container">
+  <aside class="app-sidebar" id="sidebar">
+    <div class="sidebar-toolbar">
+      <input type="text" id="sidebarSearch" class="search-input" placeholder="Filter sections...">
+      <button id="expandAllBtn" class="btn-icon sm" title="Expand or collapse all" aria-label="Expand or collapse all">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+    </div>
+    <nav class="nav-links-scroll" id="navLinks">
+      <div class="nav-group-title">Contents</div>
+    </nav>
+    <div class="sidebar-hint"><kbd>[</kbd> hide or show &middot; drag the right edge to resize</div>
+    <div class="sidebar-resizer" id="sidebarResizer" title="Drag to resize, double-click to reset"></div>
+  </aside>
+  <div class="sidebar-backdrop" onclick="toggleSidebar()"></div>
+
+  <main class="app-main">
+
+    <div class="hero-header">
+      <div class="hero-meta">
+        <span class="hero-tag">Research report</span>
+        <span class="hero-date">October 2026 &middot; NHC acyloin campaign</span>
+      </div>
+      <h1 class="hero-title">Kernel structures and prior mean functions for the NHC acyloin Gaussian process</h1>
+      <p class="hero-subtitle">Elimination run of 26.09.2026 &middot; 69 experiments &middot; 50 catalyst levels
+      &middot; 576 of 600 configurations &middot; gem pooled over <code>primary</code> and <code>leave_one_out</code>
+      &middot; 46 papers &middot; kernel_mean_1 sweep (96 configurations, 6 anchors)</p>
+    </div>
+
+<section id="sec-background" class="content-section" data-num="00" data-nav="Background">
+  <div class="section-header-block">
+    <span class="section-num-tag">Background</span>
+    <h2 class="section-heading">Which covariance structure and which prior mean the surrogate should use</h2>
+    <p class="section-lead">We optimise the yield of an NHC-catalysed acyloin condensation by batch Bayesian
+    optimisation over catalyst, solvent, base and three continuous conditions. The surrogate is a single-task
+    Gaussian process on yield, and its accuracy on experiments it has not seen sets how well the optimiser
+    ranks the 161 candidate catalysts.</p>
+  </div>
+
+  <p>The elimination run swept four kernel structures and four mean functions, each in a one-axis sweep around
+  one baseline, on all 50 catalyst levels. The crossed run <code>cross_1</code> that followed holds the kernel
+  structure at <code>KS1</code> and the mean at <code>constant</code>, because the alternatives were
+  indistinguishable from them in the elimination run and the simpler choice was kept. This report diagnoses the
+  two axes in detail, derives what a better structure or mean has to do, reviews the literature against those
+  requirements and proposes three kernel structures and three mean functions with the sweep that tests them.</p>
+
+  <h3 class="subheading">The structures and means compared</h3>
+
+  <p>Every structure is built from four block kernels, one per feature block: catalyst (<code>cat</code>),
+  solvent (<code>solv</code>), base (<code>base</code>) and continuous conditions (<code>cont</code>: formaldehyde
+  ratio, catalyst loading, temperature, time). Each block kernel \(k_b\) is a unit-variance Matérn-5/2 or RBF
+  kernel with its own lengthscales, under a log-normal prior located at \(\log\sqrt{D} + \sqrt{2}\), and every
+  lengthscale satisfies \(\ell \ge 0.05\). The 29 base-free experiments and experiment 27 carry an all-zero base
+  block and the flag <code>base_active</code> \(= 0\).</p>
+
+  <div class="table-responsive"><table class="data-table">
+    <thead><tr><th>Name</th><th>Covariance or mean</th><th>Extra hyperparameters</th><th>Base-free rows</th></tr></thead>
+    <tbody>
+      <tr><td><code>KS1</code></td><td>\(\sigma^2\, k_{\mathrm{cat}}\, k_{\mathrm{solv}}\, k_{\mathrm{base}}\, k_{\mathrm{cont}}\)</td><td>none</td><td>all-zero base location, unmasked</td></tr>
+      <tr><td><code>KS2</code></td><td>\(\sigma^2 \sum_{b} w_b\, k_b\), \(w \sim \mathrm{Dirichlet}(2)\)</td><td>3 weights</td><td>base term multiplied by <code>base_active</code></td></tr>
+      <tr><td><code>KS3</code></td><td><code>KS2</code> plus the 6 pairwise products, 10 weights</td><td>9 weights</td><td>4 of 10 terms masked</td></tr>
+      <tr><td><code>KS4</code></td><td><code>KS3</code> plus the four-way product, 11 weights</td><td>10 weights</td><td>5 of 11 terms masked</td></tr>
+      <tr><td><code>constant</code></td><td>\(m(x) = c\)</td><td>1</td><td>same constant</td></tr>
+      <tr><td><code>block_linear</code></td><td>intercept and slopes per block, slopes \(\mathcal{N}(0, 1/d_b)\)</td><td>\(d_{\mathrm{total}} + 4\)</td><td>base slope and intercept times <code>base_active</code></td></tr>
+      <tr><td><code>type_linear</code></td><td>linear in <code>cont</code> plus one linear model of <code>cat</code>, <code>solv</code>, <code>base</code> per pre-catalyst form</td><td>\(4 d_{\mathrm{disc}} + d_{\mathrm{cont}} + 5\)</td><td>zero base block</td></tr>
+      <tr><td><code>type_quadlog</code></td><td><code>type_linear</code> plus quadratic temperature and log loading, partially pooled per form</td><td>\(4 d_{\mathrm{disc}} + 20\)</td><td>zero base block</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3 class="subheading">How a model is scored</h3>
+
+  <div class="callout callout-math">
+    <div class="callout-title">Pooled CRPSS and the gem</div>
+    <p>The continuous ranked probability score (CRPS) compares a predictive distribution with the observed yield;
+    lower is better. The skill score pools it over every held-out experiment of every successful fold of a
+    study and compares it with the trivial forecast \(\mathcal{N}(\bar{y}_{\text{train}}, s^2_{\text{train}})\)
+    of the same fold:</p>
+    <div class="math-display">\[ \mathrm{CRPSS} = 1 - \frac{\sum_{i} \mathrm{CRPS}_i(\text{model})}{\sum_{i} \mathrm{CRPS}_i(\text{baseline})} \]</div>
+    <p><b>CRPSS = 0 means the model is worth nothing over quoting the training average; the gem is the smaller
+    of the pooled CRPSS on <code>primary</code> and on <code>leave_one_out</code>.</b> <code>primary</code> holds
+    out whole catalysts (60 folds, 51 training and 18 test experiments), so it measures transfer to an unseen
+    catalyst. <code>leave_one_out</code> holds out one experiment (60 folds, 68 and 1), so it measures
+    interpolation among catalysts that are in the training set.</p>
+  </div>
+
+  <div class="card">
+    <h4 class="tertiary-heading" style="margin-top:0">Noise floor and verdicts</h4>
+    <p><b>Bootstrap noise.</b> Folds of <code>primary</code> and <code>leave_one_out</code> are resampled with
+    replacement, 2,000 draws, paired across the configurations compared. The median bootstrap standard deviation of
+    one configuration's gem is 0.074 for <code>KS1</code> with the constant mean and 0.083 to 0.126 for the
+    alternatives. A level is resolved when the 95% interval of its paired gem difference excludes zero.</p>
+    <p><b>Verdicts.</b> An alternative <i>lost</i> when it is worse on most levels with a paired test below 0.05;
+    it <i>tied</i> when its across-level bootstrap interval contains zero and most levels are unresolved; it
+    <i>won</i> when the interval excludes zero.</p>
+  </div>
+</section>
+
+<section id="sec-part-1" class="content-section" data-num="I" data-nav="Kernel-structure axis">
+  <div class="section-header-block">
+    <span class="section-num-tag">Part I</span>
+    <h2 class="section-heading">The kernel-structure axis: additive terms buy catalyst transfer and pay for it in interpolation</h2>
+    <p class="section-lead">The sweep fitted <code>KS1</code> to <code>KS4</code> on the 50 catalyst levels with
+    every other axis at the elimination baseline: Matérn-5/2, one-hot solvent and base blocks, raw yield, prior
+    scheme <code>P1</code>, constant mean. That baseline has a median gem of +0.026, so the comparison is made
+    far below the best <code>cross_1</code> configurations (gem +0.278 to +0.425 per catalyst level), which is
+    the main limitation of every verdict in this Part. Experiment 27 carries \(\mathrm{Rb_2CO_3}\) base features in these cells.</p>
+  </div>
+
+  <div class="kpis">
+    <div class="kpi"><div class="k">Configurations</div><div class="v">200</div></div>
+    <div class="kpi"><div class="k">Fits</div><div class="v">27,400</div></div>
+    <div class="kpi"><div class="k">Failed folds</div><div class="v">0</div></div>
+    <div class="kpi"><div class="k">KS2 vs KS1</div><div class="v">+0.012</div></div>
+    <div class="kpi"><div class="k">Unresolved levels</div><div class="v">42 / 50</div></div>
+  </div>
+
+  <h3 class="subheading">1. KS2 and KS4 tie KS1 overall and KS3 loses</h3>
+
+  <p>A structure with main effects should transfer better to an unseen catalyst, so the expectation was a clear
+  gain for <code>KS2</code> to <code>KS4</code>. Over the 50 levels the gains are small and inside the noise.</p>
+
+  <div class="table-responsive"><table class="data-table">
+    <thead><tr><th>Alternative</th><th class="num">Median gem difference</th><th class="num">Sign test p</th><th class="num">Across-level 95% interval</th><th class="num">Resolved for / against</th><th>Verdict</th></tr></thead>
+    <tbody>
+      <tr><td><code>KS2</code></td><td class="num">+0.012</td><td class="num">0.672</td><td class="num">-0.228 to +0.130</td><td class="num">7 / 1</td><td>tie</td></tr>
+      <tr><td><code>KS3</code></td><td class="num bad">-0.032</td><td class="num">0.033</td><td class="num">-0.231 to +0.086</td><td class="num">0 / 0</td><td>lost</td></tr>
+      <tr><td><code>KS4</code></td><td class="num">-0.015</td><td class="num">0.480</td><td class="num">-0.202 to +0.084</td><td class="num">3 / 0</td><td>tie</td></tr>
+    </tbody>
+  </table></div>
+
+  <p class="small">The interval is the paired fold bootstrap of the across-level median difference
+  (alternative minus <code>KS1</code>). "Resolved" counts levels whose own 95% interval excludes zero.</p>
+
+  <p><b>Only KS3 is distinguishable from KS1, and it is worse on 33 of 50 levels; KS2 and KS4 are indistinguishable
+  from KS1 on 42 and 47 levels.</b></p>
+
+  <h3 class="subheading">2. Every additive structure improves held-out catalysts and loses leave-one-out</h3>
+
+  <p>The tie hides two opposite effects. On the study that holds out whole catalysts the additive structures are
+  better on almost every level; on leave-one-out they are worse on most levels, and because the gem is the
+  minimum of the two, leave-one-out becomes the binding study.</p>
+
+  <div class="table-responsive"><table class="data-table">
+    <thead><tr><th>Structure</th><th class="num">Median CRPSS primary</th><th class="num">Median CRPSS LOO</th><th class="num">Levels better than KS1 on primary</th><th class="num">Levels better on LOO</th><th class="num">LOO binds</th></tr></thead>
+    <tbody>
+      <tr><td><code>KS1</code></td><td class="num">+0.074</td><td class="num">+0.055</td><td class="num">&ndash;</td><td class="num">&ndash;</td><td class="num">27 / 50</td></tr>
+      <tr><td><code>KS2</code></td><td class="num">+0.138</td><td class="num">+0.049</td><td class="num good">42 / 50</td><td class="num">22 / 50</td><td class="num">48 / 50</td></tr>
+      <tr><td><code>KS3</code></td><td class="num">+0.157</td><td class="num bad">-0.005</td><td class="num good">45 / 50</td><td class="num bad">14 / 50</td><td class="num">47 / 50</td></tr>
+      <tr><td><code>KS4</code></td><td class="num">+0.146</td><td class="num">+0.012</td><td class="num good">45 / 50</td><td class="num bad">14 / 50</td><td class="num">47 / 50</td></tr>
+    </tbody>
+  </table></div>
+
+  <p><b>The additive structures raise the median primary CRPSS from +0.074 to +0.138–0.157 and beat KS1 on primary
+  on 42 to 45 of 50 levels, but beat it on leave-one-out on only 14 to 22.</b></p>
+
+  <p>The mechanism is the product. In <code>KS1</code> the covariance between a held-out catalyst and the training
+  rows is \(\sigma^2 k_{\mathrm{cat}} k_{\mathrm{rest}}\); a catalyst far from the training catalysts in descriptor
+  space has \(k_{\mathrm{cat}} \approx 0\), and its prediction reverts to the training mean whatever the solvent,
+  base and temperature. An additive term in <code>solv</code>, <code>base</code> or <code>cont</code> carries the
+  condition response to that catalyst. On leave-one-out the held-out experiment's catalyst is in the training set,
+  the full product describes its specific response, and spreading weight over additive terms costs accuracy.</p>
+
+  <h3 class="subheading">3. The gain from additive terms sits on full-width catalyst levels</h3>
+
+  <div class="table-responsive"><table class="data-table">
+    <thead><tr><th>Level group</th><th class="num">Levels</th><th class="num">Median gem KS1</th><th class="num">KS2</th><th class="num">KS3</th><th class="num">KS4</th><th class="num">KS2 wins</th></tr></thead>
+    <tbody>
+      <tr><td>full width</td><td class="num">23</td><td class="num bad">-0.023</td><td class="num good">+0.063</td><td class="num">-0.044</td><td class="num">+0.011</td><td class="num">19 / 23</td></tr>
+      <tr><td><code>_pca</code> (6 to 29 columns)</td><td class="num">23</td><td class="num good">+0.080</td><td class="num">+0.040</td><td class="num">-0.000</td><td class="num">+0.003</td><td class="num">7 / 23</td></tr>
+      <tr><td>interpretable</td><td class="num">4</td><td class="num good">+0.104</td><td class="num">+0.058</td><td class="num">+0.045</td><td class="num">+0.047</td><td class="num">0 / 4</td></tr>
+    </tbody>
+  </table></div>
+
+  <p><b>On full-width levels KS1 with the constant mean scores below the trivial forecast (median gem -0.023) and
+  KS2 lifts the median by +0.102; on reduced and interpretable levels KS1 is ahead by 0.034 to 0.054.</b> The
+  across-level bootstrap interval of the full-group difference still contains zero (-0.188 to +0.072 for <code>KS1</code> minus <code>KS2</code>), so even there <code>KS2</code> is a point win rather than a resolved one.</p>
+
+  <h3 class="subheading">4. No mixture term can switch off, and KS2 sends interactions to the noise</h3>
+
+  <p>From the fitted hyperparameters of every <code>primary</code> and <code>leave_one_out</code> fold (6,000 folds
+  per structure) the Dirichlet weights, outputscales and noise variances were recovered through the constraints in
+  <code>core/kernels.py</code>.</p>
+
+  <div class="table-responsive"><table class="data-table">
+    <thead><tr><th>Quantity</th><th class="num">KS1</th><th class="num">KS2</th><th class="num">KS3</th><th class="num">KS4</th></tr></thead>
+    <tbody>
+      <tr><td>Median noise variance (standardised)</td><td class="num">0.0032</td><td class="num bad">0.0770</td><td class="num">0.0031</td><td class="num">0.0031</td></tr>
+      <tr><td>Median total outputscale</td><td class="num">0.739</td><td class="num">1.517</td><td class="num">1.412</td><td class="num">1.395</td></tr>
+      <tr><td>Largest single weight, max over folds</td><td class="num">&ndash;</td><td class="num">0.575</td><td class="num">0.312</td><td class="num">0.309</td></tr>
+      <tr><td>Smallest weight, min over folds</td><td class="num">&ndash;</td><td colspan="3" class="num">0.035</td></tr>
+      <tr><td>Largest median weight</td><td class="num">&ndash;</td><td class="num"><code>cont</code> 0.465</td><td class="num"><code>cat·cont</code> 0.172</td><td class="num"><code>cat·cont</code> 0.170</td></tr>
+      <tr><td>Median weight on interaction terms</td><td class="num">&ndash;</td><td class="num">&ndash;</td><td class="num">0.703</td><td class="num">0.730</td></tr>
+      <tr><td>Folds with a <code>cont</code> lengthscale at the 0.05 floor</td><td class="num">15%</td><td class="num bad">83%</td><td class="num">17%</td><td class="num">22%</td></tr>
+    </tbody>
+  </table></div>
+
+  <p><b>The symmetric Dirichlet(2) prior keeps every weight between 0.035 and 0.58 in all 18,000 mixture fits, so no
+  term is ever switched off, and KS2, which has no interaction term, fits a noise variance 24 times that of KS1.</b>
+  The Dirichlet(2) density vanishes on the boundary of the simplex, which is what holds every weight away from zero.
+  <code>KS2</code> cannot represent a catalyst-by-condition interaction, so the unexplained variance goes to the
+  noise, and its continuous-block lengthscales on formaldehyde ratio, loading and temperature shrink to the floor
+  in 83 percent of folds, turning the <code>cont</code> term into an indicator of identical conditions. In
+  <code>KS3</code> and <code>KS4</code> the folds with the largest catalyst main-effect weight do worst on
+  leave-one-out: the top quartile of \(w_{\mathrm{cat}}\) has a median fold CRPSS of +0.144 against +0.350 in the
+  bottom quartile (<code>KS3</code>).</p>
+
+  <div class="callout callout-warning">
+    <div class="callout-title">Limitation</div>
+    <p>Every number in this Part is at the elimination baseline. At the <code>cross_1</code> anchors the solvent
+    and base blocks are low-dimensional descriptors, the outcome is probit-transformed and the prior is
+    <code>P2</code>; six of the seven per-level best <code>cross_1</code> configurations bind on
+    <code>primary</code>, where the additive structures help, so the ties here do not carry over without a run.</p>
+  </div>
+</section>
+
+<section id="sec-part-2" class="content-section" data-num="II" data-nav="Mean-function axis">
+  <div class="section-header-block">
+    <span class="section-num-tag">Part II</span>
+    <h2 class="section-heading">The mean-function axis: the identified part of a linear mean is low-dimensional</h2>
+    <p class="section-lead">The sweep fitted the four means under <code>KS1</code> at the same baseline as Part I.
+    126 of the 150 non-constant configurations are on disk; the comparison is paired on the 44, 42 and 40 levels
+    where the alternative exists.</p>
+  </div>
+
+  <div class="kpis">
+    <div class="kpi"><div class="k">Configurations on disk</div><div class="v">176 / 200</div></div>
+    <div class="kpi"><div class="k">Failed folds</div><div class="v">0</div></div>
+    <div class="kpi"><div class="k">block_linear vs constant</div><div class="v">+0.022</div></div>
+    <div class="kpi"><div class="k">type_linear vs constant</div><div class="v">+0.023</div></div>
+    <div class="kpi"><div class="k">Cost at 44 columns</div><div class="v">3.3&ndash;4.7 times</div></div>
+  </div>
+
+  <h3 class="subheading">5. Linear means tie overall and win on full-width levels</h3>
+
+  <div class="table-responsive"><table class="data-table">
+    <thead><tr><th>Mean</th><th class="num">Levels</th><th class="num">Median gem difference</th><th class="num">95% interval</th><th class="num">Full-width difference</th><th class="num">Full-width interval</th><th>Verdict</th></tr></thead>
+    <tbody>
+      <tr><td><code>block_linear</code></td><td class="num">44</td><td class="num">+0.022</td><td class="num">-0.074 to +0.112</td><td class="num good">+0.140</td><td class="num">+0.063 to +0.299</td><td>tie; won full width</td></tr>
+      <tr><td><code>type_linear</code></td><td class="num">42</td><td class="num">+0.023</td><td class="num">-0.090 to +0.126</td><td class="num good">+0.097</td><td class="num">+0.026 to +0.193</td><td>tie; won full width</td></tr>
+      <tr><td><code>type_quadlog</code></td><td class="num">40</td><td class="num">-0.006</td><td class="num">-0.147 to +0.107</td><td class="num good">+0.103</td><td class="num">+0.019 to +0.222</td><td>tie; won full width</td></tr>
+    </tbody>
+  </table></div>
+
+  <p><b>On the 13 to 17 full-width levels where they ran, all three non-constant means beat the constant mean with
+  bootstrap intervals that exclude zero (+0.097 to +0.140); on the 23 reduced levels they are indistinguishable from
+  it on 22 or 23 levels.</b> As for the kernel axis, the gain is on <code>primary</code>: the median primary CRPSS
+  rises from +0.074 to +0.140–0.156, it rises on 34 to 37 levels, leave-one-out rises on 15 to 23, and
+  leave-one-out binds on 36 to 40 levels.</p>
+
+  <h3 class="subheading">6. The 24 absent cells did not fail, they had not finished</h3>
+
+  <p>The 24 configurations missing from the mean axis are all non-constant means on ten full-width levels
+  (<code>soap</code>, <code>grover</code>, <code>unimol</code>, <code>ecfp4</code>, <code>map4</code>,
+  <code>transformerm_carbene</code>, <code>molformer_xl_carbene</code>, <code>minimol_carbene</code>,
+  <code>scage_carbene</code>, <code>graphormer_carbene</code>). They are in the run's <code>inputs.json</code>, no
+  fold of them failed, and the cost model projects 1.2 to 11.0 hours each, 70 CPU-h in total, against about 15
+  minutes for a median cell; they were still running when the finished cells were collected. The full-width
+  verdicts above therefore rest on the narrower full-width levels.</p>
+
+  <h3 class="subheading">7. Only the solvent, base, condition and form coefficients are identified</h3>
+
+  <p>A parameter is identified when the data move it away from its prior and it keeps its sign across folds. The
+  fitted mean coefficients of every ok <code>primary</code> fold were compared with their priors.</p>
+
+  <div class="table-responsive"><table class="data-table">
+    <thead><tr><th>Mean</th><th>Coefficients</th><th class="num">Median |z| against prior</th><th class="num">Fold SD / prior SD</th><th class="num">Sign stability</th></tr></thead>
+    <tbody>
+      <tr><td><code>block_linear</code></td><td>base intercept</td><td class="num good">0.748</td><td class="num">0.116</td><td class="num">100%</td></tr>
+      <tr><td><code>block_linear</code></td><td>continuous slopes</td><td class="num good">0.606</td><td class="num">0.286</td><td class="num">96%</td></tr>
+      <tr><td><code>block_linear</code></td><td>base slopes</td><td class="num">0.231</td><td class="num">0.115</td><td class="num">92%</td></tr>
+      <tr><td><code>block_linear</code></td><td>catalyst slopes</td><td class="num bad">0.032</td><td class="num">0.020</td><td class="num">95%</td></tr>
+      <tr><td><code>type_linear</code></td><td>per-form intercepts</td><td class="num good">0.397</td><td class="num">0.188</td><td class="num">90%</td></tr>
+      <tr><td><code>type_quadlog</code></td><td>temperature, linear term</td><td class="num good">0.814</td><td class="num">0.189</td><td class="num">100%</td></tr>
+      <tr><td><code>type_quadlog</code></td><td>free-NHC deviations</td><td class="num bad">0.009</td><td class="num">0.008</td><td class="num">72%</td></tr>
+    </tbody>
+  </table></div>
+
+  <p><b>The catalyst slopes sit at their prior (median |z| 0.032) while the base intercept, the continuous slopes, the
+  per-form intercepts and the linear temperature term are identified with 90 to 100 percent sign stability.</b>
+  The catalyst slopes are most of the parameters (\(d_{\mathrm{cat}}\) per mean, \(4 d_{\mathrm{cat}}\) for the
+  per-form means, 29,797 on <code>soap</code>) and none of the gain. Temperature is 80 °C in 47 of the 69
+  experiments and time takes only 16 h or 20 h, so any shape in the continuous block beyond a slope is identified
+  by about 22 experiments.</p>
+
+  <h3 class="subheading">8. A linear mean takes a third of the kernel variance</h3>
+
+  <div class="table-responsive"><table class="data-table">
+    <thead><tr><th>Mean</th><th class="num">Outputscale ratio to constant</th><th class="num">Noise ratio</th><th class="num">Continuous lengthscale ratio, LOO</th></tr></thead>
+    <tbody>
+      <tr><td><code>block_linear</code></td><td class="num">0.648</td><td class="num">0.996</td><td class="num">1.12</td></tr>
+      <tr><td><code>type_linear</code></td><td class="num">0.701</td><td class="num">0.999</td><td class="num">1.41</td></tr>
+      <tr><td><code>type_quadlog</code></td><td class="num">0.666</td><td class="num">0.999</td><td class="num">1.36</td></tr>
+    </tbody>
+  </table></div>
+
+  <p class="small">Medians over 2,400 to 2,640 <code>leave_one_out</code> folds paired fold by fold with the constant
+  mean on the same level.</p>
+
+  <p><b>The non-constant means take 30 to 35 percent of the kernel outputscale and leave the noise unchanged.</b>
+  The variance they take is the condition trend, which the continuous lengthscales stop modelling (they lengthen by
+  12 to 41 percent). Taken as a trend shared by all catalysts, it is the same catalyst-independent component the
+  additive kernels supply in Part I, reached through the mean instead of the covariance.</p>
+
+  <div class="callout callout-insight">
+    <div class="callout-title">Cost is not only the parameter count</div>
+    <p>The timing probe puts <code>block_linear</code> at 14.8 s per fold against 4.5 s for the constant mean at 44
+    columns, where it has about 48 coefficients, and at 129 s against 12.6 s at 5,028 columns. The width-dependent
+    part comes from the catalyst slopes; the 3.3-fold cost at 44 columns is paid by a mean of a few dozen
+    coefficients fitted jointly with the kernel by L-BFGS.</p>
+  </div>
+</section>
+
+<section id="sec-part-3" class="content-section" data-num="III" data-nav="Structural limits and requirements">
+  <div class="section-header-block">
+    <span class="section-num-tag">Part III</span>
+    <h2 class="section-heading">What the current structures cannot express, and what the next ones must</h2>
+    <p class="section-lead">The limits below are read from <code>core/kernels.py</code> and
+    <code>core/models.py</code> and checked against the fitted hyperparameters of Parts I and II.</p>
+  </div>
+
+  <h3 class="subheading">9. Structural limits of KS1 to KS4 and the means</h3>
+
+  <div class="table-responsive"><table class="data-table">
+    <thead><tr><th>Limit</th><th>Where</th><th>Consequence</th></tr></thead>
+    <tbody>
+      <tr><td>The product has no main effect</td><td><code>kernels.py:700-721</code></td><td>A catalyst far from the training catalysts gets no covariance with them, whatever the conditions.</td></tr>
+      <tr><td>Mixture weights live on a simplex under Dirichlet(2)</td><td><code>kernels.py:553-560, 597-599</code>; <code>config.py:438</code></td><td>Terms compete for one outputscale and none can reach zero.</td></tr>
+      <tr><td>Interaction terms reuse the single-block kernels</td><td><code>kernels.py:601-615</code></td><td>A pairwise term cannot be smoother or rougher than its main effects.</td></tr>
+      <tr><td>Base terms are multiplied by <code>base_active</code> without renormalising</td><td><code>kernels.py:458-496</code></td><td>At symmetric weights a base-free row has 75, 60 and 55 percent of a base row's prior variance in <code>KS2</code>, <code>KS3</code>, <code>KS4</code>.</td></tr>
+      <tr><td><code>KS1</code> base-free rows share one zero location</td><td><code>feature_assembly.py:190</code>; <code>kernels.py:700-721</code></td><td>Base-free rows correlate fully in the base factor; the variance is consistent with base rows.</td></tr>
+      <tr><td>No categorical kernel for catalyst, form or identity</td><td><code>kernels.py:92-194</code></td><td>Discrete choices enter only through descriptor or one-hot distances.</td></tr>
+      <tr><td>Linear means carry one slope per catalyst column</td><td><code>models.py:126-196, 199-280</code></td><td>Parameter count and cost grow with catalyst width; the slopes stay at their prior.</td></tr>
+      <tr><td><code>type_quadlog</code> evaluates \(\log\) of the reconstructed loading and a quadratic in temperature</td><td><code>models.py:407-416</code></td><td>Unbounded extrapolation; undefined for a loading at or below zero after de-normalisation.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3 class="subheading">10. Requirements for the next structures</h3>
+
+  <p>Each failure mode becomes a requirement. The kernel requirements are labelled RK, the mean requirements RM.</p>
+
+  <div class="table-responsive"><table class="data-table">
+    <thead><tr><th>Label</th><th>Requirement</th><th>Evidence</th></tr></thead>
+    <tbody>
+      <tr><td>RK1</td><td>Keep the full four-block product and add a catalyst-independent component</td><td>Product wins leave-one-out (Section 2); additive terms win primary on 42 to 45 of 50 levels.</td></tr>
+      <tr><td>RK2</td><td>The added component's variance can shrink to zero within one fit</td><td>Dirichlet(2) weights never fall below 0.035; high catalyst weight costs leave-one-out (Section 4).</td></tr>
+      <tr><td>RK3</td><td>At most a few extra hyperparameters, cost near <code>KS1</code></td><td>Gem noise 0.074 to 0.126 per configuration; an alternative must win on fewer degrees of freedom.</td></tr>
+      <tr><td>RK4</td><td>Base-free rows keep the prior variance of base rows</td><td>Masking without renormalisation removes 25 to 45 percent of it.</td></tr>
+      <tr><td>RK5</td><td>A full-interaction term is always present</td><td><code>KS2</code> without it fits 24 times the noise.</td></tr>
+      <tr><td>RM1</td><td>Mean only over solvent, base, conditions and form</td><td>Catalyst slopes are unidentified (Section 7).</td></tr>
+      <tr><td>RM2</td><td>Parameter count independent of catalyst width; proper priors</td><td>Width drives cost to 10 times; NUTS needs proper priors.</td></tr>
+      <tr><td>RM3</td><td>Bounded or linear extrapolation</td><td><code>type_quadlog</code> is behind on reduced levels; the quadratic diverges off the data.</td></tr>
+      <tr><td>RM4</td><td>Shrinkage toward the constant mean when the data do not support more</td><td>Reduced levels show no gain; leave-one-out is hurt where the trend is not real.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="sec-part-4" class="content-section" data-num="IV" data-nav="Literature">
+  <div class="section-header-block">
+    <span class="section-num-tag">Part IV</span>
+    <h2 class="section-heading">The literature, by family, against these requirements</h2>
+    <p class="section-lead">46 papers were read in full text. Each is cited by DOI or arXiv identifier and by its
+    file in <code>archived_trash/kernel_mean_research/</code>. Every formula used in Part V was checked against
+    the paper.</p>
+  </div>
+
+  <h3 class="subheading">11. Mixtures of product and additive terms</h3>
+
+  <p>The additive GP of Duvenaud, Nickisch and Rasmussen weights each interaction order \(n\) by its own variance
+  \(\sigma_n^2\) (their Eq. 3), so main effects and the full product coexist with independent variances rather than
+  on a simplex. CoCaBO (Ru et al., Eq. 2) and CASMOPOLITAN (Wan et al., Eq. 4) reduce this to one trade-off
+  parameter fitted by marginal likelihood:</p>
+
+  <div class="math-display">\[ k = (1-\lambda)(k_h + k_x) + \lambda\, k_h k_x \]</div>
+
+  <p>HyBO (Deshwal et al.)
+  puts a horseshoe prior on the order weights so unused orders shrink to zero. The orthogonal additive kernel (Lu,
+  Boukouvalas and Hensman) constrains each component to integrate to zero under the input measure (their Eq. 6 and
+  8; for a categorical input Appendix C, Eq. 20), which makes main effects and interactions identifiable.</p>
+
+  <div class="table-responsive"><table class="data-table">
+    <thead><tr><th>Paper</th><th>Identifier</th><th>File</th><th>What it offers here</th></tr></thead>
+    <tbody>
+      <tr><td>Duvenaud, Nickisch, Rasmussen 2011, NeurIPS</td><td>arXiv 1112.4394</td><td><code>Duvenaud2011_additive_gp.pdf</code></td><td>Order variances \(\sigma_n^2\) in place of a simplex; KS2 to KS4 are its orders 1, 2 and 4.</td></tr>
+      <tr><td>Ru, Alvi, Nguyen, Osborne, Roberts 2020, ICML</td><td>arXiv 1906.08878</td><td><code>Ru2020_cocabo.pdf</code></td><td>One-parameter mixture of sum and product of categorical and continuous kernels.</td></tr>
+      <tr><td>Wan, Nguyen, Ha, Ru, Lu, Osborne 2021, ICML</td><td>arXiv 2102.07188</td><td><code>Wan2021_casmopolitan.pdf</code></td><td>The same mixture with regret bounds in mixed spaces.</td></tr>
+      <tr><td>Deshwal, Belakaria, Doppa 2021, ICML</td><td>arXiv 2106.04682</td><td><code>Deshwal2021_hybo.pdf</code></td><td>All interaction orders with horseshoe-shrunk order weights, fully Bayesian.</td></tr>
+      <tr><td>Lu, Boukouvalas, Hensman 2022, ICML</td><td>arXiv 2206.09861</td><td><code>Lu2022_orthogonal_additive_kernel.pdf</code></td><td>Orthogonality constraint that makes the decomposition unique; Sobol indices per term.</td></tr>
+      <tr><td>Kandasamy, Schneider, Póczos 2015, ICML</td><td>arXiv 1503.01673</td><td><code>Kandasamy2015_additive_bo.pdf</code></td><td>Purely additive BO; no interaction term, the <code>KS2</code> failure mode.</td></tr>
+      <tr><td>Gardner, Guo, Weinberger, Garnett, Grosse 2017, AISTATS</td><td>PMLR 54:1311-1319</td><td><code>Gardner2017_additive_structure_bo.pdf</code></td><td>MCMC over additive partitions; recovers the partition from 50 points in 8 of 10 runs.</td></tr>
+      <tr><td>Agrawal, Huggins, Trippe, Broderick 2019, ICML</td><td>arXiv 1905.06501</td><td><code>Agrawal2019_kernel_interaction_trick.pdf</code></td><td>Linear and pairwise effects integrated into a kernel with hierarchical shrinkage.</td></tr>
+    </tbody>
+  </table></div>
+
+  <p><b>For this dataset the family offers exactly what RK1, RK2 and RK5 ask: a product term and a main-effect term
+  whose relative variance is one free parameter with a prior that allows zero.</b> Against it: the papers fit on
+  hundreds of points or more (Duvenaud et al.: 167 to 8,192 points; Lu et al.: 208 and up), the mixture parameter is often weakly
+  identified, and none treats a block that is absent on some rows. The orthogonality constraint needs an input
+  measure, which for the catalyst block is the 161-catalyst library.</p>
+
+  <h3 class="subheading">12. Hierarchical and categorical structure</h3>
+
+  <p>Hensman, Lawrence and Rattray model replicates and clusters as a shared parent process plus deviations, which
+  on the stacked data is \(k_g + \delta\, k_f\): every member inherits the shared covariance, and only members of
+  the same group share the deviation. lgpr (Timonen et al.) makes such deviations identifiable with the zero-sum
+  kernel, 1 for equal categories and \(-1/(M-1)\) otherwise (their Eq. 1), and shrinks component scales with
+  half-Student-t priors whose mode is zero. Group and nested kernels (Roustant et al.; Carpintero Perez et al.)
+  parameterise categorical correlation through group structure with a handful of parameters and beat free-form
+  categorical kernels in a 42-dataset benchmark.</p>
+
+  <div class="table-responsive"><table class="data-table">
+    <thead><tr><th>Paper</th><th>Identifier</th><th>File</th><th>What it offers here</th></tr></thead>
+    <tbody>
+      <tr><td>Hensman, Lawrence, Rattray 2013, BMC Bioinformatics</td><td>10.1186/1471-2105-14-252</td><td><code>Hensman2013_hierarchical_gp.pdf</code></td><td>Shared process plus group deviation, one extra variance per level of hierarchy.</td></tr>
+      <tr><td>Timonen, Mannerström, Vehtari, Lähdesmäki 2021, Bioinformatics</td><td>10.1093/bioinformatics/btab021</td><td><code>Timonen2021_lgpr.pdf</code></td><td>Zero-sum categorical kernel; half-Student-t scale priors; NUTS throughout.</td></tr>
+      <tr><td>Cheng et al. 2019, Nature Communications</td><td>10.1038/s41467-019-09785-8</td><td><code>Cheng2019_longp_additive_gp.pdf</code></td><td>Additive categorical by continuous components, selected by LOO and stratified CV.</td></tr>
+      <tr><td>Roustant et al. 2020, SIAM/ASA JUQ</td><td>10.1137/18M1209386</td><td><code>Roustant2020_group_kernels.pdf</code></td><td>Compound-symmetric and group block covariances with validity conditions.</td></tr>
+      <tr><td>Carpintero Perez, Da Veiga, Garnier 2025</td><td>arXiv 2510.01840</td><td><code>CarpinteroPerez2025_categorical_kernels.pdf</code></td><td>Benchmark of 23 categorical kernels; nested kernels lead.</td></tr>
+      <tr><td>Zhang, Tao, Chen, Apley 2020, Technometrics</td><td>10.1080/00401706.2019.1638834</td><td><code>Zhang2020_latent_variable_gp.pdf</code></td><td>Latent 2-D coordinates per category; \(2m-3\) parameters per factor.</td></tr>
+      <tr><td>Oune, Bostanabad 2021, CMAME</td><td>10.1016/j.cma.2021.114128</td><td><code>Oune2021_latent_map_gp.pdf</code></td><td>Linear map of a prior encoding to a latent space; inactive inputs as zeros (Sec. 4.2.3).</td></tr>
+      <tr><td>Saves, Diouane, Bartoli, Lefebvre, Morlier 2023, Neurocomputing</td><td>10.1016/j.neucom.2023.126472</td><td><code>Saves2023_mixed_categorical_kernel.pdf</code></td><td>Hierarchy of categorical kernels; one-hot ARD is its continuous relaxation.</td></tr>
+      <tr><td>Bonilla, Chai, Williams 2007, NeurIPS</td><td>NeurIPS 20</td><td><code>Bonilla2007_multitask_gp_icm.pdf</code></td><td>Free-form task covariance; no transfer to a task absent from training.</td></tr>
+    </tbody>
+  </table></div>
+
+  <p><b>The hierarchical form fits the diagnosis directly: a condition response shared by all catalysts, plus a
+  catalyst-specific deviation scaled by catalyst similarity.</b> Against the categorical kernels: about 25
+  catalysts appear in a training fold and 161 are candidates, so any kernel indexed by catalyst identity (latent
+  coordinates, free-form or group covariances) has no information about the catalysts held out in
+  <code>primary</code>. They are useful for the four pre-catalyst forms, not for the catalyst itself.</p>
+
+  <h3 class="subheading">13. Inputs that are absent on some rows</h3>
+
+  <p>For the base block on base-free rows the literature offers three treatments. Swersky et al. embed an inactive
+  input at a fixed point of a cylindrical (arc) embedding; Zaefferer and Horn show that imputing a fixed reference
+  value keeps the kernel positive semidefinite and gives inactive rows the same prior variance; Jenatton et al.
+  build tree-structured covariances in which shared parents are linear terms integrated out analytically.
+  <code>KS1</code> already uses the imputation form; <code>KS2</code> to <code>KS4</code> use a mask, which none of
+  these papers recommends without renormalisation.</p>
+
+  <div class="table-responsive"><table class="data-table">
+    <thead><tr><th>Paper</th><th>Identifier</th><th>File</th><th>What it offers here</th></tr></thead>
+    <tbody>
+      <tr><td>Swersky, Duvenaud, Snoek, Hutter, Osborne 2014</td><td>arXiv 1409.4011</td><td><code>Swersky2014_conditional_kernels.pdf</code></td><td>Arc kernel for conditionally active inputs.</td></tr>
+      <tr><td>Zaefferer, Horn 2018, PPSN XV</td><td>10.1007/978-3-319-99259-4_32</td><td><code>Zaefferer2018_hierarchical_kernels.pdf</code></td><td>Imputation and wedge kernels; imputation is valid and variance-consistent.</td></tr>
+      <tr><td>Jenatton, Archambeau, González, Seeger 2017, ICML</td><td>PMLR 70:1655-1664</td><td><code>Jenatton2017_tree_structured_bo.pdf</code></td><td>Conditional structure through integrated-out linear parents.</td></tr>
+    </tbody>
+  </table></div>
+
+  <p><b>Keeping the imputed zero location of KS1 for every new term satisfies RK4 with no extra parameter.</b></p>
+
+  <h3 class="subheading">14. Prior mean functions</h3>
+
+  <p>O'Hagan and Rasmussen and Williams (Section 2.7) give the Gaussian process with explicit basis functions:
+  with \(g(x) = f(x) + h(x)^{\top}\beta\) and \(\beta \sim \mathcal{N}(b, B)\), integrating \(\beta\) out gives (their Eq. 2.40)</p>
+
+  <div class="math-display">\[ g \sim \mathcal{GP}\big(h(x)^{\top} b,\; k(x,x') + h(x)^{\top} B\, h(x')\big) \]</div>
+
+  <p>The
+  coefficients disappear from the optimisation, and the predictive variance carries their uncertainty, growing
+  with \(\lVert h(x) \rVert\) away from the data. Kennedy and O'Hagan use the same device for a mechanistic model
+  plus a discrepancy process, with weak priors on the regression coefficients integrated out. De Ath, Fieldsend
+  and Everson find, over ten synthetic and three real problems, that linear and quadratic means fitted by ridge
+  regression do not lower BO regret and often raise it, while a pessimistic constant helps in five or more
+  dimensions. Ziatdinov, Ghosh and Kalinin fit parametric physical means jointly with the kernel by NUTS and find
+  them decisive when the shape is right.</p>
+
+  <div class="table-responsive"><table class="data-table">
+    <thead><tr><th>Paper</th><th>Identifier</th><th>File</th><th>What it offers here</th></tr></thead>
+    <tbody>
+      <tr><td>O'Hagan 1978, JRSS B</td><td>10.1111/j.2517-6161.1978.tb01643.x</td><td><code>OHagan1978_curve_fitting_optimal_design.pdf</code></td><td>Linear trend with coefficients integrated out (Theorem 2).</td></tr>
+      <tr><td>Rasmussen, Williams 2006, GPML ch. 2</td><td>ISBN 026218253X</td><td><code>Rasmussen2006_gpml_ch2.pdf</code></td><td>Explicit basis functions, Eq. 2.39 to 2.45, restricted likelihood.</td></tr>
+      <tr><td>Kennedy, O'Hagan 2001, JRSS B</td><td>10.1111/1467-9868.00294</td><td><code>Kennedy2001_bayesian_calibration.pdf</code></td><td>Mechanistic mean plus discrepancy GP; confounding of the two.</td></tr>
+      <tr><td>De Ath, Fieldsend, Everson 2020, GECCO</td><td>10.1145/3377929.3398118</td><td><code>DeAth2020_role_of_mean_function_bo.pdf</code></td><td>Evidence that fitted polynomial means do not help BO regret.</td></tr>
+      <tr><td>Ziatdinov, Ghosh, Kalinin 2022, MLST</td><td>10.1088/2632-2153/ac4baa</td><td><code>Ziatdinov2022_physics_augmented_gp.pdf</code></td><td>Physical parametric means with proper priors, sampled by NUTS.</td></tr>
+      <tr><td>Le Gratiet 2014, IJUQ</td><td>10.1615/Int.J.UncertaintyQuantification.2014006914</td><td><code>LeGratiet2014_recursive_cokriging.pdf</code></td><td>Mean of a fine model from a coarse model with integrated trend.</td></tr>
+      <tr><td>Perrone, Jenatton, Seeger, Archambeau 2018</td><td>arXiv 1712.02902</td><td><code>Perrone2018_ablr_warm_start.pdf</code></td><td>Bayesian linear regression surrogates shared across tasks.</td></tr>
+      <tr><td>Wang et al. 2024, JMLR 25(212)</td><td>arXiv 2109.08215</td><td><code>Wang2024_pretrained_gp_hyperbo.pdf</code></td><td>Mean and kernel pre-trained on related tasks.</td></tr>
+      <tr><td>Wistuba, Grabocka 2021, ICLR</td><td>arXiv 2101.07667</td><td><code>Wistuba2021_few_shot_bo.pdf</code></td><td>Meta-learned deep kernel and mean.</td></tr>
+    </tbody>
+  </table></div>
+
+  <p><b>The integrated linear trend meets RM1, RM2 and RM3 at once; shrinkage toward the constant (RM4) comes from a
+  single scale on \(B\).</b> Against a physical mean: temperature is 80 °C in 47 of 69 experiments, so an Arrhenius or
+  optimum shape is identified by about 22 experiments, and Kennedy and O'Hagan show how a flexible discrepancy
+  absorbs a wrong mechanistic shape. Against transferred means: no related dataset exists for this reaction.</p>
+
+  <h3 class="subheading">15. Selection, shrinkage and marginalisation at small n</h3>
+
+  <p>Piironen and Vehtari calibrate shrinkage priors by the expected number of non-zero effects and warn against
+  point estimates of the global scale. SAAS (Eriksson and Jankowiak) switches dimensions off with a half-Cauchy prior
+  on inverse lengthscales. Lotfi et al. show that the marginal likelihood can prefer models that generalise worse on
+  small data and propose the conditional marginal likelihood; Bachoc shows that leave-one-out estimation of
+  covariance parameters is more robust than maximum likelihood when the covariance family is misspecified. Simpson,
+  Lalchand and Rasmussen and Lalchand and Rasmussen find that marginalising hyperparameters on small datasets improves predictive calibration over a point estimate.</p>
+
+  <div class="table-responsive"><table class="data-table">
+    <thead><tr><th>Paper</th><th>Identifier</th><th>File</th><th>What it offers here</th></tr></thead>
+    <tbody>
+      <tr><td>Piironen, Vehtari 2017, EJS</td><td>10.1214/17-EJS1337SI</td><td><code>Piironen2017_regularized_horseshoe.pdf</code></td><td>Regularised horseshoe; calibrating the global scale.</td></tr>
+      <tr><td>Eriksson, Jankowiak 2021, UAI</td><td>arXiv 2103.00349</td><td><code>Eriksson2021_saas.pdf</code></td><td>Axis-aligned sparsity by a half-Cauchy prior, NUTS.</td></tr>
+      <tr><td>Lotfi, Izmailov, Benton, Goldblum, Wilson 2022, ICML</td><td>arXiv 2202.11678</td><td><code>Lotfi2022_marginal_likelihood.pdf</code></td><td>Where the marginal likelihood misleads; conditional marginal likelihood.</td></tr>
+      <tr><td>Bachoc 2013, CSDA 66</td><td>10.1016/j.csda.2013.03.016</td><td><code>Bachoc2013_cv_vs_ml.pdf</code></td><td>Cross-validation against maximum likelihood under misspecification.</td></tr>
+      <tr><td>Simpson, Lalchand, Rasmussen 2021, NeurIPS</td><td>arXiv 2010.16344</td><td><code>Simpson2021_marginalised_gp.pdf</code></td><td>Nested sampling over hyperparameters.</td></tr>
+      <tr><td>Lalchand, Rasmussen 2020, PMLR 118</td><td>arXiv 1912.13440</td><td><code>Lalchand2020_fully_bayesian_gp.pdf</code></td><td>HMC and variational inference over hyperparameters.</td></tr>
+      <tr><td>Duvenaud, Lloyd, Grosse, Tenenbaum, Ghahramani 2013, ICML</td><td>arXiv 1302.4922</td><td><code>Duvenaud2013_compositional_kernel_search.pdf</code></td><td>Greedy compositional kernel search by BIC.</td></tr>
+      <tr><td>Lloyd et al. 2014, AAAI</td><td>arXiv 1402.4304</td><td><code>Lloyd2014_automatic_statistician.pdf</code></td><td>The same search with component descriptions.</td></tr>
+      <tr><td>Malkomes, Schaff, Garnett 2016, NeurIPS</td><td>NeurIPS 29</td><td><code>Malkomes2016_bo_model_selection.pdf</code></td><td>BO over the space of kernels.</td></tr>
+      <tr><td>Abdessalem, Dervilis, Wagg, Worden 2017, Front. Built Environ.</td><td>10.3389/fbuil.2017.00052</td><td><code>Abdessalem2017_abc_smc_kernel_selection.pdf</code></td><td>ABC-SMC over kernel choices.</td></tr>
+    </tbody>
+  </table></div>
+
+  <p><b>For 51 training points the literature favours a few interpretable components with shrinkage priors and
+  cross-validated comparison over a search across many structures.</b> Kernel search by marginal likelihood is the
+  approach Lotfi et al. and Bachoc warn about at this size, and it costs tens to thousands of fits per decision.
+  Full marginalisation is the principled fix for weakly identified mixture parameters and is the natural second stage
+  for whichever proposal is accepted.</p>
+
+  <h3 class="subheading">16. Chemistry and Bayesian optimisation context</h3>
+
+  <div class="table-responsive"><table class="data-table">
+    <thead><tr><th>Paper</th><th>Identifier</th><th>File</th><th>What it offers here</th></tr></thead>
+    <tbody>
+      <tr><td>Shields et al. 2021, Nature 590</td><td>10.1038/s41586-021-03213-y</td><td><code>Shields2021_edbo.pdf</code></td><td>Reaction BO over catalyst, solvent, base and conditions with descriptor GPs.</td></tr>
+      <tr><td>Griffiths et al. 2023, NeurIPS</td><td>arXiv 2212.04450</td><td><code>Griffiths2023_gauche.pdf</code></td><td>GP kernels for molecules and reactions in GPyTorch.</td></tr>
+      <tr><td>Häse, Aldeghi, Hickman, Roch, Aspuru-Guzik 2021, Appl. Phys. Rev.</td><td>10.1063/5.0048164</td><td><code>Hase2021_gryffin.pdf</code></td><td>Descriptor-informed categorical BO without a GP.</td></tr>
+      <tr><td>Hvarfner, Hellsten, Nardi 2024, ICML</td><td>arXiv 2402.02229</td><td><code>Hvarfner2024_vanilla_bo_high_dim.pdf</code></td><td>The \(\sqrt{D}\)-scaled lengthscale prior used in every block.</td></tr>
+      <tr><td>Hvarfner et al. 2022, ICLR</td><td>arXiv 2204.11051</td><td><code>Hvarfner2022_pibo.pdf</code></td><td>User beliefs in the acquisition function.</td></tr>
+      <tr><td>Hvarfner, Hutter, Nardi 2024, ICLR</td><td>arXiv 2311.14645</td><td><code>Hvarfner2024_user_guided_bo_colabo.pdf</code></td><td>User priors over function values and optima.</td></tr>
+      <tr><td>Souza et al. 2021, ECML PKDD</td><td>arXiv 2006.14608</td><td><code>Souza2021_bopro_prior_optimum.pdf</code></td><td>A prior over the optimum's location.</td></tr>
+    </tbody>
+  </table></div>
+
+  <p>These papers fix the setting rather than the structure: none of them separates a catalyst-independent condition
+  response from a catalyst-specific one, and the belief-injection methods act on the acquisition function, not on the
+  surrogate, so they are outside this report's scope.</p>
+</section>
+
+<section id="sec-part-5" class="content-section" data-num="V" data-nav="Proposals and the test sweep">
+  <div class="section-header-block">
+    <span class="section-num-tag">Part V</span>
+    <h2 class="section-heading">Three kernel structures, three mean functions and the sweep that tests them</h2>
+    <p class="section-lead">Every proposal contains <code>KS1</code> with the constant mean as a special case, so
+    a fit that finds no use for the new component returns to the current model. All new priors are proper and
+    have closed-form densities, so each proposal can be sampled by NUTS.</p>
+  </div>
+
+  <h3 class="subheading">17. KS5: product with a catalyst correlation floor</h3>
+
+  <div class="math-display">\[ k(x,x') = \sigma^2 \big[\rho + (1-\rho)\, k_{\mathrm{cat}}(x,x')\big]\, k_{\mathrm{solv}}(x,x')\, k_{\mathrm{base}}(x,x')\, k_{\mathrm{cont}}(x,x'), \qquad \rho \sim \mathrm{Beta}(1, 3) \]</div>
+
+  <p>Two experiments run under the same conditions correlate at least \(\rho\) whatever their catalysts. This is the
+  hierarchical form of Section 12 with the shared and deviation processes using the same condition kernel:
+  \(\sigma^2\rho\, k_{\mathrm{rest}}\) is the response shared by all catalysts, \(\sigma^2(1-\rho) k_{\mathrm{cat}}
+  k_{\mathrm{rest}}\) the catalyst-specific part. It addresses Section 2 directly: a held-out catalyst with
+  \(k_{\mathrm{cat}} \approx 0\) keeps covariance \(\sigma^2\rho\, k_{\mathrm{rest}}\) with training rows at similar
+  conditions. Beta(1, 3) has its mode at \(\rho = 0\) (which is <code>KS1</code>) and mean 0.25, with finite density
+  at zero, so the MAP fit can return to <code>KS1</code>. One extra hyperparameter; measured at 1.31 to 1.42 times the cost of <code>KS1</code>; base-free rows keep the <code>KS1</code> zero location (RK4). It is one method on
+  <code>KernelStructure</code> that wraps the catalyst block kernel. The risk is identification: with long
+  catalyst lengthscales \(k_{\mathrm{cat}} \approx 1\) everywhere and \(\rho\) is flat, so its fold-to-fold spread
+  is part of the acceptance test.</p>
+
+  <h3 class="subheading">18. KS6: product plus shrunk condition main effects</h3>
+
+  <div class="math-display">\[ k(x,x') = \sigma_{\times}^2\, k_{\mathrm{cat}}\, k_{\mathrm{solv}}\, k_{\mathrm{base}}\, k_{\mathrm{cont}} + \sigma_{+}^2\, \tfrac{1}{3}\big(k_{\mathrm{solv}} + k_{\mathrm{base}} + k_{\mathrm{cont}}\big), \qquad \sigma_{\times}^2 \sim \mathrm{Gamma}(3, 4),\; \sigma_{+} \sim \mathcal{N}^{+}(0, 0.5^2) \]</div>
+
+  <p>This is the Duvenaud additive kernel restricted to order 1 and order 4, with two changes the diagnosis asks
+  for: the catalyst has no main effect (a large \(w_{\mathrm{cat}}\) costs leave-one-out, Section 4), and the main
+  effects carry their own scale with a half-normal prior whose mode is zero instead of sharing a Dirichlet simplex
+  with the product (RK2, RK5). The main effects reuse the block kernels and lengthscales of the product, so the
+  only extra hyperparameter is \(\sigma_{+}\); the prior mean of \(\sigma_{+}^2\) is 0.25 against 0.75 for the
+  product. The base main effect is unmasked and uses the zero location, so base-free rows keep their variance. Cost: measured at 1.03 to 1.37 times <code>KS1</code>. It is a <code>KernelStructure</code> method using
+  <code>_block_kernel(block, mask=False)</code>.</p>
+
+  <h3 class="subheading">19. KS7: shared condition process plus a library-centred catalyst deviation</h3>
+
+  <div class="math-display">\[ k(x,x') = \big[\sigma_g^2 + \sigma_d^2\, \tilde{k}_{\mathrm{cat}}(x,x')\big]\, k_{\mathrm{solv}}\, k_{\mathrm{base}}\, k_{\mathrm{cont}}, \qquad \tilde{k}_{\mathrm{cat}}(c,c') = k_{\mathrm{cat}}(c,c') - \frac{m(c)\, m(c')}{\bar{M}} \]</div>
+
+  <div class="math-display">\[ m(c) = \frac{1}{L}\sum_{l=1}^{L} k_{\mathrm{cat}}(c, c_l), \qquad \bar{M} = \frac{1}{L^2}\sum_{l=1}^{L}\sum_{l'=1}^{L} k_{\mathrm{cat}}(c_l, c_{l'}), \qquad L = 161 \]</div>
+
+  <p>The catalyst deviation is constrained to average to zero over the 161 library catalysts, the orthogonality of
+  Lu et al. (Appendix C, Eq. 20, with uniform weights over the library) applied to the catalyst block. The shared
+  term \(\sigma_g^2 k_{\mathrm{rest}}\) is then the library-average response and the deviation cannot absorb it,
+  which removes the trade-off that makes \(\rho\) in <code>KS5</code> weakly identified. \(\tilde{k}_{\mathrm{cat}}\)
+  is a conditional covariance and stays positive semidefinite. Priors: \(\sigma_d^2 \sim \mathrm{Gamma}(3,4)\) as for
+  the <code>KS1</code> outputscale, \(\sigma_g \sim \mathcal{N}^{+}(0, 0.5^2)\). One extra hyperparameter. Its extra cost is one \(n \times 161\) and one \(161 \times 161\) catalyst Gram matrix per evaluation, which grows with catalyst width: measured at 1.5, 3.6 and 4.3 times <code>KS1</code> on the <code>grover_pca</code> (29 columns), <code>scage_carbene</code> (about 530) and <code>unimol</code> (1,559) anchors. The library catalyst rows are carried by <code>CellFeatures.cat_library</code> and normalised with the fold's training ranges, the map the model's input transform applies. <code>KS7</code> is implemented and tested but is not part of the sweep in Section 24, where its width-dependent cost would set the run's duration.</p>
+
+  <h3 class="subheading">20. M1 (cond_linear): condition-linear mean</h3>
+
+  <div class="math-display">\[ m(x) = c + a_{\mathrm{solv}}^{\top} x_{\mathrm{solv}} + a_{\mathrm{cont}}^{\top} x_{\mathrm{cont}} + \beta(x)\big(b_{\mathrm{base}} + a_{\mathrm{base}}^{\top} x_{\mathrm{base}}\big), \qquad a_b \sim \mathcal{N}(0, I/d_b),\; b_{\mathrm{base}}, c \sim \mathcal{N}(0, 1) \]</div>
+
+  <p>Here \(\beta(x)\) is <code>base_active</code>. This is <code>block_linear</code> without the catalyst slopes,
+  the identified part of Section 7. Its parameter count is \(d_{\mathrm{solv}} + d_{\mathrm{base}} +
+  d_{\mathrm{cont}} + 2\), about 10 to 30 at the anchors and independent of catalyst width (RM1, RM2). Extrapolation is
+  linear (RM3) and shrinkage comes only from the fixed priors. Cost: measured at 2.46 to 2.75 times the constant mean on three anchors, without a trend in catalyst width. It is the <code>_MEAN_BUILDERS</code> key <code>cond_linear</code>.</p>
+
+  <h3 class="subheading">21. M2 (cond_trend): integrated condition-linear trend</h3>
+
+  <div class="math-display">\[ m(x) = c, \qquad k_{\mathrm{M2}}(x,x') = k(x,x') + s^2\, h(x)^{\top} D\, h(x'), \qquad h(x) = \big[x_{\mathrm{solv}},\, \beta(x),\, \beta(x)\, x_{\mathrm{base}},\, x_{\mathrm{cont}}\big], \qquad s \sim \mathcal{N}^{+}(0, 1) \]</div>
+
+  <p>The coefficients of <code>M1</code> are given the prior \(\mathcal{N}(0, s^2 D)\), with \(D\) holding \(1/d_b\)
+  for each block and 1 for the base intercept, and integrated out (Rasmussen and Williams, Eq. 2.40; O'Hagan,
+  Theorem 2). The trend costs one hyperparameter \(s\) instead of 11 to 30 coefficients; \(s \to 0\) returns the
+  constant mean (RM4), and the predictive variance carries the slope uncertainty, so the trend raises uncertainty
+  rather than confidence away from the data. Cost: one low-rank kernel term, measured at 0.89 to 1.10 times the constant mean. It is the mean key <code>cond_trend</code>: <code>build_mean_module</code> returns the constant mean and <code>build_mean_kernel_term</code> the trend term, which the model factory adds to the kernel.</p>
+
+  <h3 class="subheading">22. M3 (form_offset): partially pooled pre-catalyst form offsets</h3>
+
+  <div class="math-display">\[ m(x) = c, \qquad k_{\mathrm{M3}}(x,x') = k(x,x') + \tau^2\, \mathbf{1}\big[t(x) = t(x')\big], \qquad \tau \sim \mathcal{N}^{+}(0, 0.5^2) \]</div>
+
+  <p>Each pre-catalyst form \(t\) (salt, free NHC, \(\mathrm{CO_2}\) adduct, bicarbonate) gets an offset \(b_t \sim \mathcal{N}(0,
+  \tau^2)\), integrated out, so the four offsets are partially pooled toward the constant and their spread is learned.
+  The per-form intercepts are the identified part of <code>type_linear</code> (median |z| 0.397, 90 percent sign
+  stability). Integrating the offsets rather than fitting them avoids the degenerate MAP of a hierarchical variance
+  (\(\tau \to 0\) with all \(b_t = 0\)). It is the random-effect version of the zero-sum categorical term of lgpr and
+  is predictable for every library catalyst, since the form is known for all 161. Cost: one rank-4 term, measured at about 1.0 times the constant mean. It is the mean key <code>form_offset</code>, built as <code>M2</code> is. The form determines
+  <code>base_active</code>, so <code>M3</code> also carries the base versus no-base offset.</p>
+
+  <h3 class="subheading">23. The proposals side by side</h3>
+
+  <div class="table-responsive"><table class="data-table">
+    <thead><tr><th>Proposal</th><th>Failure mode addressed</th><th class="num">Extra hyperparameters</th><th class="num">Expected cost</th><th>Base-free rows</th><th>Interface</th></tr></thead>
+    <tbody>
+      <tr><td><code>KS5</code></td><td>No transfer to unseen catalysts in the product</td><td class="num">1</td><td class="num">1.31&ndash;1.42 times</td><td>zero location</td><td><code>KernelStructure</code> method</td></tr>
+      <tr><td><code>KS6</code></td><td>Simplex weights; catalyst main effect; no interaction in KS2</td><td class="num">1</td><td class="num">1.03&ndash;1.37 times</td><td>zero location, unmasked</td><td><code>KernelStructure</code> method</td></tr>
+      <tr><td><code>KS7</code></td><td>Trade-off between shared and catalyst terms</td><td class="num">1</td><td class="num">1.5&ndash;4.3 times, with width</td><td>zero location</td><td>method plus library catalyst rows</td></tr>
+      <tr><td><code>M1</code> <code>cond_linear</code></td><td>Unidentified catalyst slopes; width-driven cost</td><td class="num">10&ndash;30</td><td class="num">2.46&ndash;2.75 times</td><td>base terms times <code>base_active</code></td><td><code>_MEAN_BUILDERS</code></td></tr>
+      <tr><td><code>M2</code> <code>cond_trend</code></td><td>Coefficients fitted as point estimates</td><td class="num">1</td><td class="num">0.89&ndash;1.10 times</td><td>base terms times <code>base_active</code></td><td>builder returning a kernel term</td></tr>
+      <tr><td><code>M3</code> <code>form_offset</code></td><td>Form offsets tied to catalyst slopes in <code>type_linear</code></td><td class="num">1</td><td class="num">about 1.0 times</td><td>through the form</td><td>builder returning a kernel term</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="callout callout-arch">
+    <div class="callout-title">Why these and not the other families</div>
+    <p>Categorical kernels on catalyst identity cannot predict a held-out catalyst. Physical temperature means rest on
+    about 22 experiments off 80 °C. Kernel search and averaging over many structures cost tens of fits per decision and
+    select by a marginal likelihood that misleads at 51 points. Purely additive structures repeat <code>KS2</code>.
+    Each proposal adds one interpretable component with one scale whose prior includes zero, which is what the
+    small-data papers of Section 15 support.</p>
+  </div>
+
+  <h3 class="subheading">24. The sweep that tests them</h3>
+
+  <p>The proposals are tested where the scan now operates, on the best <code>cross_1</code> configuration of six of its seven catalyst levels, rather than at the elimination baseline; <code>unimol</code>, whose 1,559-column design makes it the slowest anchor, and <code>KS7</code> are not in the sweep. Each anchor is crossed with four kernel structures (<code>KS1</code>, <code>KS2</code>, <code>KS5</code>, <code>KS6</code>) and four means (<code>constant</code>, <code>cond_linear</code>, <code>cond_trend</code>, <code>form_offset</code>), with every other axis at the
+  anchor's level and all 137 folds of the current <code>cv_splits.json</code>. <code>KS1</code> with the constant
+  mean refits each anchor in the same run as the paired control, which also removes the selection effect of picking
+  the best of 2,520 configurations and refits the probit anchors under the per-scale noise prior.</p>
+
+  <div class="table-responsive"><table class="data-table">
+    <thead><tr><th>Anchor catalyst level</th><th>Solvent / base / kernel / transform / prior</th><th class="num">cross_1 gem</th><th>Binding study</th><th class="num">Anchor cell, min</th><th class="num">16 cells, CPU-h</th></tr></thead>
+    <tbody>
+      <tr><td><code>grover_pca</code></td><td>Hansen / grover_pca / matern52 / probit / P2</td><td class="num">+0.425</td><td>primary</td><td class="num">12.7</td><td class="num">5.2</td></tr>
+      <tr><td><code>soap_pca</code></td><td>Gutmann / grover_pca / rbf / probit / P2</td><td class="num">+0.346</td><td>primary</td><td class="num">12.7</td><td class="num">5.2</td></tr>
+      <tr><td><code>minimol_precat_pca</code></td><td>grover_pca / OHE / rbf / arcsin_sqrt / P2</td><td class="num">+0.318</td><td>primary</td><td class="num">10.7</td><td class="num">4.4</td></tr>
+      <tr><td><code>transformerm_precat_pca</code></td><td>grover_pca / OHE / rbf / probit / P2</td><td class="num">+0.317</td><td>primary</td><td class="num">12.7</td><td class="num">5.2</td></tr>
+      <tr><td><code>scage_carbene</code></td><td>Gutmann / thermo / rbf / probit / P1</td><td class="num">+0.297</td><td>leave_one_out</td><td class="num">16.3</td><td class="num">6.8</td></tr>
+      <tr><td><code>interpretable_steric</code></td><td>Gutmann / thermo / rbf / probit / P2</td><td class="num">+0.278</td><td>primary</td><td class="num">12.7</td><td class="num">5.2</td></tr>
+    </tbody>
+  </table></div>
+
+  <p><b>96 configurations, 13,152 fits, projected at 32 CPU-h; the slowest cell is <code>scage_carbene</code> with <code>KS5</code> and <code>cond_linear</code> at 54 min, so 96 workers finish in under an hour.</b> The median cell takes 16 min. The projection is the scheduler's probed time for each anchor multiplied by the factors of Section 23, which were measured on three folds per cell of the <code>grover_pca</code>, <code>scage_carbene</code> and <code>unimol</code> cells on one local machine. Five of the six anchors bind on <code>primary</code>, the study the proposals target, so a gain there lifts the gem as long as leave-one-out does
+  not fall below it.</p>
+
+  <div class="callout callout-arch">
+    <div class="callout-title">Acceptance and rejection</div>
+    <p><b>A proposal is accepted when, against the anchor refit in the same run, its paired fold-bootstrap gem
+    difference is resolved positive on at least four of the six anchors and resolved negative on none.</b> Its
+    leave-one-out pooled CRPSS must not be resolved worse on any anchor, it must have no failed fold, and its cost
+    must stay within 1.5 times the anchor for the kernels and 3.5 times for <code>M1</code>.</p>
+    <p>The rule is stated on the pooled gem. The BO gem of <code>bo_surrogate_metrics.html</code> (its Metric 1,
+    the BO-weighted CRPS skill score) is computed for every configuration and reported next to it; an anchor on which
+    the two disagree in sign counts as unresolved.</p>
+    <p>The new scale parameter must be identified: across the 60 <code>primary</code> folds its standard deviation
+    is below its prior standard deviation and its median lies away from zero. A proposal whose scale sits at zero has
+    returned to <code>KS1</code> or the constant mean and is reported as such.</p>
+    <p>A proposal that is indistinguishable from the anchor on all six anchors is rejected, and <code>KS1</code> with
+    the constant mean stays. When two proposals are both accepted and indistinguishable from each other, the one with
+    fewer extra hyperparameters and lower cost is kept. The type, scaffold, solvent and replicate studies are reported
+    for every configuration, and a mean that lowers the leave-one-type-out CRPSS on more than half the anchors is
+    flagged for <code>M3</code> in particular.</p>
+  </div>
+
+  <div class="callout callout-warning">
+    <div class="callout-title">Limitation</div>
+    <p>Six anchors give little resolving power: with a per-configuration gem standard deviation of 0.074 to 0.126,
+    only a gain of roughly 0.1 resolves on a single anchor. The sweep can show that a proposal helps at the current
+    best configurations; it cannot rank the proposals across all 50 levels. A positive result is followed by fully
+    Bayesian fits of the accepted proposal on the anchors, since every new prior is proper.</p>
+  </div>
+</section>
+
+<section id="sec-part-6" class="content-section" data-num="VI" data-nav="Results of kernel_mean_1">
+  <div class="section-header-block">
+    <span class="section-num-tag">Part VI</span>
+    <h2 class="section-heading">No proposal beats the anchors; KS1 with the constant mean stays</h2>
+    <p class="section-lead">The sweep of Section 24 ran in full on the six anchors: every cell finished all 137 folds, and each anchor's <code>KS1</code> / <code>constant</code> cell was refitted in the same run as the paired control. The refitted controls score +0.427, +0.344, +0.317, +0.305, +0.299 and +0.279, within 0.002 of their <code>cross_1</code> gem except <code>transformerm_precat_pca</code> (0.012 below). Every comparison below is against that control. Six anchors of 120 interpolation folds each are the main limitation: the gains measured here, 0.01 to 0.04 of gem, do not resolve on a single anchor.</p>
+  </div>
+
+  <div class="kpis">
+    <div class="kpi"><div class="k">Configurations</div><div class="v">96</div></div>
+    <div class="kpi"><div class="k">Fits</div><div class="v">13,152</div></div>
+    <div class="kpi"><div class="k">Failed folds</div><div class="v">0</div></div>
+    <div class="kpi"><div class="k">Resolved gains</div><div class="v">0 / 90</div></div>
+    <div class="kpi"><div class="k">Accepted</div><div class="v">0 / 15</div></div>
+    <div class="kpi"><div class="k">CPU-h</div><div class="v">20.6</div></div>
+  </div>
+
+  <h3 class="subheading">25. No proposal is resolved better than its anchor on any anchor</h3>
+
+  <p class="small">Each cell is the gem of the proposal minus the gem of the anchor's <code>KS1</code> / <code>constant</code> cell, with its 95 percent interval from a paired fold bootstrap (4,000 resamples of the 60 <code>primary</code> and 60 <code>leave_one_out</code> folds, the same resamples for proposal and control). A difference is resolved when the interval excludes zero; resolved losses are marked.</p>
+
+  <div class="table-responsive"><table class="data-table">
+    <thead><tr><th>Proposal</th><th class="num"><code>grover_pca</code></th><th class="num"><code>soap_pca</code></th><th class="num"><code>minimol_precat_pca</code></th><th class="num"><code>transformerm_precat_pca</code></th><th class="num"><code>scage_carbene</code></th><th class="num"><code>interpretable_steric</code></th></tr></thead>
+    <tbody>
+      <tr><td><code>KS1</code> + <code>cond_linear</code></td><td class="num">-0.012 [-0.075, +0.051]</td><td class="num">-0.009 [-0.132, +0.108]</td><td class="num">-0.048 [-0.087, +0.010]</td><td class="num bad">-0.100 [-0.168, -0.010]</td><td class="num">-0.229 [-0.372, +0.052]</td><td class="num">-0.097 [-0.201, +0.024]</td></tr>
+      <tr><td><code>KS1</code> + <code>cond_trend</code></td><td class="num">-0.003 [-0.058, +0.037]</td><td class="num">+0.031 [-0.002, +0.195]</td><td class="num">+0.005 [-0.042, +0.016]</td><td class="num">-0.023 [-0.044, +0.021]</td><td class="num">+0.032 [-0.016, +0.160]</td><td class="num">+0.036 [-0.015, +0.054]</td></tr>
+      <tr><td><code>KS1</code> + <code>form_offset</code></td><td class="num">-0.021 [-0.034, +0.021]</td><td class="num">+0.015 [-0.025, +0.071]</td><td class="num">-0.000 [-0.005, +0.004]</td><td class="num">-0.005 [-0.017, +0.009]</td><td class="num">+0.029 [-0.037, +0.137]</td><td class="num">+0.039 [-0.008, +0.051]</td></tr>
+      <tr><td><code>KS2</code> + <code>constant</code></td><td class="num">-0.085 [-0.290, +0.043]</td><td class="num">-0.074 [-0.258, +0.111]</td><td class="num bad">-0.137 [-0.409, -0.069]</td><td class="num">-0.055 [-0.231, +0.124]</td><td class="num">-0.057 [-0.262, +0.112]</td><td class="num">+0.004 [-0.192, +0.055]</td></tr>
+      <tr><td><code>KS2</code> + <code>cond_linear</code></td><td class="num bad">-0.288 [-0.372, -0.075]</td><td class="num">-0.183 [-0.252, +0.060]</td><td class="num bad">-0.087 [-0.246, -0.042]</td><td class="num">-0.070 [-0.128, +0.152]</td><td class="num">-0.212 [-0.322, +0.054]</td><td class="num">-0.084 [-0.148, +0.002]</td></tr>
+      <tr><td><code>KS2</code> + <code>cond_trend</code></td><td class="num">-0.078 [-0.283, +0.048]</td><td class="num">-0.084 [-0.220, +0.112]</td><td class="num bad">-0.123 [-0.386, -0.049]</td><td class="num">-0.043 [-0.216, +0.124]</td><td class="num">-0.030 [-0.155, +0.161]</td><td class="num">-0.004 [-0.192, +0.050]</td></tr>
+      <tr><td><code>KS2</code> + <code>form_offset</code></td><td class="num">-0.075 [-0.277, +0.051]</td><td class="num">-0.070 [-0.260, +0.113]</td><td class="num bad">-0.174 [-0.517, -0.077]</td><td class="num">-0.054 [-0.223, +0.126]</td><td class="num">-0.056 [-0.170, +0.141]</td><td class="num">+0.003 [-0.210, +0.051]</td></tr>
+      <tr><td><code>KS5</code> + <code>constant</code></td><td class="num">-0.004 [-0.009, +0.010]</td><td class="num">-0.024 [-0.040, +0.000]</td><td class="num">+0.001 [-0.001, +0.006]</td><td class="num">+0.001 [-0.004, +0.008]</td><td class="num">-0.037 [-0.140, +0.044]</td><td class="num">-0.012 [-0.025, +0.004]</td></tr>
+      <tr><td><code>KS5</code> + <code>cond_linear</code></td><td class="num">-0.014 [-0.074, +0.053]</td><td class="num">-0.007 [-0.131, +0.110]</td><td class="num">-0.047 [-0.088, +0.008]</td><td class="num bad">-0.104 [-0.175, -0.008]</td><td class="num">-0.198 [-0.323, +0.056]</td><td class="num">-0.114 [-0.228, +0.014]</td></tr>
+      <tr><td><code>KS5</code> + <code>cond_trend</code></td><td class="num">+0.001 [-0.053, +0.040]</td><td class="num">+0.027 [-0.011, +0.181]</td><td class="num">+0.004 [-0.045, +0.015]</td><td class="num">-0.018 [-0.039, +0.019]</td><td class="num">+0.024 [-0.019, +0.160]</td><td class="num">+0.042 [-0.017, +0.063]</td></tr>
+      <tr><td><code>KS5</code> + <code>form_offset</code></td><td class="num">-0.020 [-0.034, +0.018]</td><td class="num">+0.008 [-0.051, +0.068]</td><td class="num">-0.001 [-0.019, +0.004]</td><td class="num">-0.006 [-0.017, +0.008]</td><td class="num">+0.044 [-0.021, +0.154]</td><td class="num">+0.022 [-0.004, +0.041]</td></tr>
+      <tr><td><code>KS6</code> + <code>constant</code></td><td class="num">-0.003 [-0.008, +0.010]</td><td class="num">-0.009 [-0.030, +0.007]</td><td class="num">+0.001 [-0.001, +0.008]</td><td class="num">+0.002 [-0.003, +0.007]</td><td class="num">-0.007 [-0.035, +0.025]</td><td class="num">-0.001 [-0.009, +0.008]</td></tr>
+      <tr><td><code>KS6</code> + <code>cond_linear</code></td><td class="num">-0.014 [-0.075, +0.053]</td><td class="num">-0.004 [-0.124, +0.111]</td><td class="num">-0.048 [-0.088, +0.009]</td><td class="num bad">-0.102 [-0.173, -0.008]</td><td class="num">-0.220 [-0.361, +0.043]</td><td class="num">-0.072 [-0.168, +0.034]</td></tr>
+      <tr><td><code>KS6</code> + <code>cond_trend</code></td><td class="num">-0.000 [-0.055, +0.040]</td><td class="num">+0.030 [-0.008, +0.185]</td><td class="num">+0.005 [-0.046, +0.016]</td><td class="num">-0.016 [-0.037, +0.019]</td><td class="num">+0.013 [-0.075, +0.124]</td><td class="num">+0.038 [-0.018, +0.054]</td></tr>
+      <tr><td><code>KS6</code> + <code>form_offset</code></td><td class="num">-0.022 [-0.034, +0.020]</td><td class="num">+0.010 [-0.024, +0.075]</td><td class="num">-0.001 [-0.020, +0.004]</td><td class="num">-0.003 [-0.014, +0.010]</td><td class="num">-0.044 [-0.107, +0.044]</td><td class="num">+0.037 [-0.006, +0.050]</td></tr>
+    </tbody>
+  </table></div>
+
+  <p><b>Of the 90 proposal&ndash;anchor pairs none is resolved positive, so no proposal reaches the four of six anchors the rule asks for, nor three of six.</b></p>
+
+  <p>The largest point gains are +0.044 (<code>KS5</code> + <code>form_offset</code> on <code>scage_carbene</code>) and +0.042 (<code>KS5</code> + <code>cond_trend</code> on <code>interpretable_steric</code>), both with intervals reaching below zero. The integrated trend is the only component with a positive mean over the anchors: +0.013 with <code>KS1</code>, +0.013 with <code>KS5</code> and +0.012 with <code>KS6</code>, positive at four or five of six anchors. The <code>KS5</code> and <code>KS6</code> cells with the constant mean lie within 0.04 of the control everywhere, which is what a structure whose new term has collapsed returns (Section 27).</p>
+
+  <h3 class="subheading">26. The condition-linear mean and KS2 are resolved worse</h3>
+
+  <p>The expectation from Section 7 was that dropping the catalyst slopes leaves a mean whose coefficients are identified. The measurement is that fitting those coefficients as point estimates still costs more than it gives. <code>cond_linear</code> is resolved worse on <code>transformerm_precat_pca</code> with each of <code>KS1</code>, <code>KS5</code> and <code>KS6</code> (-0.100 to -0.104), on both the gem and leave-one-out, and loses 0.20 to 0.23 of gem on <code>scage_carbene</code>, with intervals reaching +0.04 to +0.06. Its leave-one-type-out pooled CRPSS falls at all six anchors, by 0.09 to 1.05, so the fitted slopes extrapolate badly to an unseen pre-catalyst form.</p>
+
+  <p><b><code>KS2</code> is resolved worse on <code>minimol_precat_pca</code> with every mean (-0.087 to -0.174, leave-one-out -0.15 to -0.26) and, with <code>cond_linear</code>, on <code>grover_pca</code> as well (-0.288).</b></p>
+
+  <p>This repeats Section 2 at the operating point: the additive structure gives up interpolation among measured catalysts. Seven proposals fail the leave-one-out condition of the rule on one anchor each: the three <code>cond_linear</code> cells on <code>transformerm_precat_pca</code> and the four <code>KS2</code> cells on <code>minimol_precat_pca</code>. The other eight are resolved worse on no anchor, on either the gem or leave-one-out.</p>
+
+  <h3 class="subheading">27. The KS5 floor and the KS6 main-effect scale sit at zero</h3>
+
+  <p class="small">Per new scale, over the 60 <code>primary</code> folds of each anchor's cell with the other axis at <code>KS1</code> or <code>constant</code>: the range over the six anchors of the median and of the standard deviation, the share of folds whose value is below 0.01, and the number of anchors whose median is above 0.01, which is how "away from zero" is read here. Values are the constrained parameters (sigmoid for \(\rho\), softplus for the scales).</p>
+
+  <div class="table-responsive"><table class="data-table">
+    <thead><tr><th>Scale</th><th>Prior</th><th class="num">Prior SD</th><th class="num">Median over folds</th><th class="num">SD over folds</th><th class="num">Folds below 0.01</th><th class="num">Anchors identified</th></tr></thead>
+    <tbody>
+      <tr><td><code>KS5</code> floor \(\rho\)</td><td>\(\mathrm{Beta}(1, 3)\)</td><td class="num">0.194</td><td class="num bad">0.000&ndash;0.014</td><td class="num">0.000&ndash;0.059</td><td class="num">48&ndash;100%</td><td class="num bad">1 of 6</td></tr>
+      <tr><td><code>KS6</code> main scale \(\sigma_{+}\)</td><td>\(\mathcal{N}^{+}(0, 0.5^2)\)</td><td class="num">0.301</td><td class="num bad">0.0006&ndash;0.0031</td><td class="num">0.000&ndash;0.198</td><td class="num">63&ndash;100%</td><td class="num bad">0 of 6</td></tr>
+      <tr><td><code>cond_trend</code> scale \(s\)</td><td>\(\mathcal{N}^{+}(0, 1)\)</td><td class="num">0.603</td><td class="num good">0.292&ndash;0.411</td><td class="num">0.045&ndash;0.172</td><td class="num">0&ndash;15%</td><td class="num good">6 of 6</td></tr>
+      <tr><td><code>form_offset</code> scale \(\tau\)</td><td>\(\mathcal{N}^{+}(0, 0.5^2)\)</td><td class="num">0.301</td><td class="num">0.001&ndash;0.191</td><td class="num">0.046&ndash;0.096</td><td class="num">0&ndash;78%</td><td class="num">4 of 6</td></tr>
+    </tbody>
+  </table></div>
+
+  <p><b>The floor and the main-effect scale fit to zero, so <code>KS5</code> and <code>KS6</code> return to <code>KS1</code>; the trend scale is identified on every anchor and the form offset on four.</b></p>
+
+  <p>Every standard deviation is below its prior standard deviation, but for \(\rho\) and \(\sigma_{+}\) that holds because the folds pile up at the boundary, not because the data pin an interior value. The one anchor where \(\rho\) passes the median test, <code>soap_pca</code>, has a median of 0.014 against a prior mean of 0.25, with 48 percent of folds below 0.01. This is the identification risk named in Section 17. The combinations behave the same way: across the 24 cells that carry each scale, the floor has a median above 0.01 in one, the main scale in none, the trend scale in 22 and the form offset in 12. The form offset is at zero on <code>minimol_precat_pca</code> and <code>transformerm_precat_pca</code> and 0.15 to 0.19 on the other four anchors.</p>
+
+  <h3 class="subheading">28. The integrated trend lifts primary on every anchor, by too little to resolve on the gem</h3>
+
+  <p>With <code>KS1</code>, <code>cond_trend</code> raises the pooled <code>primary</code> CRPSS on all six anchors, by +0.005 to +0.036, resolved on <code>scage_carbene</code> (+0.027 [+0.002, +0.052]) and <code>interpretable_steric</code> (+0.036 [+0.020, +0.053]). On leave-one-out it moves between -0.023 and +0.077, and on <code>transformerm_precat_pca</code>, where leave-one-out binds, the -0.023 makes the gem difference negative. <code>form_offset</code> is resolved positive on <code>primary</code> at the same two anchors (+0.026 and +0.039) and resolved negative on <code>grover_pca</code> (-0.021 [-0.034, -0.007]). It raises the leave-one-type-out pooled CRPSS on two of six anchors, so it is not flagged under the rule of Section 24.</p>
+
+  <p><b>The trend is the one proposal that is identified, never resolved worse and consistently positive on the study it targets; its gain of 0.01 to 0.04 sits below what six anchors can resolve.</b></p>
+
+  <h3 class="subheading">29. Verdicts</h3>
+
+  <p class="small">Per proposal: anchors resolved positive and resolved negative on the gem, anchors on which leave-one-out is resolved worse, anchors on which each new scale is identified (median above 0.01), and the cell's wall time against the anchor's control (median over the anchors, with the range). No fold failed in any cell.</p>
+
+  <div class="table-responsive"><table class="data-table">
+    <thead><tr><th>Proposal</th><th class="num">Gem better</th><th class="num">Gem worse</th><th class="num">LOO worse</th><th>New scale identified</th><th class="num">Cost</th><th>Verdict</th></tr></thead>
+    <tbody>
+      <tr><td><code>KS1</code> + <code>cond_linear</code></td><td class="num">0</td><td class="num bad">1</td><td class="num bad">1</td><td>no new scale</td><td class="num">2.60 (2.10&ndash;2.95)</td><td>rejected</td></tr>
+      <tr><td><code>KS1</code> + <code>cond_trend</code></td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td>trend scale 6 of 6</td><td class="num">1.11 (0.97&ndash;1.27)</td><td>rejected</td></tr>
+      <tr><td><code>KS1</code> + <code>form_offset</code></td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td>offset scale 4 of 6</td><td class="num">1.12 (1.05&ndash;1.25)</td><td>rejected</td></tr>
+      <tr><td><code>KS2</code> + <code>constant</code></td><td class="num">0</td><td class="num bad">1</td><td class="num bad">1</td><td>no new scale</td><td class="num">0.98 (0.75&ndash;1.26)</td><td>rejected</td></tr>
+      <tr><td><code>KS2</code> + <code>cond_linear</code></td><td class="num">0</td><td class="num bad">2</td><td class="num bad">1</td><td>no new scale</td><td class="num">1.77 (1.47&ndash;2.61)</td><td>rejected</td></tr>
+      <tr><td><code>KS2</code> + <code>cond_trend</code></td><td class="num">0</td><td class="num bad">1</td><td class="num bad">1</td><td>trend scale 4 of 6</td><td class="num">1.05 (0.86&ndash;1.47)</td><td>rejected</td></tr>
+      <tr><td><code>KS2</code> + <code>form_offset</code></td><td class="num">0</td><td class="num bad">1</td><td class="num bad">1</td><td>offset scale 0 of 6</td><td class="num">1.13 (0.85&ndash;1.50)</td><td>rejected</td></tr>
+      <tr><td><code>KS5</code> + <code>constant</code></td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td>floor 1 of 6</td><td class="num">1.34 (1.18&ndash;1.44)</td><td>rejected</td></tr>
+      <tr><td><code>KS5</code> + <code>cond_linear</code></td><td class="num">0</td><td class="num bad">1</td><td class="num bad">1</td><td>floor 0 of 6</td><td class="num">3.70 (2.01&ndash;4.00)</td><td>rejected</td></tr>
+      <tr><td><code>KS5</code> + <code>cond_trend</code></td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td>floor 0 of 6; trend scale 6 of 6</td><td class="num">1.54 (1.33&ndash;1.62)</td><td>rejected</td></tr>
+      <tr><td><code>KS5</code> + <code>form_offset</code></td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td>floor 0 of 6; offset scale 4 of 6</td><td class="num">1.40 (1.29&ndash;1.55)</td><td>rejected</td></tr>
+      <tr><td><code>KS6</code> + <code>constant</code></td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td>main scale 0 of 6</td><td class="num">1.18 (1.00&ndash;1.61)</td><td>rejected</td></tr>
+      <tr><td><code>KS6</code> + <code>cond_linear</code></td><td class="num">0</td><td class="num bad">1</td><td class="num bad">1</td><td>main scale 0 of 6</td><td class="num">3.14 (1.99&ndash;3.66)</td><td>rejected</td></tr>
+      <tr><td><code>KS6</code> + <code>cond_trend</code></td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td>main scale 0 of 6; trend scale 6 of 6</td><td class="num">1.31 (1.13&ndash;1.68)</td><td>rejected</td></tr>
+      <tr><td><code>KS6</code> + <code>form_offset</code></td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td>main scale 0 of 6; offset scale 4 of 6</td><td class="num">1.30 (1.13&ndash;1.36)</td><td>rejected</td></tr>
+    </tbody>
+  </table></div>
+
+  <p><b>All 15 proposals are rejected: none is resolved positive on any anchor, so the rule fails at its first condition for every one, whether the threshold is four or three anchors. <code>KS1</code> with the constant mean stays the model of the scan.</b></p>
+
+  <p>With the constant mean, <code>KS5</code> costs 1.18 to 1.44 times its control and <code>KS6</code> 1.00 to 1.61 times; with <code>KS1</code>, <code>cond_linear</code> costs 2.10 to 2.95 times. The cost bounds of Section 24 (1.5 for a kernel, 3.5 for <code>cond_linear</code>) are exceeded only by <code>KS6</code> on <code>grover_pca</code>. The whole sweep took 20.6 CPU-h against the projected 32, and its slowest cell, <code>minimol_precat_pca</code> with <code>KS5</code> and <code>cond_linear</code>, 33 minutes. The BO gem that the rule reports next to the pooled gem is not computed for this sweep; it can only turn an anchor into an unresolved one, so it cannot change a rejection.</p>
+
+  <div class="callout callout-insight">
+    <div class="callout-title">What the sweep leaves open</div>
+    <p><code>cond_trend</code> is the only proposal worth a further test. Its scale is identified on every anchor, it is never resolved worse, and it raises <code>primary</code> on all six anchors. Resolving a gain of 0.01 to 0.04 needs either more anchors or a paired test pooled over anchors, and the leave-one-out loss on <code>transformerm_precat_pca</code> has to be understood first. <code>KS5</code> and <code>KS6</code> are not worth refitting at these anchors: their new terms fit to zero.</p>
+  </div>
+</section>
+
+    <footer class="report-footer">Sources, under <code>pablo/featurization_and_kernel_scan/</code>:
+    <code>results/gem_scores.parquet</code> (576 configurations), <code>results/scan_aggregate.parquet</code>
+    (69,120 <code>primary</code> and <code>leave_one_out</code> fold rows),
+    <code>results/axis_sensitivity/axis_sensitivity.md</code> and its CSVs (2,000 bootstrap draws, seed 0),
+    per-fold hyperparameters in <code>results/cells/</code> (576 files), the timing probe in
+    <code>results/timing_probe/</code>, <code>runs/cross_1/gem_scores.parquet</code> (2,520 configurations), <code>runs/kernel_mean_1/scan_aggregate.parquet</code> (13,152 folds), <code>runs/kernel_mean_1/gem_scores.parquet</code> (96 configurations) and per-fold hyperparameters in <code>runs/kernel_mean_1/cells/</code> (96 files; Part VI bootstrap 4,000 draws, seed 0),
+    <code>data/libraries/experiments.parquet</code> (69 experiments), <code>core/kernels.py</code> and
+    <code>core/models.py</code>. Papers: 46 PDFs in <code>archived_trash/kernel_mean_research/</code> at the
+    repository root. Elimination cells carry \(\mathrm{Rb_2CO_3}\) features on experiment 27 and are fitted on raw
+    yield. Hyperparameters are transformed through the constraints in <code>core/kernels.py</code> and
+    <code>core/models.py</code>. The sweep cost is <code>scheduler estimate-runtime --run kernel_mean_1</code>: the probed time of each anchor times the probed <code>KS2</code> slowdown and the locally measured slowdowns of <code>scheduler._ESTIMATED_FACTORS</code> for <code>KS5</code>, <code>KS6</code> and the three new means.</footer>
+  </main>
+
+</div>
+
+<script>
+var narrow = window.matchMedia('(max-width: 900px)');
+
+function toggleTheme() {
+  var next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('pablo_theme', next);
+}
+
+function toggleSidebar() {
+  var root = document.documentElement;
+  if (narrow.matches) {
+    root.setAttribute('data-sidebar-mobile', root.getAttribute('data-sidebar-mobile') === 'open' ? 'closed' : 'open');
+    return;
+  }
+  var next = root.getAttribute('data-sidebar') === 'closed' ? 'open' : 'closed';
+  root.setAttribute('data-sidebar', next);
+  localStorage.setItem('pablo_sidebar', next);
+}
+
+window.addEventListener('keydown', function (e) {
+  if (e.key !== '[' || e.ctrlKey || e.metaKey || e.altKey) return;
+  if (/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName)) return;
+  toggleSidebar();
+});
+
+window.addEventListener('scroll', function () {
+  var el = document.documentElement;
+  var bar = document.getElementById('progressBar');
+  bar.style.width = (el.scrollTop / (el.scrollHeight - el.clientHeight)) * 100 + '%';
+});
+
+window.addEventListener('DOMContentLoaded', function () {
+  var root = document.documentElement;
+  var nav = document.getElementById('navLinks');
+  var sections = document.querySelectorAll('section.content-section');
+  var caretSvg = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 6 15 12 9 18"/></svg>';
+  var groups = [];
+  var subLinks = [];
+
+  sections.forEach(function (sec, i) {
+    var hue = sec.dataset.hue || String(i % 8);
+    sec.dataset.hue = hue;
+    var group = document.createElement('div');
+    group.className = 'nav-group';
+    group.dataset.hue = hue;
+    group.dataset.target = sec.id;
+
+    var row = document.createElement('div');
+    row.className = 'nav-row';
+    var a = document.createElement('a');
+    a.href = '#' + sec.id;
+    a.className = 'nav-item';
+    var num = document.createElement('span');
+    num.className = 'nav-badge-num';
+    num.textContent = sec.dataset.num || '';
+    var label = document.createElement('span');
+    label.textContent = sec.dataset.nav || sec.querySelector('.section-heading').textContent;
+    a.append(num, label);
+    row.appendChild(a);
+    group.appendChild(row);
+
+    var subs = sec.querySelectorAll('h3.subheading');
+    if (subs.length) {
+      var caret = document.createElement('button');
+      caret.className = 'nav-caret';
+      caret.setAttribute('aria-label', 'Expand');
+      caret.innerHTML = caretSvg;
+      caret.addEventListener('click', function () { group.classList.toggle('open'); });
+      row.appendChild(caret);
+      var box = document.createElement('div');
+      box.className = 'nav-sub';
+      subs.forEach(function (h, j) {
+        if (!h.id) h.id = sec.id + '-' + (j + 1);
+        var s = document.createElement('a');
+        s.href = '#' + h.id;
+        s.className = 'nav-subitem';
+        s.textContent = h.textContent;
+        box.appendChild(s);
+        subLinks.push(s);
+      });
+      group.appendChild(box);
+    }
+    a.addEventListener('click', function () { if (subs.length) group.classList.add('open'); });
+    nav.appendChild(group);
+    groups.push(group);
+  });
+
+  if (window.renderMathInElement) {
+    renderMathInElement(document.body, {
+      delimiters: [
+        {left: '\\[', right: '\\]', display: true},
+        {left: '\\(', right: '\\)', display: false}
+      ],
+      throwOnError: false
+    });
+  } else {
+    console.error('KaTeX did not load; formulas are shown as LaTeX source.');
+  }
+
+  nav.addEventListener('click', function (e) {
+    if (narrow.matches && e.target.closest('a')) root.setAttribute('data-sidebar-mobile', 'closed');
+  });
+
+  var lastActive = null;
+  function spy() {
+    var line = 120;
+    var current = sections[0];
+    sections.forEach(function (sec) { if (sec.getBoundingClientRect().top <= line) current = sec; });
+    var sub = null;
+    current.querySelectorAll('h3.subheading').forEach(function (h) { if (h.getBoundingClientRect().top <= line) sub = h; });
+    groups.forEach(function (g) {
+      var on = g.dataset.target === current.id;
+      g.classList.toggle('active', on);
+      if (on && current !== lastActive && g.querySelector('.nav-sub')) g.classList.add('open');
+    });
+    subLinks.forEach(function (s) { s.classList.toggle('active', !!sub && s.getAttribute('href') === '#' + sub.id); });
+    lastActive = current;
+  }
+  window.addEventListener('scroll', spy, {passive: true});
+  spy();
+
+  var expandBtn = document.getElementById('expandAllBtn');
+  expandBtn.addEventListener('click', function () {
+    var open = !expandBtn.classList.contains('all-open');
+    expandBtn.classList.toggle('all-open', open);
+    groups.forEach(function (g) { if (g.querySelector('.nav-sub')) g.classList.toggle('open', open); });
+  });
+
+  document.getElementById('sidebarSearch').addEventListener('input', function (e) {
+    var term = e.target.value.toLowerCase().trim();
+    groups.forEach(function (g) {
+      var own = g.querySelector('.nav-item').textContent.toLowerCase().includes(term);
+      var anySub = false;
+      g.querySelectorAll('.nav-subitem').forEach(function (s) {
+        var hit = !term || own || s.textContent.toLowerCase().includes(term);
+        s.style.display = hit ? 'block' : 'none';
+        anySub = anySub || (term && s.textContent.toLowerCase().includes(term));
+      });
+      g.style.display = !term || own || anySub ? 'block' : 'none';
+      if (term && anySub) g.classList.add('open');
+    });
+  });
+
+  var resizer = document.getElementById('sidebarResizer');
+  resizer.addEventListener('pointerdown', function (e) {
+    e.preventDefault();
+    resizer.setPointerCapture(e.pointerId);
+    root.classList.add('resizing');
+  });
+  resizer.addEventListener('pointermove', function (e) {
+    if (!root.classList.contains('resizing')) return;
+    var w = Math.min(560, Math.max(220, e.clientX));
+    root.style.setProperty('--sidebar-w', w + 'px');
+  });
+  resizer.addEventListener('pointerup', function (e) {
+    root.classList.remove('resizing');
+    resizer.releasePointerCapture(e.pointerId);
+    localStorage.setItem('pablo_sidebar_w', parseInt(getComputedStyle(root).getPropertyValue('--sidebar-w'), 10));
+  });
+  resizer.addEventListener('dblclick', function () {
+    root.style.removeProperty('--sidebar-w');
+    localStorage.removeItem('pablo_sidebar_w');
+  });
+});
+</script>
+</body></html>
+

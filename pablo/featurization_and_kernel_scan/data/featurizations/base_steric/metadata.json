@@ -1,0 +1,11 @@
+{
+  "n_molecules": 8,
+  "n_features": 3,
+  "feature_cols": [
+    "sterimol_L",
+    "sterimol_B1",
+    "sterimol_B5"
+  ],
+  "descriptors_file": "descriptors.parquet",
+  "method": "Sterimol L/B1/B5 around the basic atom, z-scored across the 8-base library. Computed via morfeus on one ETKDG+MMFF94 conformer of each base fragment SMILES (anion form for ionic bases). Measurement axis: reference_atom\u2192basic_atom (N for amines/DBU/KHMDS, O for alkoxides/carbonates)."
+}

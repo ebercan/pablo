@@ -1,0 +1,27 @@
+{
+  "n_molecules": 8,
+  "n_features": 4,
+  "feature_cols": [
+    "base_grover_pc0",
+    "base_grover_pc1",
+    "base_grover_pc2",
+    "base_grover_pc3"
+  ],
+  "descriptors_file": "descriptors.parquet",
+  "method": "Frozen PCA of the standardized full-dimensional featurization, fit once over the whole 8-member base_id library with no access to any outcome. Component count from the Kneedle knee of the explained-variance curve.",
+  "source_featurization": "base_grover",
+  "source_n_features": 5000,
+  "kneedle_sensitivity": 1,
+  "knee_from_fallback": false,
+  "variance_retained": 0.9028474591807164,
+  "n_components_for_90pct": 4,
+  "n_components_for_95pct": 5,
+  "explained_variance_ratio": [
+    0.3313821284800751,
+    0.26796998133583727,
+    0.21190438532971667,
+    0.09159096403508735
+  ],
+  "random_state": 42,
+  "none_location": "No-base rows are zero-filled at assembly. PC scores are centred, so the zero vector is the centroid of the 8 bases in PC space rather than a point no base occupies. KS2-KS4 mask the base block through base_active; KS1 sees no-base rows at that centroid."
+}

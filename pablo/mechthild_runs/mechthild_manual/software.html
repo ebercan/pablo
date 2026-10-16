@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="en" class="js-focus-visible js" data-js-focus-visible="" data-lt-installed="true"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="http://mechthild.mpi-magdeburg.mpg.de/quickstart/">
+      
+      
+        <link rel="next" href="http://mechthild.mpi-magdeburg.mpg.de/hardware/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="http://mechthild.mpi-magdeburg.mpg.de/assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.2">
+    
+    
+      
+        <title>Software - Mechthild User Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="software_files/main.484c7ddc.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
+        <link rel="stylesheet" href="software_files/css.css">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr" data-new-gr-c-s-check-loaded="8.936.0" data-gr-ext-installed="">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#software" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="http://mechthild.mpi-magdeburg.mpg.de/" title="Mechthild User Documentation" class="md-header__button md-logo" aria-label="Mechthild User Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"></path></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"></path></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Mechthild User Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Software
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="none" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required="">
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0">
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">Type to start searching</div>
+          <ol class="md-search-result__list" role="presentation" hidden=""></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://gitlab.mpi-magdeburg.mpg.de/csc-administration/mechthild/docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="m504 204.6-.7-1.8L433.6 21c-1.4-3.6-3.9-6.6-7.2-8.6-2.4-1.6-5.1-2.5-8-2.8s-5.7.1-8.4 1.1-5.1 2.7-7.1 4.8c-1.9 2.1-3.3 4.7-4.1 7.4l-47 144H161.3l-47.1-144c-.8-2.8-2.2-5.3-4.1-7.4-2-2.1-4.4-3.7-7.1-4.8-2.6-1-5.5-1.4-8.4-1.1s-5.6 1.2-8 2.8c-3.2 2-5.8 5.1-7.2 8.6L9.8 202.8l-.8 1.8c-10 26.2-11.3 55-3.5 82 7.7 26.9 24 50.7 46.4 67.6l.3.2.6.4 106 79.5c38.5 29.1 66.7 50.3 84.6 63.9 3.7 1.9 8.3 4.3 13 4.3s9.3-2.4 13-4.3c17.9-13.5 46.1-34.9 84.6-63.9l106.7-79.9.3-.3c22.4-16.9 38.7-40.6 45.6-67.5 8.6-27 7.4-55.8-2.6-82"></path></svg>
+  </div>
+  <div class="md-source__repository">
+    Gitlab
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" style="top: 58px;">
+                <div class="md-sidebar__scrollwrap" style="height: 776px;">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="http://mechthild.mpi-magdeburg.mpg.de/" title="Mechthild User Documentation" class="md-nav__button md-logo" aria-label="Mechthild User Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"></path></svg>
+
+    </a>
+    Mechthild User Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://gitlab.mpi-magdeburg.mpg.de/csc-administration/mechthild/docs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="m504 204.6-.7-1.8L433.6 21c-1.4-3.6-3.9-6.6-7.2-8.6-2.4-1.6-5.1-2.5-8-2.8s-5.7.1-8.4 1.1-5.1 2.7-7.1 4.8c-1.9 2.1-3.3 4.7-4.1 7.4l-47 144H161.3l-47.1-144c-.8-2.8-2.2-5.3-4.1-7.4-2-2.1-4.4-3.7-7.1-4.8-2.6-1-5.5-1.4-8.4-1.1s-5.6 1.2-8 2.8c-3.2 2-5.8 5.1-7.2 8.6L9.8 202.8l-.8 1.8c-10 26.2-11.3 55-3.5 82 7.7 26.9 24 50.7 46.4 67.6l.3.2.6.4 106 79.5c38.5 29.1 66.7 50.3 84.6 63.9 3.7 1.9 8.3 4.3 13 4.3s9.3-2.4 13-4.3c17.9-13.5 46.1-34.9 84.6-63.9l106.7-79.9.3-.3c22.4-16.9 38.7-40.6 45.6-67.5 8.6-27 7.4-55.8-2.6-82"></path></svg>
+  </div>
+  <div class="md-source__repository">
+    Gitlab
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list">
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="http://mechthild.mpi-magdeburg.mpg.de/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="http://mechthild.mpi-magdeburg.mpg.de/quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quickstart
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Software
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="http://mechthild.mpi-magdeburg.mpg.de/software/" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Software
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc">
+      
+        <li class="md-nav__item">
+  <a href="#software-and-libraries-installed-on-mechthild" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Software and Libraries installed on Mechthild
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#modules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Modules
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Modules">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#changes-from-tcl-modules-to-lmod" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changes from TCL Modules to LMOD
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#avail" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        avail
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#load" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        load
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#list" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        list
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#unload" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        unload
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#purge" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        purge
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#help" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        help
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#whatis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        whatis
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#show" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        show
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Troubleshooting
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Troubleshooting">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#module-cache" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Module Cache
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="http://mechthild.mpi-magdeburg.mpg.de/hardware/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hardware
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="http://mechthild.mpi-magdeburg.mpg.de/slurm/jobs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jobs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="http://mechthild.mpi-magdeburg.mpg.de/slurm/partitions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Partitions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" style="top: 58px;">
+                <div class="md-sidebar__scrollwrap" style="height: 776px;">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc">
+      
+        <li class="md-nav__item">
+  <a href="#software-and-libraries-installed-on-mechthild" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Software and Libraries installed on Mechthild
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#modules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Modules
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Modules">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#changes-from-tcl-modules-to-lmod" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changes from TCL Modules to LMOD
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#avail" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        avail
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#load" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        load
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#list" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        list
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#unload" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        unload
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#purge" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        purge
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#help" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        help
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#whatis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        whatis
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#show" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        show
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Troubleshooting
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Troubleshooting">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#module-cache" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Module Cache
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+    <a href="https://gitlab.mpi-magdeburg.mpg.de/csc-administration/mechthild/docs/-/edit/main/docs/software.md?ref_type=main" title="Edit this page" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75z"></path></svg>
+    </a>
+  
+  
+
+
+<h1 id="software">Software</h1>
+<p>Here is an overview of Software installed on <code>mechthild</code>. If you need more details about
+the runtime settings of a software package, type <code>module help &lt;modulename&gt;</code> on any node of <code>mechthild</code>. 
+If some software is not available please feel free to contact the admin and ask for it. Some modules
+ depend on each other so if you need a module whose dependencies are not fulfilled, take are loaded automatically. </p>
+<h2 id="software-and-libraries-installed-on-mechthild">Software and Libraries installed on Mechthild</h2>
+<p>A complete overview about the installed software is available using <code>module avail</code>. Some highlights are:</p>
+<ul>
+<li>GNU Compiler Collection 6.5, 11, 13</li>
+<li>Intel OneAPI Compiler 2025.0</li>
+<li>AMD AOCC 5.0</li>
+<li>CUDA 12.6.2</li>
+<li>MATLAB up to 2024b </li>
+<li>GNU Octave up to version 9</li>
+<li>GROMACS </li>
+<li>OpenMPI, MPICH</li>
+</ul>
+<h2 id="modules">Modules</h2>
+<p>The installed software is managed using Lmod <a href="https://github.com/TACC/Lmod">https://github.com/TACC/Lmod</a>.
+ This allows
+to switch easily between various software environments without big 
+problems. Modules can be easily loaded, unloaded, etc. 
+If a module is in incompatible to another one, the load can be canceled.
+ In the next sections the basic commands will be explained. </p>
+<h3 id="changes-from-tcl-modules-to-lmod">Changes from TCL Modules to LMOD</h3>
+<p>Due to the switch from TCL (Environment) Modules to Lua Modules (LMOD), some smal changes appear. Frist, it is 
+no longer necessary to load the modules command in your batch jobs. I.e., the line </p>
+<pre id="__code_0"><code class="language-shell">source /etc/profile.d/modules.sh
+</code></pre>
+<p>have to be removed from your jobfiles. </p>
+<p>Second, the names of the modules changed in order to obtain a more user friendly and intuiteve order. For this reason 
+check </p>
+<pre id="__code_1"><code class="language-shell">module avail 
+</code></pre>
+<p>for the correct names. </p>
+<h3 id="avail"><code>avail</code></h3>
+<p>To show which modules are currently installed on the system you can use <code>modules avail</code> on the command line which shows 
+all installed modules. If you want to restrict the show modules you can add a subcategory which should be displayed. </p>
+<p>Example 1:</p>
+<pre id="__code_2"><code class="language-shell">module avail 
+</code></pre>
+<p>this gives </p>
+<pre id="__code_3"><code tabindex="0">-------------------------------------------------------------------------------------- System Packages and Applications --------------------------------------------------------------------------------------
+   apptainer/1.3.4    dl_poly/4.09                           matlab/2019b        matlab/2024b    octave/9.2.0 (D)    python/3.9         spack/0.23.0    (L)    turbomole/7.5          xtb/6.6.0 (D)
+   censo/2.1.2        gromacs/2024.3-er   (Intel2024+GPU)    matlab/2020b        octave/5.2.0    openmm/7.6.0        python/3.10        turbomole/7.1.1        turbomole/7.5.1
+   charmm/42          gromacs/2024.3-skx  (Intel2018+GPU)    matlab/2021a        octave/6.4.0    openmm/8.1.2        python/3.11 (L)    turbomole/7.2.1        turbomole/7.6
+   chemsh/3.7.0       gromacs/2024.3-zen2 (AMD2021+GPU)      matlab/2022a        octave/7.3.0    openmm/8.2.0 (D)    python/3.12 (D)    turbomole/7.3          turbomole/7.8.1 (D)
+   crest/3.0.2        gromacs/2024.3      (GPU,D)            matlab/2023b (D)    octave/8.4.0    python/3.8          python/3.13        turbomole/7.4          xtb/6.5.1
+
+-------------------------------------------------------------------------------------------- Development Packages --------------------------------------------------------------------------------------------
+   amdblis/5.0-ilp64-openmp         blis/1.0-ilp64             compiler/intel-oneapi-compilers/2025.0.0                hdf5/1.8.23                  openblas/0.3.28-ilp64-openmp
+   amdblis/5.0-ilp64-pthread        blis/1.0-openmp            compiler/nvhpc/24.9                                     hdf5/1.10.11                 openblas/0.3.28-ilp64-pthread
+   amdblis/5.0-ilp64                blis/1.0-pthread           cuda/12.6.2                                             hdf5/1.12.3                  openblas/0.3.28-ilp64
+   amdblis/5.0-openmp               blis/1.0            (D)    fftw/3.3.10-er                           (Intel2024)    hdf5/1.14.5       (D)        openblas/0.3.28-openmp
+   amdblis/5.0-pthread              cmake/3.30.5               fftw/3.3.10-skx                          (Intel2018)    hwloc/2.11.1      (GPU)      openblas/0.3.28-pthread
+   amdblis/5.0               (D)    compiler/aocc/5.0.0        fftw/3.3.10-zen2                         (AMD2021)      mpi/mpich/4.2.3   (GPU)      openblas/0.3.28               (D)
+   blis/1.0-ilp64-openmp            compiler/gcc/6.5.0         fftw/3.3.10                              (D)            mpi/openmpi/4.1.7 (GPU)      valgrind/3.23.0
+   blis/1.0-ilp64-pthread           compiler/gcc/13.3.0 (D)    gdb/15.2                                                mpi/openmpi/5.0.5 (GPU,D)
+
+  Where:
+   GPU:            built with GPU support
+   AMD2021:        built for AMD Nodes
+   AMD2021+GPU:    built for AMD Nodes and GPU support
+   L:              Module is loaded
+   Intel2024:      built for new Intel Nodes
+   Intel2024+GPU:  built for new Intel Nodes and GPU support
+   Intel2018:      built for old Intel Nodes
+   Intel2018+GPU:  built for old Intel Nodes and GPU support
+   D:              Default Module
+</code></pre>
+<p>Example 2 ( Show only compilers): </p>
+<pre id="__code_4"><code class="language-shell" tabindex="0">module avail compiler
+compiler/aocc/5.0.0    compiler/gcc/6.5.0    compiler/gcc/11.4.1 (D,L)    compiler/gcc/13.3.0    compiler/intel-oneapi-compilers/2025.0.0    compiler/nvhpc/24.9
+</code></pre>
+<h3 id="load"><code>load</code></h3>
+<p>To select a module you have to load it using <code>module load &lt;Path of the Module&gt;</code>. Many developemnt modules 
+depend on the previously loaded compiler. Some modules are only available for specific compilers. If the module
+is not available for the compiler loaded, an error will appear. The load command also checks if some modules conflict 
+and tries to solve the problem automatically. If this is not possible an error is shown. </p>
+<p>It no compiler is loaded, it is assumed that <strong>GCC 11.4.1</strong> is used, which is the system's default compiler. Although this compiler 
+has a module, it is not required to be loaded. </p>
+<p>Example 1 (load compiler and some libraries):  </p>
+<pre id="__code_5"><code class="language-shell">module load compiler/gcc
+module load cmake
+module load openblas
+</code></pre>
+<h3 id="list"><code>list</code></h3>
+<p>This command lists the modules that are currently loaded.</p>
+<p>Example 1:</p>
+<pre id="__code_6"><code class="language-shell" tabindex="0">module load compiler/gcc
+module load cmake
+module load openblas
+module list 
+
+Currently Loaded Modules:
+  1) compiler/gcc/11.4.1          3) zlib/1.3.1-wi6svnu    (H)   5) curl/8.10.1-bdenq4w (H)   7) ncurses/6.5-ttntlwg (H)   9) openblas/0.3.28
+  2) nghttp2/1.63.0-s4bkpiv (H)   4) openssl/3.4.0-kjppsox (H)   6) gmake/4.4.1-llzzdi3 (H)   8) cmake/3.30.5
+
+  Where:
+   H:  Hidden Module
+
+</code></pre>
+<p>Thereby, hidden modules may appear. They represent internal 
+dependencies of the software and by default not visible to the user nor 
+should be loaded by hand. </p>
+<h3 id="unload"><code>unload</code></h3>
+<p>This unloads(removes) a module from your currently loaded modules. The syntax is the same like the load command. </p>
+<p>Example: </p>
+<pre id="__code_7"><code class="language-shell" tabindex="0">module load compiler/gcc
+module load cmake
+module load openblas
+module list 
+
+Currently Loaded Modules:
+  1) compiler/gcc/11.4.1          3) zlib/1.3.1-wi6svnu    (H)   5) curl/8.10.1-bdenq4w (H)   7) ncurses/6.5-ttntlwg (H)   9) openblas/0.3.28
+  2) nghttp2/1.63.0-s4bkpiv (H)   4) openssl/3.4.0-kjppsox (H)   6) gmake/4.4.1-llzzdi3 (H)   8) cmake/3.30.5
+
+module unload openblas
+module list 
+
+Currently Loaded Modules:
+  1) compiler/gcc/11.4.1          3) zlib/1.3.1-wi6svnu    (H)   5) curl/8.10.1-bdenq4w (H)   7) ncurses/6.5-ttntlwg (H)
+  2) nghttp2/1.63.0-s4bkpiv (H)   4) openssl/3.4.0-kjppsox (H)   6) gmake/4.4.1-llzzdi3 (H)   8) cmake/3.30.5
+</code></pre>
+<h3 id="purge">purge</h3>
+<p>This command removes all currently loaded modules.  I can be used to reset the modules environment </p>
+<p>Example: </p>
+<pre id="__code_8"><code class="language-shell" tabindex="0">module load compiler/gcc
+module load cmake
+module load openblas
+module list 
+
+Currently Loaded Modules:
+  1) compiler/gcc/11.4.1          3) zlib/1.3.1-wi6svnu    (H)   5) curl/8.10.1-bdenq4w (H)   7) ncurses/6.5-ttntlwg (H)   9) openblas/0.3.28
+  2) nghttp2/1.63.0-s4bkpiv (H)   4) openssl/3.4.0-kjppsox (H)   6) gmake/4.4.1-llzzdi3 (H)   8) cmake/3.30.5
+
+module purge
+module list 
+
+No modules loaded
+</code></pre>
+<h3 id="help"><code>help</code></h3>
+<p>Some modules contain a small help text. To display this text, use <code>module help &lt;Path of the Module&gt;</code>.</p>
+<p>Example: </p>
+<pre id="__code_9"><code class="language-shell" tabindex="0">module help gromacs
+----------------------------------------------------------------------------- Module Specific Help for "gromacs/2024.3" ------------------------------------------------------------------------------
+Name   : gromacs
+Version: 2024.3
+Target : x86_64_v3
+
+GROMACS is a molecular dynamics package primarily designed for
+simulations of proteins, lipids and nucleic acids. It was originally
+developed in the Biophysical Chemistry department of University of
+Groningen, and is now maintained by contributors in universities and
+research centers across the world. GROMACS is one of the fastest and
+most popular software packages available and can run on CPUs as well as
+GPUs. It is free, open source released under the GNU Lesser General
+Public License. Before the version 4.6, GROMACS was released under the
+GNU General Public License.
+</code></pre>
+<h3 id="whatis"><code>whatis</code></h3>
+<p>Gives a short description / information about a module. Use <code>module whatis &lt;Path of the Module&gt;</code>. </p>
+<p>Example:</p>
+<pre id="__code_10"><code class="language-shell" tabindex="0">module whatis gromacs
+gromacs/2024.3      : Name : gromacs
+gromacs/2024.3      : Version : 2024.3
+gromacs/2024.3      : Target : x86_64_v3
+gromacs/2024.3      : Short description : GROMACS is a molecular dynamics package primarily designed for simulations of proteins, lipids and nucleic acids. It was originally developed in the Biophysi
+cal Chemistry department of
+</code></pre>
+<h3 id="show"><code>show</code></h3>
+<p>The show command is used to display which environment variable are changed when loading a module. 
+This can be used to get the linker and include paths of a module or to check which other environment 
+variables are changed. It also shows you with which module a module conflicts with or on which modules a module depends on. </p>
+<p>Example:</p>
+<pre id="__code_11"><code class="language-shell" tabindex="0">module show gromacs
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+   /mechthild/software/modulefiles/gromacs/2024.3.lua:
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+whatis("Name : gromacs")
+whatis("Version : 2024.3")
+whatis("Target : x86_64_v3")
+whatis("Short description : GROMACS is a molecular dynamics package primarily designed for simulations of proteins, lipids and nucleic acids. It was originally developed in the Biophysical Chemistry 
+department of University of Groningen, and is now maintained by contributors in universities and research centers across the world.")
+help([[Name   : gromacs]])
+help([[Version: 2024.3]])
+help([[Target : x86_64_v3]])
+]])
+help([[GROMACS is a molecular dynamics package primarily designed for
+simulations of proteins, lipids and nucleic acids. It was originally
+developed in the Biophysical Chemistry department of University of
+Groningen, and is now maintained by contributors in universities and
+research centers across the world. GROMACS is one of the fastest and
+most popular software packages available and can run on CPUs as well as
+GPUs. It is free, open source released under the GNU Lesser General
+Public License. Before the version 4.6, GROMACS was released under the
+GNU General Public License.]])
+depends_on("cuda/12.6.2")
+depends_on("fftw/3.3.10")
+depends_on("openblas/0.3.28")
+depends_on("mpi/openmpi/4.1.7")
+prepend_path("PATH","/mechthild/software/sys/spack/install-0.23.0/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__/linux-almalinux9-x86_64_v3/gcc-13.3.0/gromacs-202
+4.3-m7zb6uednwiavvqjg6ccufl7xlddnyvu/bin")
+prepend_path("MANPATH","/mechthild/software/sys/spack/install-0.23.0/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__/linux-almalinux9-x86_64_v3/gcc-13.3.0/gromacs-
+2024.3-m7zb6uednwiavvqjg6ccufl7xlddnyvu/share/man")
+prepend_path("PKG_CONFIG_PATH","/mechthild/software/sys/spack/install-0.23.0/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__/linux-almalinux9-x86_64_v3/gcc-13.3.0/
+gromacs-2024.3-m7zb6uednwiavvqjg6ccufl7xlddnyvu/lib64/pkgconfig")
+prepend_path("CMAKE_PREFIX_PATH","/mechthild/software/sys/spack/install-0.23.0/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__/linux-almalinux9-x86_64_v3/gcc-13.3.
+0/gromacs-2024.3-m7zb6uednwiavvqjg6ccufl7xlddnyvu/.")
+append_path("MANPATH","")
+add_property("arch","gpu")
+</code></pre>
+<h2 id="troubleshooting">Troubleshooting</h2>
+<h3 id="module-cache">Module Cache</h3>
+<p>LMod uses a cache to accelerate finding modules. If this cache is 
+outdated, for example when new modules got added, one can remove the 
+cache via
+<code>shell 
+ rm -rf ~/.cache/lmod/</code></p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["content.action.edit"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="software_files/bundle.79ae519e.min.js"></script>
+      
+    
+  
+</body><grammarly-desktop-integration data-grammarly-shadow-root="true"></grammarly-desktop-integration></html>

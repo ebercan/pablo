@@ -1,0 +1,18 @@
+{
+  "n_molecules": 161,
+  "n_features": 10,
+  "feature_cols": [
+    "n_block_card",
+    "n_block_max_L",
+    "n_block_sum_L",
+    "n_block_max_B5",
+    "n_block_min_B1",
+    "c_block_card",
+    "c_block_max_L",
+    "c_block_sum_L",
+    "c_block_max_B5",
+    "c_block_min_B1"
+  ],
+  "descriptors_file": "descriptors.parquet",
+  "method": "Permutation-invariant aggregates over ring-N and ring-C exocyclic substituents. Each block = (card, max L, sum L, max B5, min B1). Empty multiset \u2192 0. Topology-agnostic; well-defined on all ring types."
+}

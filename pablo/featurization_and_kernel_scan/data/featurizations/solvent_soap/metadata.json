@@ -1,0 +1,39 @@
+{
+  "n_molecules": 14,
+  "n_features": 3330,
+  "label": "Solvent-SOAP",
+  "names": [
+    "THF",
+    "Me-THF",
+    "Propylenecarbonate",
+    "Dimethoxyethane",
+    "Toluene",
+    "Ethyl-Acetate",
+    "Heptane",
+    "m-xylene",
+    "H2O",
+    "EtOH",
+    "DMF",
+    "DCM",
+    "1,4-Dioxane",
+    "HFIP"
+  ],
+  "raw_model_output_file": "raw_model_output.parquet",
+  "descriptors_file": "descriptors.parquet",
+  "soap": {
+    "r_cut": 6.0,
+    "n_max": 6,
+    "l_max": 4,
+    "average": "inner",
+    "species": [
+      "C",
+      "Cl",
+      "F",
+      "H",
+      "N",
+      "O"
+    ]
+  },
+  "normalisation": "row-wise L2",
+  "geometry_source": "GFN2-xTB / ALPB(toluene) optimised geometry of the library SMILES, salts as the full ion pair; data/xtb/components/solvent_<id>/xtbopt.xyz"
+}

@@ -1,0 +1,29 @@
+{
+  "n_molecules": 14,
+  "n_features": 5000,
+  "label": "GROVERlarge",
+  "raw_model_output_file": "raw_model_output.parquet",
+  "descriptors_file": "descriptors.parquet",
+  "raw_model_dim": 5000,
+  "model": "grover_large",
+  "params": "100M",
+  "fingerprint_source": "both",
+  "checkpoint": "/home/enis/Py-VSCode/pablo/pablo/featurization_and_kernel_scan/data/weights/grover_large.pt",
+  "names": [
+    "THF",
+    "Me-THF",
+    "Propylenecarbonate",
+    "Dimethoxyethane",
+    "Toluene",
+    "Ethyl-Acetate",
+    "Heptane",
+    "m-xylene",
+    "H2O",
+    "EtOH",
+    "DMF",
+    "DCM",
+    "1,4-Dioxane",
+    "HFIP"
+  ],
+  "input_smiles": "library SMILES, salts with counter-cations"
+}

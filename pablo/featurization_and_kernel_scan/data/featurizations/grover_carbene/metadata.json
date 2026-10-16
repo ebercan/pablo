@@ -1,0 +1,15 @@
+{
+  "n_molecules": 161,
+  "n_features": 5000,
+  "label": "GROVERlarge-carbene",
+  "raw_model_output_file": "raw_model_output.parquet",
+  "descriptors_file": "descriptors.parquet",
+  "raw_model_dim": 5000,
+  "repo": "tencent-ailab/grover",
+  "model": "grover_large",
+  "fingerprint_source": "both",
+  "embedding_dim": 5000,
+  "free_carbene": true,
+  "counterion_stripped": false,
+  "form_onehot_appended": false
+}

@@ -1,0 +1,31 @@
+{
+  "n_molecules": 161,
+  "label": "Mordred",
+  "n_raw_descriptors": 1613,
+  "n_kept_descriptors": 427,
+  "kept_descriptor_indices": [
+    "2",
+    "3",
+    "21",
+    "26",
+    "27",
+    "29",
+    "31",
+    "32",
+    "33",
+    "36",
+    "37",
+    "41",
+    "71",
+    "73",
+    "88",
+    "132",
+    "134",
+    "139",
+    "143",
+    "144"
+  ],
+  "raw_model_output_file": "raw_model_output.parquet",
+  "n_features": 427,
+  "descriptors_file": "descriptors.parquet"
+}

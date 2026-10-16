@@ -1,0 +1,150 @@
+[
+  {
+    "batch_index": 0,
+    "old_af_json": 0.8538833006415425,
+    "old_af_eval": 1.1377343441719274,
+    "new_af": 1.2486606007144365,
+    "refined_batch": [
+      {
+        "Temperature": 78.66,
+        "Formaldehyde_Ratio": 1.0,
+        "Catalyst_Loading": 10.0,
+        "Time": 20.0,
+        "Catalyst_ID": 5,
+        "Solvent_ID": 12,
+        "Base_ID": 5,
+        "Posterior_Mean": 19.46,
+        "Posterior_Var": 284.207
+      },
+      {
+        "Temperature": 71.49,
+        "Formaldehyde_Ratio": 3.0,
+        "Catalyst_Loading": 7.559,
+        "Time": 20.0,
+        "Catalyst_ID": 1,
+        "Solvent_ID": 12,
+        "Base_ID": 0,
+        "Posterior_Mean": 55.32,
+        "Posterior_Var": 94.566
+      },
+      {
+        "Temperature": 71.49,
+        "Formaldehyde_Ratio": 3.0,
+        "Catalyst_Loading": 8.262,
+        "Time": 20.0,
+        "Catalyst_ID": 2,
+        "Solvent_ID": 12,
+        "Base_ID": 1,
+        "Posterior_Mean": 56.04,
+        "Posterior_Var": 74.839
+      },
+      {
+        "Temperature": 79.44,
+        "Formaldehyde_Ratio": 1.0,
+        "Catalyst_Loading": 3.715,
+        "Time": 20.0,
+        "Catalyst_ID": 4,
+        "Solvent_ID": 12,
+        "Base_ID": 0,
+        "Posterior_Mean": 13.42,
+        "Posterior_Var": 235.613
+      },
+      {
+        "Temperature": 78.66,
+        "Formaldehyde_Ratio": 3.0,
+        "Catalyst_Loading": 9.011,
+        "Time": 20.0,
+        "Catalyst_ID": 5,
+        "Solvent_ID": 0,
+        "Base_ID": 5,
+        "Posterior_Mean": 48.58,
+        "Posterior_Var": 160.433
+      },
+      {
+        "Temperature": 79.44,
+        "Formaldehyde_Ratio": 2.552,
+        "Catalyst_Loading": 8.331,
+        "Time": 20.0,
+        "Catalyst_ID": 1,
+        "Solvent_ID": 0,
+        "Base_ID": 0,
+        "Posterior_Mean": 66.48,
+        "Posterior_Var": 48.887
+      }
+    ]
+  },
+  {
+    "batch_index": 1,
+    "old_af_json": 0.8490528179845178,
+    "old_af_eval": 1.123885787431914,
+    "new_af": 1.2413952166607602,
+    "refined_batch": [
+      {
+        "Temperature": 78.06,
+        "Formaldehyde_Ratio": 2.277,
+        "Catalyst_Loading": 5.074,
+        "Time": 20.0,
+        "Catalyst_ID": 4,
+        "Solvent_ID": 12,
+        "Base_ID": 0,
+        "Posterior_Mean": 9.73,
+        "Posterior_Var": 77.877
+      },
+      {
+        "Temperature": 71.49,
+        "Formaldehyde_Ratio": 3.0,
+        "Catalyst_Loading": 8.326,
+        "Time": 20.0,
+        "Catalyst_ID": 2,
+        "Solvent_ID": 12,
+        "Base_ID": 1,
+        "Posterior_Mean": 55.87,
+        "Posterior_Var": 76.457
+      },
+      {
+        "Temperature": 71.49,
+        "Formaldehyde_Ratio": 3.0,
+        "Catalyst_Loading": 7.445,
+        "Time": 20.0,
+        "Catalyst_ID": 1,
+        "Solvent_ID": 12,
+        "Base_ID": 0,
+        "Posterior_Mean": 55.31,
+        "Posterior_Var": 94.369
+      },
+      {
+        "Temperature": 79.43,
+        "Formaldehyde_Ratio": 3.0,
+        "Catalyst_Loading": 0.508,
+        "Time": 20.0,
+        "Catalyst_ID": 5,
+        "Solvent_ID": 12,
+        "Base_ID": 5,
+        "Posterior_Mean": 9.82,
+        "Posterior_Var": 284.252
+      },
+      {
+        "Temperature": 79.43,
+        "Formaldehyde_Ratio": 2.557,
+        "Catalyst_Loading": 8.321,
+        "Time": 20.0,
+        "Catalyst_ID": 1,
+        "Solvent_ID": 0,
+        "Base_ID": 0,
+        "Posterior_Mean": 66.52,
+        "Posterior_Var": 48.229
+      },
+      {
+        "Temperature": 78.06,
+        "Formaldehyde_Ratio": 3.0,
+        "Catalyst_Loading": 9.079,
+        "Time": 20.0,
+        "Catalyst_ID": 5,
+        "Solvent_ID": 0,
+        "Base_ID": 5,
+        "Posterior_Mean": 47.69,
+        "Posterior_Var": 161.282
+      }
+    ]
+  }
+]

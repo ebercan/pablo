@@ -1,0 +1,40 @@
+{
+  "n_molecules": 161,
+  "n_features": 11,
+  "feature_cols": [
+    "smited_carbene_pc0",
+    "smited_carbene_pc1",
+    "smited_carbene_pc2",
+    "smited_carbene_pc3",
+    "smited_carbene_pc4",
+    "smited_carbene_pc5",
+    "smited_carbene_pc6",
+    "smited_carbene_pc7",
+    "smited_carbene_pc8",
+    "smited_carbene_pc9",
+    "smited_carbene_pc10"
+  ],
+  "descriptors_file": "descriptors.parquet",
+  "method": "Frozen PCA of the standardized full-dimensional featurization, fit once over the whole 161-member catalyst_id library with no access to any outcome. Component count from the Kneedle knee of the explained-variance curve.",
+  "source_featurization": "smited_carbene",
+  "source_n_features": 768,
+  "kneedle_sensitivity": 1,
+  "knee_from_fallback": false,
+  "variance_retained": 0.865048463509925,
+  "n_components_for_90pct": 15,
+  "n_components_for_95pct": 23,
+  "explained_variance_ratio": [
+    0.35743284968742023,
+    0.14158989386039864,
+    0.08742118696307531,
+    0.07955719859042484,
+    0.057872527385401044,
+    0.037409950342667524,
+    0.026978858997545322,
+    0.02541333129163411,
+    0.020103924262102557,
+    0.017616530925933606,
+    0.013652211203321685
+  ],
+  "random_state": 42
+}

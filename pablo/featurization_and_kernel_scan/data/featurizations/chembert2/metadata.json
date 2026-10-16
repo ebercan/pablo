@@ -1,0 +1,10 @@
+{
+  "n_molecules": 161,
+  "label": "ChemBERTa-2",
+  "raw_model_output_file": "raw_model_output.parquet",
+  "raw_model_dim": 384,
+  "hf_model": "DeepChem/ChemBERTa-77M-MTR",
+  "pooling": "mean_last_hidden",
+  "n_features": 384,
+  "descriptors_file": "descriptors.parquet"
+}

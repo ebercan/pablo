@@ -1,0 +1,24 @@
+{
+  "n_molecules": 14,
+  "label": "Solvent-MAP2",
+  "fp_radius": 1,
+  "names": [
+    "THF",
+    "Me-THF",
+    "Propylenecarbonate",
+    "Dimethoxyethane",
+    "Toluene",
+    "Ethyl-Acetate",
+    "Heptane",
+    "m-xylene",
+    "H2O",
+    "EtOH",
+    "DMF",
+    "DCM",
+    "1,4-Dioxane",
+    "HFIP"
+  ],
+  "raw_model_output_file": "raw_model_output.parquet",
+  "n_features": 2048,
+  "descriptors_file": "descriptors.parquet"
+}

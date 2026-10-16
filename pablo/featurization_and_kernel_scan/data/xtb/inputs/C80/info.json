@@ -1,0 +1,12 @@
+{
+  "catalyst_id": 80,
+  "form": "salt",
+  "free_carbene_smiles": "CC(C)C1=CC=CC(C(C)C)=C1N1[C]N(C2=C(C(C)C)C=CC=C2C(C)C)CC1",
+  "net_charge": 0,
+  "ff_used": "mmff94",
+  "carbene_idx": 13,
+  "hetero_nbr_indices": [
+    12,
+    14
+  ]
+}

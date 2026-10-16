@@ -1,0 +1,13 @@
+{
+  "n_molecules": 161,
+  "label": "unimol",
+  "raw_model_output_file": "raw_model_output.parquet",
+  "raw_model_dim": 1536,
+  "model": "unimolv2",
+  "model_size": "1.1B",
+  "params": "1.1 billion",
+  "free_carbene": true,
+  "form_onehot_appended": false,
+  "n_features": 1536,
+  "descriptors_file": "descriptors.parquet"
+}

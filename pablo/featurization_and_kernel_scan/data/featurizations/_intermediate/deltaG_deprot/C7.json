@@ -1,0 +1,157 @@
+{
+  "catalyst_id": 7,
+  "form": "co2_adduct",
+  "precatalyst_smiles": "CC1=CC(=C(C(=C1)C)N2C(=C(C)[N+](=C2C(=O)[O-])C3=C(C)C=C(C)C=C3C)C)C",
+  "azolium": {
+    "smiles": "CC1=CC(C)=C(N2C=[N+](C3=C(C)C=C(C)C=C3C)C(C)=C2C)C(C)=C1",
+    "charge": 1,
+    "conformer_source": "etkdgv3",
+    "conformers": [
+      {
+        "g_hartree": null,
+        "min_freq_cm1": -70.41,
+        "n_h_on_c2": 1,
+        "converged": true,
+        "qc_pass": false,
+        "qc_reason": "imaginary mode -70.4 cm-1",
+        "conformer": 0,
+        "used_in_ensemble": false
+      },
+      {
+        "g_hartree": -69.263635401097,
+        "min_freq_cm1": -20.02,
+        "n_h_on_c2": 1,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 1,
+        "used_in_ensemble": true
+      },
+      {
+        "g_hartree": null,
+        "min_freq_cm1": -67.35,
+        "n_h_on_c2": 1,
+        "converged": true,
+        "qc_pass": false,
+        "qc_reason": "imaginary mode -67.3 cm-1",
+        "conformer": 2,
+        "used_in_ensemble": false
+      },
+      {
+        "g_hartree": -69.261842488466,
+        "min_freq_cm1": -47.56,
+        "n_h_on_c2": 1,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 3,
+        "used_in_ensemble": true
+      },
+      {
+        "g_hartree": null,
+        "min_freq_cm1": -55.63,
+        "n_h_on_c2": 1,
+        "converged": true,
+        "qc_pass": false,
+        "qc_reason": "imaginary mode -55.6 cm-1",
+        "conformer": 4,
+        "used_in_ensemble": false
+      },
+      {
+        "g_hartree": null,
+        "min_freq_cm1": -68.51,
+        "n_h_on_c2": 1,
+        "converged": true,
+        "qc_pass": false,
+        "qc_reason": "imaginary mode -68.5 cm-1",
+        "conformer": 5,
+        "used_in_ensemble": false
+      },
+      {
+        "g_hartree": -69.262483654991,
+        "min_freq_cm1": -33.48,
+        "n_h_on_c2": 1,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 6,
+        "used_in_ensemble": true
+      },
+      {
+        "g_hartree": -69.262546404246,
+        "min_freq_cm1": -35.56,
+        "n_h_on_c2": 1,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 7,
+        "used_in_ensemble": true
+      },
+      {
+        "g_hartree": -69.265295608703,
+        "min_freq_cm1": -13.96,
+        "n_h_on_c2": 1,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 8,
+        "used_in_ensemble": true
+      },
+      {
+        "g_hartree": -69.264620057866,
+        "min_freq_cm1": -32.94,
+        "n_h_on_c2": 1,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 9,
+        "used_in_ensemble": true
+      }
+    ],
+    "n_conformers_embedded": 10,
+    "n_conformers_used": 6,
+    "g_boltzmann_hartree": -69.26584656876251
+  },
+  "carbene": {
+    "smiles": "CC1=CC(C)=C(N2[C]N(C3=C(C)C=C(C)C=C3C)C(C)=C2C)C(C)=C1",
+    "charge": 0,
+    "conformer_source": "etkdgv3",
+    "conformers": [
+      {
+        "g_hartree": -69.037560581935,
+        "min_freq_cm1": -41.66,
+        "n_h_on_c2": 0,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 0,
+        "used_in_ensemble": true
+      },
+      {
+        "g_hartree": -69.042140556178,
+        "min_freq_cm1": -17.45,
+        "n_h_on_c2": 0,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 1,
+        "used_in_ensemble": true
+      },
+      {
+        "g_hartree": -69.039491256843,
+        "min_freq_cm1": -24.43,
+        "n_h_on_c2": 0,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 2,
+        "used_in_ensemble": true
+      }
+    ],
+    "n_conformers_embedded": 3,
+    "n_conformers_used": 3,
+    "g_boltzmann_hartree": -69.04220291451018
+  },
+  "xtb_deltaG_deprot": 140.33851765805116,
+  "failures": []
+}

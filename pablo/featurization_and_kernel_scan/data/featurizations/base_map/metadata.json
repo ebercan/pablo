@@ -1,0 +1,18 @@
+{
+  "n_molecules": 8,
+  "label": "Base-MAP2",
+  "fp_radius": 1,
+  "names": [
+    "Triethylamine",
+    "Potassium tert-butoxide",
+    "Rubidium carbonate",
+    "N-Ethyl-N-isopropylpropan-2-amine (H\u00fcnig's base)",
+    "Cesium carbonate",
+    "1,8-Diazabicyclo[5.4.0]undec-7-ene",
+    "Potassium bis(trimethylsilyl)amide",
+    "Sodium tert-butoxide"
+  ],
+  "raw_model_output_file": "raw_model_output.parquet",
+  "n_features": 2048,
+  "descriptors_file": "descriptors.parquet"
+}

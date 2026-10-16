@@ -1,0 +1,35 @@
+{
+  "n_molecules": 161,
+  "n_features": 8,
+  "feature_cols": [
+    "monroe_precat_pc0",
+    "monroe_precat_pc1",
+    "monroe_precat_pc2",
+    "monroe_precat_pc3",
+    "monroe_precat_pc4",
+    "monroe_precat_pc5",
+    "monroe_precat_pc6",
+    "monroe_precat_pc7"
+  ],
+  "descriptors_file": "descriptors.parquet",
+  "method": "Frozen PCA of the standardized full-dimensional featurization, fit once over the whole 161-member catalyst_id library with no access to any outcome. Component count fixed at 8; the knee is recorded alongside.",
+  "source_featurization": "monroe_precat",
+  "source_n_features": 720,
+  "knee": 15,
+  "kneedle_sensitivity": 1,
+  "knee_from_fallback": false,
+  "variance_retained": 0.7355017815934333,
+  "n_components_for_90pct": 18,
+  "n_components_for_95pct": 27,
+  "explained_variance_ratio": [
+    0.24624129837710393,
+    0.14714165468735332,
+    0.0880470925936324,
+    0.07196633077704721,
+    0.06156932631696221,
+    0.04688703355200334,
+    0.04113417742363443,
+    0.03251486786569642
+  ],
+  "random_state": 42
+}

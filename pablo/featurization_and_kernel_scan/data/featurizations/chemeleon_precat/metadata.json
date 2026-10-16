@@ -1,0 +1,13 @@
+{
+  "n_molecules": 161,
+  "n_features": 2048,
+  "label": "CheMeleon-precat",
+  "raw_model_output_file": "raw_model_output.parquet",
+  "descriptors_file": "descriptors.parquet",
+  "raw_model_dim": 2048,
+  "repo": "JacksonBurns/chemeleon",
+  "embedding_dim": 2048,
+  "free_carbene": false,
+  "counterion_stripped": false,
+  "form_onehot_appended": false
+}

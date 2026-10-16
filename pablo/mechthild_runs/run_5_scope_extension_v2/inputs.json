@@ -1,0 +1,8102 @@
+{
+  "0": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "random",
+    "operating_mode": "random",
+    "benchmark": "Ackley",
+    "seed": 0,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=0|mode=random"
+  },
+  "1": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "myopic",
+    "operating_mode": "myopic",
+    "benchmark": "Ackley",
+    "seed": 0,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=0|mode=myopic"
+  },
+  "2": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "only_terminal",
+    "benchmark": "Ackley",
+    "seed": 0,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=0|mode=only_terminal"
+  },
+  "3": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "averaged",
+    "benchmark": "Ackley",
+    "seed": 0,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=0|mode=averaged"
+  },
+  "4": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "layer_averaged",
+    "benchmark": "Ackley",
+    "seed": 0,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=0|mode=layer_averaged"
+  },
+  "5": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "random",
+    "operating_mode": "random",
+    "benchmark": "Ackley",
+    "seed": 1,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=1|mode=random"
+  },
+  "6": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "myopic",
+    "operating_mode": "myopic",
+    "benchmark": "Ackley",
+    "seed": 1,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=1|mode=myopic"
+  },
+  "7": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "only_terminal",
+    "benchmark": "Ackley",
+    "seed": 1,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=1|mode=only_terminal"
+  },
+  "8": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "averaged",
+    "benchmark": "Ackley",
+    "seed": 1,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=1|mode=averaged"
+  },
+  "9": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "layer_averaged",
+    "benchmark": "Ackley",
+    "seed": 1,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=1|mode=layer_averaged"
+  },
+  "10": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "random",
+    "operating_mode": "random",
+    "benchmark": "Ackley",
+    "seed": 2,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=2|mode=random"
+  },
+  "11": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "myopic",
+    "operating_mode": "myopic",
+    "benchmark": "Ackley",
+    "seed": 2,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=2|mode=myopic"
+  },
+  "12": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "only_terminal",
+    "benchmark": "Ackley",
+    "seed": 2,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=2|mode=only_terminal"
+  },
+  "13": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "averaged",
+    "benchmark": "Ackley",
+    "seed": 2,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=2|mode=averaged"
+  },
+  "14": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "layer_averaged",
+    "benchmark": "Ackley",
+    "seed": 2,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=2|mode=layer_averaged"
+  },
+  "15": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "random",
+    "operating_mode": "random",
+    "benchmark": "Ackley",
+    "seed": 3,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=3|mode=random"
+  },
+  "16": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "myopic",
+    "operating_mode": "myopic",
+    "benchmark": "Ackley",
+    "seed": 3,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=3|mode=myopic"
+  },
+  "17": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "only_terminal",
+    "benchmark": "Ackley",
+    "seed": 3,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=3|mode=only_terminal"
+  },
+  "18": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "averaged",
+    "benchmark": "Ackley",
+    "seed": 3,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=3|mode=averaged"
+  },
+  "19": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "layer_averaged",
+    "benchmark": "Ackley",
+    "seed": 3,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=3|mode=layer_averaged"
+  },
+  "20": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "random",
+    "operating_mode": "random",
+    "benchmark": "Ackley",
+    "seed": 4,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=4|mode=random"
+  },
+  "21": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "myopic",
+    "operating_mode": "myopic",
+    "benchmark": "Ackley",
+    "seed": 4,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=4|mode=myopic"
+  },
+  "22": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "only_terminal",
+    "benchmark": "Ackley",
+    "seed": 4,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=4|mode=only_terminal"
+  },
+  "23": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "averaged",
+    "benchmark": "Ackley",
+    "seed": 4,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=4|mode=averaged"
+  },
+  "24": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "layer_averaged",
+    "benchmark": "Ackley",
+    "seed": 4,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=4|mode=layer_averaged"
+  },
+  "25": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "random",
+    "operating_mode": "random",
+    "benchmark": "Ackley",
+    "seed": 5,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=5|mode=random"
+  },
+  "26": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "myopic",
+    "operating_mode": "myopic",
+    "benchmark": "Ackley",
+    "seed": 5,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=5|mode=myopic"
+  },
+  "27": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "only_terminal",
+    "benchmark": "Ackley",
+    "seed": 5,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=5|mode=only_terminal"
+  },
+  "28": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "averaged",
+    "benchmark": "Ackley",
+    "seed": 5,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=5|mode=averaged"
+  },
+  "29": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "layer_averaged",
+    "benchmark": "Ackley",
+    "seed": 5,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=5|mode=layer_averaged"
+  },
+  "30": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "random",
+    "operating_mode": "random",
+    "benchmark": "Ackley",
+    "seed": 6,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=6|mode=random"
+  },
+  "31": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "myopic",
+    "operating_mode": "myopic",
+    "benchmark": "Ackley",
+    "seed": 6,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=6|mode=myopic"
+  },
+  "32": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "only_terminal",
+    "benchmark": "Ackley",
+    "seed": 6,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=6|mode=only_terminal"
+  },
+  "33": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "averaged",
+    "benchmark": "Ackley",
+    "seed": 6,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=6|mode=averaged"
+  },
+  "34": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "layer_averaged",
+    "benchmark": "Ackley",
+    "seed": 6,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=6|mode=layer_averaged"
+  },
+  "35": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "random",
+    "operating_mode": "random",
+    "benchmark": "Ackley",
+    "seed": 7,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=7|mode=random"
+  },
+  "36": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "myopic",
+    "operating_mode": "myopic",
+    "benchmark": "Ackley",
+    "seed": 7,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=7|mode=myopic"
+  },
+  "37": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "only_terminal",
+    "benchmark": "Ackley",
+    "seed": 7,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=7|mode=only_terminal"
+  },
+  "38": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "averaged",
+    "benchmark": "Ackley",
+    "seed": 7,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=7|mode=averaged"
+  },
+  "39": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "layer_averaged",
+    "benchmark": "Ackley",
+    "seed": 7,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=7|mode=layer_averaged"
+  },
+  "40": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "random",
+    "operating_mode": "random",
+    "benchmark": "Ackley",
+    "seed": 8,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=8|mode=random"
+  },
+  "41": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "myopic",
+    "operating_mode": "myopic",
+    "benchmark": "Ackley",
+    "seed": 8,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=8|mode=myopic"
+  },
+  "42": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "only_terminal",
+    "benchmark": "Ackley",
+    "seed": 8,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=8|mode=only_terminal"
+  },
+  "43": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "averaged",
+    "benchmark": "Ackley",
+    "seed": 8,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=8|mode=averaged"
+  },
+  "44": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "layer_averaged",
+    "benchmark": "Ackley",
+    "seed": 8,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=8|mode=layer_averaged"
+  },
+  "45": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "random",
+    "operating_mode": "random",
+    "benchmark": "Ackley",
+    "seed": 9,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=9|mode=random"
+  },
+  "46": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "myopic",
+    "operating_mode": "myopic",
+    "benchmark": "Ackley",
+    "seed": 9,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=9|mode=myopic"
+  },
+  "47": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "only_terminal",
+    "benchmark": "Ackley",
+    "seed": 9,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=9|mode=only_terminal"
+  },
+  "48": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "averaged",
+    "benchmark": "Ackley",
+    "seed": 9,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=9|mode=averaged"
+  },
+  "49": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "layer_averaged",
+    "benchmark": "Ackley",
+    "seed": 9,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=9|mode=layer_averaged"
+  },
+  "50": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "random",
+    "operating_mode": "random",
+    "benchmark": "Ackley",
+    "seed": 10,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=10|mode=random"
+  },
+  "51": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "myopic",
+    "operating_mode": "myopic",
+    "benchmark": "Ackley",
+    "seed": 10,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=10|mode=myopic"
+  },
+  "52": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "only_terminal",
+    "benchmark": "Ackley",
+    "seed": 10,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=10|mode=only_terminal"
+  },
+  "53": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "averaged",
+    "benchmark": "Ackley",
+    "seed": 10,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=10|mode=averaged"
+  },
+  "54": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "layer_averaged",
+    "benchmark": "Ackley",
+    "seed": 10,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=10|mode=layer_averaged"
+  },
+  "55": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "random",
+    "operating_mode": "random",
+    "benchmark": "Ackley",
+    "seed": 11,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=11|mode=random"
+  },
+  "56": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "myopic",
+    "operating_mode": "myopic",
+    "benchmark": "Ackley",
+    "seed": 11,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=11|mode=myopic"
+  },
+  "57": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "only_terminal",
+    "benchmark": "Ackley",
+    "seed": 11,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=11|mode=only_terminal"
+  },
+  "58": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "averaged",
+    "benchmark": "Ackley",
+    "seed": 11,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=11|mode=averaged"
+  },
+  "59": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "layer_averaged",
+    "benchmark": "Ackley",
+    "seed": 11,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=11|mode=layer_averaged"
+  },
+  "60": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "random",
+    "operating_mode": "random",
+    "benchmark": "Ackley",
+    "seed": 12,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=12|mode=random"
+  },
+  "61": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "myopic",
+    "operating_mode": "myopic",
+    "benchmark": "Ackley",
+    "seed": 12,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=12|mode=myopic"
+  },
+  "62": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "only_terminal",
+    "benchmark": "Ackley",
+    "seed": 12,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=12|mode=only_terminal"
+  },
+  "63": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "averaged",
+    "benchmark": "Ackley",
+    "seed": 12,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=12|mode=averaged"
+  },
+  "64": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "layer_averaged",
+    "benchmark": "Ackley",
+    "seed": 12,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=12|mode=layer_averaged"
+  },
+  "65": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "random",
+    "operating_mode": "random",
+    "benchmark": "Ackley",
+    "seed": 13,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=13|mode=random"
+  },
+  "66": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "myopic",
+    "operating_mode": "myopic",
+    "benchmark": "Ackley",
+    "seed": 13,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=13|mode=myopic"
+  },
+  "67": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "only_terminal",
+    "benchmark": "Ackley",
+    "seed": 13,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=13|mode=only_terminal"
+  },
+  "68": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "averaged",
+    "benchmark": "Ackley",
+    "seed": 13,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=13|mode=averaged"
+  },
+  "69": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "layer_averaged",
+    "benchmark": "Ackley",
+    "seed": 13,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=13|mode=layer_averaged"
+  },
+  "70": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "random",
+    "operating_mode": "random",
+    "benchmark": "Ackley",
+    "seed": 14,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=14|mode=random"
+  },
+  "71": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "myopic",
+    "operating_mode": "myopic",
+    "benchmark": "Ackley",
+    "seed": 14,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=14|mode=myopic"
+  },
+  "72": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "only_terminal",
+    "benchmark": "Ackley",
+    "seed": 14,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=14|mode=only_terminal"
+  },
+  "73": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "averaged",
+    "benchmark": "Ackley",
+    "seed": 14,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=14|mode=averaged"
+  },
+  "74": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "layer_averaged",
+    "benchmark": "Ackley",
+    "seed": 14,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=14|mode=layer_averaged"
+  },
+  "75": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "random",
+    "operating_mode": "random",
+    "benchmark": "Ackley",
+    "seed": 15,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=15|mode=random"
+  },
+  "76": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "myopic",
+    "operating_mode": "myopic",
+    "benchmark": "Ackley",
+    "seed": 15,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=15|mode=myopic"
+  },
+  "77": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "only_terminal",
+    "benchmark": "Ackley",
+    "seed": 15,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=15|mode=only_terminal"
+  },
+  "78": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "averaged",
+    "benchmark": "Ackley",
+    "seed": 15,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=15|mode=averaged"
+  },
+  "79": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "layer_averaged",
+    "benchmark": "Ackley",
+    "seed": 15,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=15|mode=layer_averaged"
+  },
+  "80": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "random",
+    "operating_mode": "random",
+    "benchmark": "Ackley",
+    "seed": 16,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=16|mode=random"
+  },
+  "81": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "myopic",
+    "operating_mode": "myopic",
+    "benchmark": "Ackley",
+    "seed": 16,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=16|mode=myopic"
+  },
+  "82": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "only_terminal",
+    "benchmark": "Ackley",
+    "seed": 16,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=16|mode=only_terminal"
+  },
+  "83": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "averaged",
+    "benchmark": "Ackley",
+    "seed": 16,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=16|mode=averaged"
+  },
+  "84": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "layer_averaged",
+    "benchmark": "Ackley",
+    "seed": 16,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=16|mode=layer_averaged"
+  },
+  "85": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "random",
+    "operating_mode": "random",
+    "benchmark": "Ackley",
+    "seed": 17,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=17|mode=random"
+  },
+  "86": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "myopic",
+    "operating_mode": "myopic",
+    "benchmark": "Ackley",
+    "seed": 17,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=17|mode=myopic"
+  },
+  "87": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "only_terminal",
+    "benchmark": "Ackley",
+    "seed": 17,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=17|mode=only_terminal"
+  },
+  "88": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "averaged",
+    "benchmark": "Ackley",
+    "seed": 17,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=17|mode=averaged"
+  },
+  "89": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "layer_averaged",
+    "benchmark": "Ackley",
+    "seed": 17,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=17|mode=layer_averaged"
+  },
+  "90": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "random",
+    "operating_mode": "random",
+    "benchmark": "Ackley",
+    "seed": 18,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=18|mode=random"
+  },
+  "91": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "myopic",
+    "operating_mode": "myopic",
+    "benchmark": "Ackley",
+    "seed": 18,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=18|mode=myopic"
+  },
+  "92": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "only_terminal",
+    "benchmark": "Ackley",
+    "seed": 18,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=18|mode=only_terminal"
+  },
+  "93": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "averaged",
+    "benchmark": "Ackley",
+    "seed": 18,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=18|mode=averaged"
+  },
+  "94": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "layer_averaged",
+    "benchmark": "Ackley",
+    "seed": 18,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=18|mode=layer_averaged"
+  },
+  "95": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "random",
+    "operating_mode": "random",
+    "benchmark": "Ackley",
+    "seed": 19,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=19|mode=random"
+  },
+  "96": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "myopic",
+    "operating_mode": "myopic",
+    "benchmark": "Ackley",
+    "seed": 19,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=19|mode=myopic"
+  },
+  "97": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "only_terminal",
+    "benchmark": "Ackley",
+    "seed": 19,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=19|mode=only_terminal"
+  },
+  "98": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "averaged",
+    "benchmark": "Ackley",
+    "seed": 19,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=19|mode=averaged"
+  },
+  "99": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "layer_averaged",
+    "benchmark": "Ackley",
+    "seed": 19,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Ackley|seed=19|mode=layer_averaged"
+  },
+  "100": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "random",
+    "operating_mode": "random",
+    "benchmark": "Gallagher101",
+    "seed": 0,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=0|mode=random"
+  },
+  "101": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "myopic",
+    "operating_mode": "myopic",
+    "benchmark": "Gallagher101",
+    "seed": 0,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=0|mode=myopic"
+  },
+  "102": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "only_terminal",
+    "benchmark": "Gallagher101",
+    "seed": 0,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=0|mode=only_terminal"
+  },
+  "103": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "averaged",
+    "benchmark": "Gallagher101",
+    "seed": 0,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=0|mode=averaged"
+  },
+  "104": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "layer_averaged",
+    "benchmark": "Gallagher101",
+    "seed": 0,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=0|mode=layer_averaged"
+  },
+  "105": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "random",
+    "operating_mode": "random",
+    "benchmark": "Gallagher101",
+    "seed": 1,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=1|mode=random"
+  },
+  "106": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "myopic",
+    "operating_mode": "myopic",
+    "benchmark": "Gallagher101",
+    "seed": 1,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=1|mode=myopic"
+  },
+  "107": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "only_terminal",
+    "benchmark": "Gallagher101",
+    "seed": 1,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=1|mode=only_terminal"
+  },
+  "108": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "averaged",
+    "benchmark": "Gallagher101",
+    "seed": 1,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=1|mode=averaged"
+  },
+  "109": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "layer_averaged",
+    "benchmark": "Gallagher101",
+    "seed": 1,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=1|mode=layer_averaged"
+  },
+  "110": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "random",
+    "operating_mode": "random",
+    "benchmark": "Gallagher101",
+    "seed": 2,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=2|mode=random"
+  },
+  "111": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "myopic",
+    "operating_mode": "myopic",
+    "benchmark": "Gallagher101",
+    "seed": 2,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=2|mode=myopic"
+  },
+  "112": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "only_terminal",
+    "benchmark": "Gallagher101",
+    "seed": 2,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=2|mode=only_terminal"
+  },
+  "113": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "averaged",
+    "benchmark": "Gallagher101",
+    "seed": 2,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=2|mode=averaged"
+  },
+  "114": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "layer_averaged",
+    "benchmark": "Gallagher101",
+    "seed": 2,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=2|mode=layer_averaged"
+  },
+  "115": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "random",
+    "operating_mode": "random",
+    "benchmark": "Gallagher101",
+    "seed": 3,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=3|mode=random"
+  },
+  "116": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "myopic",
+    "operating_mode": "myopic",
+    "benchmark": "Gallagher101",
+    "seed": 3,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=3|mode=myopic"
+  },
+  "117": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "only_terminal",
+    "benchmark": "Gallagher101",
+    "seed": 3,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=3|mode=only_terminal"
+  },
+  "118": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "averaged",
+    "benchmark": "Gallagher101",
+    "seed": 3,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=3|mode=averaged"
+  },
+  "119": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "layer_averaged",
+    "benchmark": "Gallagher101",
+    "seed": 3,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=3|mode=layer_averaged"
+  },
+  "120": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "random",
+    "operating_mode": "random",
+    "benchmark": "Gallagher101",
+    "seed": 4,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=4|mode=random"
+  },
+  "121": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "myopic",
+    "operating_mode": "myopic",
+    "benchmark": "Gallagher101",
+    "seed": 4,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=4|mode=myopic"
+  },
+  "122": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "only_terminal",
+    "benchmark": "Gallagher101",
+    "seed": 4,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=4|mode=only_terminal"
+  },
+  "123": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "averaged",
+    "benchmark": "Gallagher101",
+    "seed": 4,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=4|mode=averaged"
+  },
+  "124": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "layer_averaged",
+    "benchmark": "Gallagher101",
+    "seed": 4,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=4|mode=layer_averaged"
+  },
+  "125": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "random",
+    "operating_mode": "random",
+    "benchmark": "Gallagher101",
+    "seed": 5,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=5|mode=random"
+  },
+  "126": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "myopic",
+    "operating_mode": "myopic",
+    "benchmark": "Gallagher101",
+    "seed": 5,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=5|mode=myopic"
+  },
+  "127": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "only_terminal",
+    "benchmark": "Gallagher101",
+    "seed": 5,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=5|mode=only_terminal"
+  },
+  "128": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "averaged",
+    "benchmark": "Gallagher101",
+    "seed": 5,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=5|mode=averaged"
+  },
+  "129": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "layer_averaged",
+    "benchmark": "Gallagher101",
+    "seed": 5,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=5|mode=layer_averaged"
+  },
+  "130": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "random",
+    "operating_mode": "random",
+    "benchmark": "Gallagher101",
+    "seed": 6,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=6|mode=random"
+  },
+  "131": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "myopic",
+    "operating_mode": "myopic",
+    "benchmark": "Gallagher101",
+    "seed": 6,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=6|mode=myopic"
+  },
+  "132": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "only_terminal",
+    "benchmark": "Gallagher101",
+    "seed": 6,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=6|mode=only_terminal"
+  },
+  "133": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "averaged",
+    "benchmark": "Gallagher101",
+    "seed": 6,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=6|mode=averaged"
+  },
+  "134": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "layer_averaged",
+    "benchmark": "Gallagher101",
+    "seed": 6,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=6|mode=layer_averaged"
+  },
+  "135": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "random",
+    "operating_mode": "random",
+    "benchmark": "Gallagher101",
+    "seed": 7,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=7|mode=random"
+  },
+  "136": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "myopic",
+    "operating_mode": "myopic",
+    "benchmark": "Gallagher101",
+    "seed": 7,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=7|mode=myopic"
+  },
+  "137": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "only_terminal",
+    "benchmark": "Gallagher101",
+    "seed": 7,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=7|mode=only_terminal"
+  },
+  "138": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "averaged",
+    "benchmark": "Gallagher101",
+    "seed": 7,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=7|mode=averaged"
+  },
+  "139": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "layer_averaged",
+    "benchmark": "Gallagher101",
+    "seed": 7,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=7|mode=layer_averaged"
+  },
+  "140": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "random",
+    "operating_mode": "random",
+    "benchmark": "Gallagher101",
+    "seed": 8,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=8|mode=random"
+  },
+  "141": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "myopic",
+    "operating_mode": "myopic",
+    "benchmark": "Gallagher101",
+    "seed": 8,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=8|mode=myopic"
+  },
+  "142": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "only_terminal",
+    "benchmark": "Gallagher101",
+    "seed": 8,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=8|mode=only_terminal"
+  },
+  "143": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "averaged",
+    "benchmark": "Gallagher101",
+    "seed": 8,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=8|mode=averaged"
+  },
+  "144": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "layer_averaged",
+    "benchmark": "Gallagher101",
+    "seed": 8,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=8|mode=layer_averaged"
+  },
+  "145": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "random",
+    "operating_mode": "random",
+    "benchmark": "Gallagher101",
+    "seed": 9,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=9|mode=random"
+  },
+  "146": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "myopic",
+    "operating_mode": "myopic",
+    "benchmark": "Gallagher101",
+    "seed": 9,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=9|mode=myopic"
+  },
+  "147": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "only_terminal",
+    "benchmark": "Gallagher101",
+    "seed": 9,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=9|mode=only_terminal"
+  },
+  "148": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "averaged",
+    "benchmark": "Gallagher101",
+    "seed": 9,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=9|mode=averaged"
+  },
+  "149": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "layer_averaged",
+    "benchmark": "Gallagher101",
+    "seed": 9,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=9|mode=layer_averaged"
+  },
+  "150": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "random",
+    "operating_mode": "random",
+    "benchmark": "Gallagher101",
+    "seed": 10,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=10|mode=random"
+  },
+  "151": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "myopic",
+    "operating_mode": "myopic",
+    "benchmark": "Gallagher101",
+    "seed": 10,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=10|mode=myopic"
+  },
+  "152": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "only_terminal",
+    "benchmark": "Gallagher101",
+    "seed": 10,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=10|mode=only_terminal"
+  },
+  "153": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "averaged",
+    "benchmark": "Gallagher101",
+    "seed": 10,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=10|mode=averaged"
+  },
+  "154": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "layer_averaged",
+    "benchmark": "Gallagher101",
+    "seed": 10,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=10|mode=layer_averaged"
+  },
+  "155": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "random",
+    "operating_mode": "random",
+    "benchmark": "Gallagher101",
+    "seed": 11,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=11|mode=random"
+  },
+  "156": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "myopic",
+    "operating_mode": "myopic",
+    "benchmark": "Gallagher101",
+    "seed": 11,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=11|mode=myopic"
+  },
+  "157": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "only_terminal",
+    "benchmark": "Gallagher101",
+    "seed": 11,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=11|mode=only_terminal"
+  },
+  "158": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "averaged",
+    "benchmark": "Gallagher101",
+    "seed": 11,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=11|mode=averaged"
+  },
+  "159": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "layer_averaged",
+    "benchmark": "Gallagher101",
+    "seed": 11,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=11|mode=layer_averaged"
+  },
+  "160": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "random",
+    "operating_mode": "random",
+    "benchmark": "Gallagher101",
+    "seed": 12,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=12|mode=random"
+  },
+  "161": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "myopic",
+    "operating_mode": "myopic",
+    "benchmark": "Gallagher101",
+    "seed": 12,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=12|mode=myopic"
+  },
+  "162": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "only_terminal",
+    "benchmark": "Gallagher101",
+    "seed": 12,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=12|mode=only_terminal"
+  },
+  "163": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "averaged",
+    "benchmark": "Gallagher101",
+    "seed": 12,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=12|mode=averaged"
+  },
+  "164": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "layer_averaged",
+    "benchmark": "Gallagher101",
+    "seed": 12,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=12|mode=layer_averaged"
+  },
+  "165": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "random",
+    "operating_mode": "random",
+    "benchmark": "Gallagher101",
+    "seed": 13,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=13|mode=random"
+  },
+  "166": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "myopic",
+    "operating_mode": "myopic",
+    "benchmark": "Gallagher101",
+    "seed": 13,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=13|mode=myopic"
+  },
+  "167": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "only_terminal",
+    "benchmark": "Gallagher101",
+    "seed": 13,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=13|mode=only_terminal"
+  },
+  "168": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "averaged",
+    "benchmark": "Gallagher101",
+    "seed": 13,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=13|mode=averaged"
+  },
+  "169": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "layer_averaged",
+    "benchmark": "Gallagher101",
+    "seed": 13,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=13|mode=layer_averaged"
+  },
+  "170": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "random",
+    "operating_mode": "random",
+    "benchmark": "Gallagher101",
+    "seed": 14,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=14|mode=random"
+  },
+  "171": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "myopic",
+    "operating_mode": "myopic",
+    "benchmark": "Gallagher101",
+    "seed": 14,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=14|mode=myopic"
+  },
+  "172": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "only_terminal",
+    "benchmark": "Gallagher101",
+    "seed": 14,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=14|mode=only_terminal"
+  },
+  "173": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "averaged",
+    "benchmark": "Gallagher101",
+    "seed": 14,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=14|mode=averaged"
+  },
+  "174": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "layer_averaged",
+    "benchmark": "Gallagher101",
+    "seed": 14,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=14|mode=layer_averaged"
+  },
+  "175": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "random",
+    "operating_mode": "random",
+    "benchmark": "Gallagher101",
+    "seed": 15,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=15|mode=random"
+  },
+  "176": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "myopic",
+    "operating_mode": "myopic",
+    "benchmark": "Gallagher101",
+    "seed": 15,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=15|mode=myopic"
+  },
+  "177": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "only_terminal",
+    "benchmark": "Gallagher101",
+    "seed": 15,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=15|mode=only_terminal"
+  },
+  "178": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "averaged",
+    "benchmark": "Gallagher101",
+    "seed": 15,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=15|mode=averaged"
+  },
+  "179": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "layer_averaged",
+    "benchmark": "Gallagher101",
+    "seed": 15,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=15|mode=layer_averaged"
+  },
+  "180": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "random",
+    "operating_mode": "random",
+    "benchmark": "Gallagher101",
+    "seed": 16,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=16|mode=random"
+  },
+  "181": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "myopic",
+    "operating_mode": "myopic",
+    "benchmark": "Gallagher101",
+    "seed": 16,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=16|mode=myopic"
+  },
+  "182": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "only_terminal",
+    "benchmark": "Gallagher101",
+    "seed": 16,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=16|mode=only_terminal"
+  },
+  "183": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "averaged",
+    "benchmark": "Gallagher101",
+    "seed": 16,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=16|mode=averaged"
+  },
+  "184": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "layer_averaged",
+    "benchmark": "Gallagher101",
+    "seed": 16,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=16|mode=layer_averaged"
+  },
+  "185": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "random",
+    "operating_mode": "random",
+    "benchmark": "Gallagher101",
+    "seed": 17,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=17|mode=random"
+  },
+  "186": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "myopic",
+    "operating_mode": "myopic",
+    "benchmark": "Gallagher101",
+    "seed": 17,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=17|mode=myopic"
+  },
+  "187": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "only_terminal",
+    "benchmark": "Gallagher101",
+    "seed": 17,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=17|mode=only_terminal"
+  },
+  "188": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "averaged",
+    "benchmark": "Gallagher101",
+    "seed": 17,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=17|mode=averaged"
+  },
+  "189": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "layer_averaged",
+    "benchmark": "Gallagher101",
+    "seed": 17,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=17|mode=layer_averaged"
+  },
+  "190": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "random",
+    "operating_mode": "random",
+    "benchmark": "Gallagher101",
+    "seed": 18,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=18|mode=random"
+  },
+  "191": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "myopic",
+    "operating_mode": "myopic",
+    "benchmark": "Gallagher101",
+    "seed": 18,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=18|mode=myopic"
+  },
+  "192": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "only_terminal",
+    "benchmark": "Gallagher101",
+    "seed": 18,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=18|mode=only_terminal"
+  },
+  "193": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "averaged",
+    "benchmark": "Gallagher101",
+    "seed": 18,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=18|mode=averaged"
+  },
+  "194": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "layer_averaged",
+    "benchmark": "Gallagher101",
+    "seed": 18,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=18|mode=layer_averaged"
+  },
+  "195": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "random",
+    "operating_mode": "random",
+    "benchmark": "Gallagher101",
+    "seed": 19,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=19|mode=random"
+  },
+  "196": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "myopic",
+    "operating_mode": "myopic",
+    "benchmark": "Gallagher101",
+    "seed": 19,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=19|mode=myopic"
+  },
+  "197": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "only_terminal",
+    "benchmark": "Gallagher101",
+    "seed": 19,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=19|mode=only_terminal"
+  },
+  "198": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "averaged",
+    "benchmark": "Gallagher101",
+    "seed": 19,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=19|mode=averaged"
+  },
+  "199": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "layer_averaged",
+    "benchmark": "Gallagher101",
+    "seed": 19,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "Gallagher101|seed=19|mode=layer_averaged"
+  },
+  "200": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "random",
+    "operating_mode": "random",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 0,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=0|mode=random"
+  },
+  "201": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "myopic",
+    "operating_mode": "myopic",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 0,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=0|mode=myopic"
+  },
+  "202": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "only_terminal",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 0,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=0|mode=only_terminal"
+  },
+  "203": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "averaged",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 0,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=0|mode=averaged"
+  },
+  "204": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "layer_averaged",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 0,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=0|mode=layer_averaged"
+  },
+  "205": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "random",
+    "operating_mode": "random",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 1,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=1|mode=random"
+  },
+  "206": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "myopic",
+    "operating_mode": "myopic",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 1,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=1|mode=myopic"
+  },
+  "207": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "only_terminal",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 1,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=1|mode=only_terminal"
+  },
+  "208": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "averaged",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 1,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=1|mode=averaged"
+  },
+  "209": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "layer_averaged",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 1,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=1|mode=layer_averaged"
+  },
+  "210": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "random",
+    "operating_mode": "random",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 2,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=2|mode=random"
+  },
+  "211": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "myopic",
+    "operating_mode": "myopic",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 2,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=2|mode=myopic"
+  },
+  "212": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "only_terminal",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 2,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=2|mode=only_terminal"
+  },
+  "213": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "averaged",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 2,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=2|mode=averaged"
+  },
+  "214": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "layer_averaged",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 2,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=2|mode=layer_averaged"
+  },
+  "215": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "random",
+    "operating_mode": "random",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 3,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=3|mode=random"
+  },
+  "216": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "myopic",
+    "operating_mode": "myopic",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 3,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=3|mode=myopic"
+  },
+  "217": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "only_terminal",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 3,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=3|mode=only_terminal"
+  },
+  "218": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "averaged",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 3,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=3|mode=averaged"
+  },
+  "219": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "layer_averaged",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 3,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=3|mode=layer_averaged"
+  },
+  "220": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "random",
+    "operating_mode": "random",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 4,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=4|mode=random"
+  },
+  "221": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "myopic",
+    "operating_mode": "myopic",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 4,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=4|mode=myopic"
+  },
+  "222": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "only_terminal",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 4,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=4|mode=only_terminal"
+  },
+  "223": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "averaged",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 4,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=4|mode=averaged"
+  },
+  "224": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "layer_averaged",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 4,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=4|mode=layer_averaged"
+  },
+  "225": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "random",
+    "operating_mode": "random",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 5,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=5|mode=random"
+  },
+  "226": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "myopic",
+    "operating_mode": "myopic",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 5,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=5|mode=myopic"
+  },
+  "227": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "only_terminal",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 5,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=5|mode=only_terminal"
+  },
+  "228": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "averaged",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 5,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=5|mode=averaged"
+  },
+  "229": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "layer_averaged",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 5,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=5|mode=layer_averaged"
+  },
+  "230": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "random",
+    "operating_mode": "random",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 6,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=6|mode=random"
+  },
+  "231": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "myopic",
+    "operating_mode": "myopic",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 6,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=6|mode=myopic"
+  },
+  "232": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "only_terminal",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 6,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=6|mode=only_terminal"
+  },
+  "233": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "averaged",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 6,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=6|mode=averaged"
+  },
+  "234": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "layer_averaged",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 6,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=6|mode=layer_averaged"
+  },
+  "235": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "random",
+    "operating_mode": "random",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 7,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=7|mode=random"
+  },
+  "236": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "myopic",
+    "operating_mode": "myopic",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 7,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=7|mode=myopic"
+  },
+  "237": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "only_terminal",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 7,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=7|mode=only_terminal"
+  },
+  "238": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "averaged",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 7,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=7|mode=averaged"
+  },
+  "239": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "layer_averaged",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 7,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=7|mode=layer_averaged"
+  },
+  "240": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "random",
+    "operating_mode": "random",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 8,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=8|mode=random"
+  },
+  "241": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "myopic",
+    "operating_mode": "myopic",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 8,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=8|mode=myopic"
+  },
+  "242": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "only_terminal",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 8,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=8|mode=only_terminal"
+  },
+  "243": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "averaged",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 8,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=8|mode=averaged"
+  },
+  "244": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "layer_averaged",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 8,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=8|mode=layer_averaged"
+  },
+  "245": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "random",
+    "operating_mode": "random",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 9,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=9|mode=random"
+  },
+  "246": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "myopic",
+    "operating_mode": "myopic",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 9,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=9|mode=myopic"
+  },
+  "247": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "only_terminal",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 9,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=9|mode=only_terminal"
+  },
+  "248": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "averaged",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 9,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=9|mode=averaged"
+  },
+  "249": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "layer_averaged",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 9,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=9|mode=layer_averaged"
+  },
+  "250": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "random",
+    "operating_mode": "random",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 10,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=10|mode=random"
+  },
+  "251": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "myopic",
+    "operating_mode": "myopic",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 10,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=10|mode=myopic"
+  },
+  "252": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "only_terminal",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 10,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=10|mode=only_terminal"
+  },
+  "253": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "averaged",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 10,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=10|mode=averaged"
+  },
+  "254": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "layer_averaged",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 10,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=10|mode=layer_averaged"
+  },
+  "255": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "random",
+    "operating_mode": "random",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 11,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=11|mode=random"
+  },
+  "256": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "myopic",
+    "operating_mode": "myopic",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 11,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=11|mode=myopic"
+  },
+  "257": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "only_terminal",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 11,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=11|mode=only_terminal"
+  },
+  "258": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "averaged",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 11,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=11|mode=averaged"
+  },
+  "259": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "layer_averaged",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 11,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=11|mode=layer_averaged"
+  },
+  "260": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "random",
+    "operating_mode": "random",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 12,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=12|mode=random"
+  },
+  "261": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "myopic",
+    "operating_mode": "myopic",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 12,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=12|mode=myopic"
+  },
+  "262": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "only_terminal",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 12,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=12|mode=only_terminal"
+  },
+  "263": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "averaged",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 12,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=12|mode=averaged"
+  },
+  "264": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "layer_averaged",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 12,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=12|mode=layer_averaged"
+  },
+  "265": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "random",
+    "operating_mode": "random",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 13,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=13|mode=random"
+  },
+  "266": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "myopic",
+    "operating_mode": "myopic",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 13,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=13|mode=myopic"
+  },
+  "267": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "only_terminal",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 13,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=13|mode=only_terminal"
+  },
+  "268": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "averaged",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 13,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=13|mode=averaged"
+  },
+  "269": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "layer_averaged",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 13,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=13|mode=layer_averaged"
+  },
+  "270": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "random",
+    "operating_mode": "random",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 14,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=14|mode=random"
+  },
+  "271": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "myopic",
+    "operating_mode": "myopic",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 14,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=14|mode=myopic"
+  },
+  "272": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "only_terminal",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 14,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=14|mode=only_terminal"
+  },
+  "273": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "averaged",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 14,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=14|mode=averaged"
+  },
+  "274": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "layer_averaged",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 14,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=14|mode=layer_averaged"
+  },
+  "275": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "random",
+    "operating_mode": "random",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 15,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=15|mode=random"
+  },
+  "276": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "myopic",
+    "operating_mode": "myopic",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 15,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=15|mode=myopic"
+  },
+  "277": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "only_terminal",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 15,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=15|mode=only_terminal"
+  },
+  "278": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "averaged",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 15,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=15|mode=averaged"
+  },
+  "279": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "layer_averaged",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 15,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=15|mode=layer_averaged"
+  },
+  "280": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "random",
+    "operating_mode": "random",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 16,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=16|mode=random"
+  },
+  "281": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "myopic",
+    "operating_mode": "myopic",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 16,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=16|mode=myopic"
+  },
+  "282": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "only_terminal",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 16,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=16|mode=only_terminal"
+  },
+  "283": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "averaged",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 16,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=16|mode=averaged"
+  },
+  "284": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "layer_averaged",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 16,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=16|mode=layer_averaged"
+  },
+  "285": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "random",
+    "operating_mode": "random",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 17,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=17|mode=random"
+  },
+  "286": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "myopic",
+    "operating_mode": "myopic",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 17,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=17|mode=myopic"
+  },
+  "287": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "only_terminal",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 17,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=17|mode=only_terminal"
+  },
+  "288": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "averaged",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 17,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=17|mode=averaged"
+  },
+  "289": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "layer_averaged",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 17,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=17|mode=layer_averaged"
+  },
+  "290": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "random",
+    "operating_mode": "random",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 18,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=18|mode=random"
+  },
+  "291": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "myopic",
+    "operating_mode": "myopic",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 18,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=18|mode=myopic"
+  },
+  "292": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "only_terminal",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 18,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=18|mode=only_terminal"
+  },
+  "293": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "averaged",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 18,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=18|mode=averaged"
+  },
+  "294": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "layer_averaged",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 18,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=18|mode=layer_averaged"
+  },
+  "295": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "random",
+    "operating_mode": "random",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 19,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=19|mode=random"
+  },
+  "296": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "myopic",
+    "operating_mode": "myopic",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 19,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=19|mode=myopic"
+  },
+  "297": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "only_terminal",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 19,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=19|mode=only_terminal"
+  },
+  "298": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "averaged",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 19,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=19|mode=averaged"
+  },
+  "299": {
+    "optimizer": "pool_greedy",
+    "space": "nhc",
+    "strategy": "fantasized",
+    "operating_mode": "layer_averaged",
+    "benchmark": "LunacekBiRastrigin",
+    "seed": 19,
+    "source_a_availability_delay": 4,
+    "lookahead_horizon": 4,
+    "num_fantasies": [
+      12,
+      4,
+      2,
+      1
+    ],
+    "q": 6,
+    "q_expand": 1,
+    "n_eval": 100,
+    "batch_constraints": {
+      "2": [
+        2,
+        2,
+        2
+      ]
+    },
+    "label": "LunacekBiRastrigin|seed=19|mode=layer_averaged"
+  }
+}

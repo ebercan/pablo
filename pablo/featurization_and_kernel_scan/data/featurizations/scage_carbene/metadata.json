@@ -1,0 +1,12 @@
+{
+  "n_molecules": 161,
+  "label": "scage_carbene",
+  "raw_model_output_file": "raw_model_output.parquet",
+  "raw_model_dim": 512,
+  "repo": "KazeDog/scage",
+  "checkpoint": "/home/enis/Desktop/scage/weights/pretrain/pretrain.pth",
+  "free_carbene": true,
+  "form_onehot_appended": false,
+  "n_features": 512,
+  "descriptors_file": "descriptors.parquet"
+}

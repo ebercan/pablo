@@ -1,0 +1,11 @@
+{
+  "n_molecules": 8,
+  "n_features": 3,
+  "feature_cols": [
+    "pa_kJ_mol",
+    "is_inorganic",
+    "is_organic"
+  ],
+  "descriptors_file": "descriptors.parquet",
+  "method": "Gas-phase proton affinity (kJ/mol, z-scored across the 8-base library) plus a two-column organic/inorganic one-hot. The one-hot is zero in both columns for the 'no base' rows the assembler zero-fills."
+}

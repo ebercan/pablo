@@ -1,0 +1,8 @@
+{
+  "n_molecules": 161,
+  "label": "Mol2vec",
+  "model_path": "/home/enis/Py-VSCode/pablo/pablo/featurization_and_kernel_scan/data/mol2vec_weights.pkl",
+  "raw_model_output_file": "raw_model_output.parquet",
+  "n_features": 300,
+  "descriptors_file": "descriptors.parquet"
+}

@@ -1,0 +1,13 @@
+{
+  "n_molecules": 161,
+  "n_features": 768,
+  "label": "SMI-TED-Light-carbene",
+  "raw_model_output_file": "raw_model_output.parquet",
+  "descriptors_file": "descriptors.parquet",
+  "raw_model_dim": 768,
+  "repo": "ibm-research/materials.smi-ted",
+  "embedding_dim": 768,
+  "free_carbene": true,
+  "counterion_stripped": false,
+  "form_onehot_appended": false
+}

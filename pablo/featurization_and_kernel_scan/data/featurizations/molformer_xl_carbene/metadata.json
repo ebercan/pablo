@@ -1,0 +1,12 @@
+{
+  "n_molecules": 161,
+  "label": "molformer_xl_carbene",
+  "raw_model_output_file": "raw_model_output.parquet",
+  "raw_model_dim": 768,
+  "hf_model": "ibm/MoLFormer-XL-both-10pct",
+  "pooling": "mean_last_hidden",
+  "free_carbene": true,
+  "form_onehot_appended": false,
+  "n_features": 768,
+  "descriptors_file": "descriptors.parquet"
+}

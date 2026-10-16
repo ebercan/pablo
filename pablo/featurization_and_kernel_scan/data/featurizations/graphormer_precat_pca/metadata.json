@@ -1,0 +1,32 @@
+{
+  "n_molecules": 161,
+  "n_features": 7,
+  "feature_cols": [
+    "graphormer_precat_pc0",
+    "graphormer_precat_pc1",
+    "graphormer_precat_pc2",
+    "graphormer_precat_pc3",
+    "graphormer_precat_pc4",
+    "graphormer_precat_pc5",
+    "graphormer_precat_pc6"
+  ],
+  "descriptors_file": "descriptors.parquet",
+  "method": "Frozen PCA of the standardized full-dimensional featurization, fit once over the whole 161-catalyst library with no access to any outcome. Component count from the Kneedle knee of the explained-variance curve.",
+  "source_featurization": "graphormer_precat",
+  "source_n_features": 768,
+  "kneedle_sensitivity": 1,
+  "knee_from_fallback": false,
+  "variance_retained": 0.8509166273202026,
+  "n_components_for_90pct": 14,
+  "n_components_for_95pct": 29,
+  "explained_variance_ratio": [
+    0.6886310515566937,
+    0.05626011160454849,
+    0.03321640108998391,
+    0.023930671179016948,
+    0.02125823610918467,
+    0.016507145144115706,
+    0.011113010636659256
+  ],
+  "random_state": 42
+}

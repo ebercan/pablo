@@ -1,0 +1,30 @@
+{
+  "n_molecules": 14,
+  "n_features": 6,
+  "feature_cols": [
+    "solvent_soap_pc0",
+    "solvent_soap_pc1",
+    "solvent_soap_pc2",
+    "solvent_soap_pc3",
+    "solvent_soap_pc4",
+    "solvent_soap_pc5"
+  ],
+  "descriptors_file": "descriptors.parquet",
+  "method": "Frozen PCA of the standardized full-dimensional featurization, fit once over the whole 14-member solvent_id library with no access to any outcome. Component count from the Kneedle knee of the explained-variance curve.",
+  "source_featurization": "solvent_soap",
+  "source_n_features": 3330,
+  "kneedle_sensitivity": 1,
+  "knee_from_fallback": false,
+  "variance_retained": 0.9330536807147041,
+  "n_components_for_90pct": 6,
+  "n_components_for_95pct": 7,
+  "explained_variance_ratio": [
+    0.2755115939346266,
+    0.2509776068716491,
+    0.20634852530635114,
+    0.08701714062795675,
+    0.06981562027618657,
+    0.04338319369793388
+  ],
+  "random_state": 42
+}

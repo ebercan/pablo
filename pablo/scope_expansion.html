@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scope expansion</title>
+<script>
+(function () {
+  var root = document.documentElement;
+  var saved = localStorage.getItem('pablo_theme');
+  var sys = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  root.setAttribute('data-theme', saved || sys);
+  root.setAttribute('data-sidebar', localStorage.getItem('pablo_sidebar') || 'open');
+  var w = parseInt(localStorage.getItem('pablo_sidebar_w'), 10);
+  if (w >= 220 && w <= 560) root.style.setProperty('--sidebar-w', w + 'px');
+})();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.19.0/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.19.0/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.19.0/dist/contrib/auto-render.min.js"></script>
+<style>
+:root{
+  --font-sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  --font-mono:'Fira Code','SFMono-Regular',Consolas,Monaco,monospace;
+  --sidebar-w:300px; --header-h:60px;
+  --radius-sm:5px; --radius-md:8px; --radius-lg:10px;
+}
+[data-theme="light"]{
+  color-scheme:light;
+  --bg-app:#F5F6F8; --bg-card:#FFFFFF; --bg-card-subtle:#F0F2F5; --bg-elevated:#E8EBF0;
+  --bg-header:rgba(255,255,255,.92); --bg-code:#1B2330; --code-ink:#E3E7ED; --grid-line:rgba(24,32,44,.03);
+  --border-subtle:#DADFE6; --border-strong:#C3CAD4;
+  --text-main:#18202C; --text-muted:#4B5563; --text-dim:#6B7280;
+  --red:#A23B32;    --red-rgb:162,59,50;
+  --orange:#AE5520; --orange-rgb:174,85,32;
+  --yellow:#8A6A12; --yellow-rgb:138,106,18;
+  --green:#2F6B45;  --green-rgb:47,107,69;
+  --teal:#1F6E6A;   --teal-rgb:31,110,106;
+  --blue:#1F5A99;   --blue-rgb:31,90,153;
+  --indigo:#43479A; --indigo-rgb:67,71,154;
+  --purple:#6B3F8F; --purple-rgb:107,63,143;
+  --slate:#4A5568;  --slate-rgb:74,85,104;
+  --tint:.07;
+  --shadow-card:0 1px 2px rgba(24,32,44,.06),0 2px 8px rgba(24,32,44,.04);
+}
+[data-theme="dark"]{
+  color-scheme:dark;
+  --bg-app:#0F1216; --bg-card:#161A20; --bg-card-subtle:#1B2027; --bg-elevated:#232932;
+  --bg-header:rgba(15,18,22,.92); --bg-code:#0B0D10; --code-ink:#D5DBE3; --grid-line:rgba(255,255,255,.02);
+  --border-subtle:#2A3039; --border-strong:#3A424E;
+  --text-main:#E6E9EE; --text-muted:#A7B0BC; --text-dim:#7C8692;
+  --red:#E3867B;    --red-rgb:227,134,123;
+  --orange:#E5A06A; --orange-rgb:229,160,106;
+  --yellow:#D6B862; --yellow-rgb:214,184,98;
+  --green:#82C29B;  --green-rgb:130,194,155;
+  --teal:#6FC0B7;   --teal-rgb:111,192,183;
+  --blue:#82A9DE;   --blue-rgb:130,169,222;
+  --indigo:#A0A4E4; --indigo-rgb:160,164,228;
+  --purple:#BC9DD9; --purple-rgb:188,157,217;
+  --slate:#A0AEC0;  --slate-rgb:160,174,192;
+  --tint:.11;
+  --shadow-card:0 1px 2px rgba(0,0,0,.4);
+}
+:root,[data-hue="0"]{--sec:var(--blue);--sec-rgb:var(--blue-rgb)}
+[data-hue="1"]{--sec:var(--teal);--sec-rgb:var(--teal-rgb)}
+[data-hue="2"]{--sec:var(--red);--sec-rgb:var(--red-rgb)}
+[data-hue="3"]{--sec:var(--green);--sec-rgb:var(--green-rgb)}
+[data-hue="4"]{--sec:var(--purple);--sec-rgb:var(--purple-rgb)}
+[data-hue="5"]{--sec:var(--orange);--sec-rgb:var(--orange-rgb)}
+[data-hue="6"]{--sec:var(--indigo);--sec-rgb:var(--indigo-rgb)}
+[data-hue="7"]{--sec:var(--yellow);--sec-rgb:var(--yellow-rgb)}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{font-size:15px;scroll-behavior:smooth;scroll-padding-top:calc(var(--header-h) + 24px)}
+body{background:var(--bg-app);color:var(--text-main);font-family:var(--font-sans);
+ line-height:1.65;-webkit-font-smoothing:antialiased;min-height:100vh;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+ background-image:linear-gradient(to right,var(--grid-line) 1px,transparent 1px),
+  linear-gradient(to bottom,var(--grid-line) 1px,transparent 1px);
+ background-size:40px 40px}
+
+header.app-header{position:fixed;top:0;left:0;right:0;height:var(--header-h);z-index:100;
+ background:var(--bg-header);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+ border-bottom:1px solid var(--border-subtle);display:flex;align-items:center;
+ justify-content:space-between;gap:1rem;padding:0 1.25rem}
+.brand-wrapper{display:flex;align-items:center;gap:.85rem;min-width:0}
+.brand-badge{font-family:var(--font-mono);font-size:.72rem;font-weight:600;letter-spacing:.06em;
+ text-transform:uppercase;padding:.25rem .6rem;border-radius:var(--radius-sm);white-space:nowrap;
+ color:var(--text-muted);border:1px solid var(--border-strong)}
+.brand-title{font-size:1rem;font-weight:650;letter-spacing:-.01em;color:var(--text-main);
+ white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brand-title .dim{color:var(--text-muted);font-weight:400}
+.header-controls{display:flex;align-items:center;gap:.75rem}
+.reading-progress-track{position:absolute;bottom:-1px;left:0;width:100%;height:2px}
+.reading-progress-bar{height:100%;width:0;background:var(--blue);transition:width .1s ease-out}
+.btn-icon{background:transparent;border:1px solid var(--border-subtle);color:var(--text-muted);
+ width:36px;height:36px;border-radius:var(--radius-sm);display:inline-flex;align-items:center;
+ justify-content:center;cursor:pointer;transition:all .15s ease;flex:none}
+.btn-icon:hover{color:var(--text-main);border-color:var(--border-strong);background:var(--bg-card-subtle)}
+.btn-icon.sm{width:32px;height:32px}
+.btn-icon .moon{display:none}
+[data-theme="light"] .btn-icon .sun{display:none}
+[data-theme="light"] .btn-icon .moon{display:block}
+[data-sidebar="open"] #sidebarToggleBtn{color:var(--blue);border-color:rgba(var(--blue-rgb),.45);background:rgba(var(--blue-rgb),var(--tint))}
+
+.layout-container{display:flex;position:relative;margin-top:var(--header-h);z-index:1}
+aside.app-sidebar{width:var(--sidebar-w);position:fixed;top:var(--header-h);bottom:0;left:0;z-index:50;
+ background:var(--bg-card);border-right:1px solid var(--border-subtle);display:flex;flex-direction:column;
+ transition:transform .25s ease}
+[data-sidebar="closed"] aside.app-sidebar{transform:translateX(-100%)}
+.sidebar-resizer{position:absolute;top:0;right:-4px;width:8px;bottom:0;cursor:col-resize;z-index:2}
+.sidebar-resizer::after{content:"";position:absolute;top:0;bottom:0;left:3px;width:2px;background:var(--blue);
+ opacity:0;transition:opacity .2s}
+.sidebar-resizer:hover::after,.resizing .sidebar-resizer::after{opacity:1}
+.resizing,.resizing *{cursor:col-resize!important;user-select:none!important;transition:none!important}
+.sidebar-toolbar{display:flex;gap:.5rem;align-items:center;padding:1rem 1rem .75rem;
+ border-bottom:1px solid var(--border-subtle)}
+.search-input{flex:1;min-width:0;padding:.45rem .7rem;background:var(--bg-card-subtle);
+ border:1px solid var(--border-subtle);border-radius:var(--radius-sm);color:var(--text-main);
+ font:inherit;font-size:.85rem;outline:none}
+.search-input:focus{border-color:var(--blue);box-shadow:0 0 0 2px rgba(var(--blue-rgb),.18)}
+#expandAllBtn svg{transition:transform .2s}
+#expandAllBtn.all-open svg{transform:rotate(180deg)}
+.nav-links-scroll{flex:1;overflow-y:auto;padding:.75rem .75rem 2rem}
+.nav-group-title{font-size:.68rem;text-transform:uppercase;letter-spacing:.1em;font-weight:650;
+ color:var(--text-dim);padding:.6rem .5rem .35rem}
+.nav-group{margin-bottom:2px}
+.nav-row{display:flex;align-items:stretch;border-radius:var(--radius-sm);border-left:2px solid transparent}
+.nav-row:hover{background:var(--bg-card-subtle)}
+.nav-item{flex:1;min-width:0;display:flex;align-items:baseline;gap:.6rem;padding:.45rem .4rem .45rem .55rem;
+ color:var(--text-muted);text-decoration:none;font-size:.86rem;font-weight:500}
+.nav-row:hover .nav-item{color:var(--text-main)}
+.nav-badge-num{font-family:var(--font-mono);font-size:.7rem;font-weight:600;color:var(--sec);min-width:1.9rem;flex:none}
+.nav-group.active .nav-row{background:rgba(var(--sec-rgb),var(--tint));border-left-color:var(--sec)}
+.nav-group.active .nav-item{color:var(--text-main);font-weight:600}
+.nav-caret{flex:none;width:30px;background:none;border:none;color:var(--text-dim);cursor:pointer;
+ display:flex;align-items:center;justify-content:center;border-radius:var(--radius-sm)}
+.nav-caret:hover{color:var(--text-main)}
+.nav-caret svg{transition:transform .2s}
+.nav-group.open .nav-caret svg{transform:rotate(90deg)}
+.nav-sub{display:none;margin:2px 0 6px 1.4rem;padding-left:.6rem;border-left:1px solid var(--border-strong)}
+.nav-group.open .nav-sub{display:block}
+.nav-subitem{display:block;padding:.28rem .55rem;font-size:.8rem;line-height:1.4;color:var(--text-muted);
+ text-decoration:none;border-radius:4px}
+.nav-subitem:hover{color:var(--text-main);background:var(--bg-card-subtle)}
+.nav-subitem.active{color:var(--sec);font-weight:600}
+.sidebar-hint{padding:.6rem 1rem;border-top:1px solid var(--border-subtle);font-size:.7rem;color:var(--text-dim)}
+.sidebar-hint kbd{font-family:var(--font-mono);font-size:.68rem;border:1px solid var(--border-strong);
+ border-radius:3px;padding:0 .3rem;background:var(--bg-card-subtle)}
+.sidebar-backdrop{display:none}
+
+main.app-main{margin-left:var(--sidebar-w);flex:1;padding:3rem 4rem 6rem;max-width:calc(1240px + var(--sidebar-w));
+ min-width:0;transition:margin-left .25s ease}
+[data-sidebar="closed"] main.app-main{margin-inline:auto;max-width:1240px}
+.hero-header{margin-bottom:3.25rem;padding-bottom:2rem;border-bottom:1px solid var(--border-strong)}
+.hero-meta{display:flex;align-items:center;gap:.75rem;margin-bottom:1rem;flex-wrap:wrap}
+.hero-tag{font-family:var(--font-mono);font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;
+ color:var(--blue);padding:.2rem .6rem;border:1px solid rgba(var(--blue-rgb),.4);border-radius:var(--radius-sm)}
+.hero-date{font-family:var(--font-mono);font-size:.8rem;color:var(--text-dim)}
+.hero-title{font-size:2.5rem;font-weight:800;letter-spacing:-.03em;line-height:1.12;margin-bottom:.9rem;color:var(--text-main)}
+.hero-subtitle{font-size:1.05rem;color:var(--text-muted);max-width:950px;line-height:1.55}
+
+section.content-section{margin-bottom:4.25rem;scroll-margin-top:calc(var(--header-h) + 30px)}
+.section-header-block{margin-bottom:1.6rem;padding-left:1rem;border-left:3px solid var(--sec)}
+.section-num-tag{display:block;font-family:var(--font-mono);font-size:.74rem;font-weight:600;color:var(--sec);
+ text-transform:uppercase;letter-spacing:.1em;margin-bottom:.35rem}
+.section-heading{font-size:1.75rem;font-weight:750;letter-spacing:-.02em;line-height:1.25;margin-bottom:.55rem}
+.section-lead{font-size:1.05rem;color:var(--text-muted);line-height:1.6;max-width:90ch;margin-bottom:0}
+h3.subheading{font-size:1.25rem;font-weight:650;margin:2.25rem 0 .9rem;letter-spacing:-.01em;
+ display:flex;align-items:baseline;gap:.6rem;scroll-margin-top:calc(var(--header-h) + 24px)}
+h3.subheading::before{content:"";flex:none;width:8px;height:8px;border-radius:2px;background:var(--sec);transform:translateY(-2px)}
+h4.tertiary-heading{font-size:1rem;font-weight:650;color:var(--text-main);margin:1.5rem 0 .6rem}
+p{margin-bottom:1.1rem;max-width:90ch}
+p.muted,.small{color:var(--text-muted)}
+.small{font-size:.88rem}
+strong,b{font-weight:650}
+code{font-family:var(--font-mono);font-size:.84em;color:var(--text-main);background:var(--bg-card-subtle);
+ border:1px solid var(--border-subtle);padding:.05rem .35rem;border-radius:4px}
+
+.card{background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:var(--radius-lg);
+ padding:1.4rem 1.5rem;box-shadow:var(--shadow-card);margin-bottom:1.5rem}
+.card > :last-child,.callout > :last-child{margin-bottom:0}
+.grid-2,.grid-3{display:grid;gap:1.25rem;margin-bottom:1.5rem}
+.grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.grid-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.grid-2 > .card,.grid-3 > .card{margin-bottom:0}
+
+.callout{--c:var(--blue);--c-rgb:var(--blue-rgb);
+ border-radius:0 var(--radius-md) var(--radius-md) 0;padding:1rem 1.3rem;margin:1.5rem 0;
+ border-left:3px solid var(--c);background:rgba(var(--c-rgb),var(--tint));max-width:90ch}
+.callout-title{font-weight:650;font-size:.78rem;margin-bottom:.45rem;text-transform:uppercase;letter-spacing:.07em;color:var(--c)}
+.callout-insight{--c:var(--green);--c-rgb:var(--green-rgb)}
+.callout-math{--c:var(--indigo);--c-rgb:var(--indigo-rgb)}
+.callout-warning{--c:var(--yellow);--c-rgb:var(--yellow-rgb)}
+.callout-danger{--c:var(--red);--c-rgb:var(--red-rgb)}
+.callout-arch{--c:var(--blue);--c-rgb:var(--blue-rgb)}
+
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.75rem;margin:1.5rem 0}
+.kpi{background:var(--bg-card);border:1px solid var(--border-subtle);border-top:2px solid var(--sec);
+ border-radius:var(--radius-md);padding:.75rem 1rem;box-shadow:var(--shadow-card)}
+.kpi .k{font-size:.7rem;font-weight:650;text-transform:uppercase;letter-spacing:.07em;color:var(--text-dim)}
+.kpi .v{font-size:1.55rem;font-weight:750;letter-spacing:-.02em;color:var(--text-main);font-variant-numeric:tabular-nums}
+
+.table-responsive{width:100%;overflow-x:auto;margin:1.5rem 0;border-radius:var(--radius-md);
+ border:1px solid var(--border-subtle);background:var(--bg-card)}
+table.data-table{width:100%;border-collapse:collapse;text-align:left;font-size:.9rem}
+table.data-table th{background:var(--bg-card-subtle);color:var(--text-muted);padding:.65rem 1rem;font-weight:650;
+ font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;border-bottom:2px solid var(--sec);
+ white-space:nowrap;position:sticky;top:0}
+table.data-table td{padding:.55rem 1rem;border-bottom:1px solid var(--border-subtle);vertical-align:top}
+table.data-table tbody tr:hover td{background:var(--bg-card-subtle)}
+table.data-table tr:last-child td{border-bottom:none}
+table.data-table .num{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+table.data-table td.r{color:var(--text-dim)}
+table.data-table td.good{background:rgba(var(--green-rgb),calc(var(--tint) * 1.6))!important;color:var(--green);font-weight:650}
+table.data-table td.bad{background:rgba(var(--red-rgb),calc(var(--tint) * 1.6))!important;color:var(--red);font-weight:650}
+
+.chip{display:inline-flex;align-items:center;padding:.08rem .45rem;border-radius:4px;font-family:var(--font-mono);
+ font-size:.72rem;font-weight:600;margin:.1rem;--c:var(--slate);--c-rgb:var(--slate-rgb);
+ color:var(--c);background:rgba(var(--c-rgb),var(--tint));border:1px solid rgba(var(--c-rgb),.35)}
+.chip-red{--c:var(--red);--c-rgb:var(--red-rgb)} .chip-orange{--c:var(--orange);--c-rgb:var(--orange-rgb)}
+.chip-yellow{--c:var(--yellow);--c-rgb:var(--yellow-rgb)} .chip-green{--c:var(--green);--c-rgb:var(--green-rgb)}
+.chip-teal{--c:var(--teal);--c-rgb:var(--teal-rgb)} .chip-blue{--c:var(--blue);--c-rgb:var(--blue-rgb)}
+.chip-indigo{--c:var(--indigo);--c-rgb:var(--indigo-rgb)} .chip-purple{--c:var(--purple);--c-rgb:var(--purple-rgb)}
+.chip-slate{--c:var(--slate);--c-rgb:var(--slate-rgb)}
+
+.math-display{overflow-x:auto;overflow-y:hidden;padding:.35rem 1.25rem;margin:.9rem 0;background:var(--bg-card);
+ border:1px solid var(--border-subtle);border-radius:var(--radius-md);font-size:1.1rem}
+.katex{font-size:1.06em}
+.katex-display{margin:.6em 0}
+.katex-error{color:var(--red)!important;background:rgba(var(--red-rgb),.12);padding:0 .3rem;border-radius:3px}
+.diagram-wrapper{background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:var(--radius-lg);
+ padding:1.5rem;margin:1.5rem 0}
+.diagram-wrapper svg{display:block;max-width:100%;height:auto;margin:0 auto}
+.diagram-caption{margin-top:.9rem;font-size:.82rem;color:var(--text-dim);text-align:center}
+pre.code-block{background:var(--bg-code);border:1px solid var(--border-subtle);border-radius:var(--radius-md);
+ padding:1rem 1.1rem;overflow-x:auto;font-family:var(--font-mono);font-size:.83rem;line-height:1.5;
+ color:var(--code-ink);margin:1rem 0}
+pre.code-block code{color:inherit;background:none;border:none;padding:0}
+
+footer.report-footer{margin-top:3rem;padding-top:1.1rem;border-top:1px solid var(--border-strong);
+ color:var(--text-dim);font-size:.85rem}
+
+@media (max-width:1100px){.grid-2,.grid-3{grid-template-columns:1fr}}
+@media (max-width:900px){
+  aside.app-sidebar{width:min(86vw,340px);transform:translateX(-100%);box-shadow:0 8px 30px rgba(0,0,0,.25)}
+  [data-sidebar-mobile="open"] aside.app-sidebar{transform:none}
+  [data-sidebar-mobile="open"] .sidebar-backdrop{display:block;position:fixed;inset:var(--header-h) 0 0 0;
+   z-index:40;background:rgba(0,0,0,.4)}
+  .sidebar-resizer,.sidebar-hint{display:none}
+  main.app-main,[data-sidebar="closed"] main.app-main{margin-left:0;padding:2rem 16px 5rem}
+  header.app-header{padding:0 12px}
+  .header-controls .chip,.brand-badge{display:none}
+  .hero-title{font-size:1.9rem}
+  .section-heading{font-size:1.45rem}
+}
+@media print{
+  header.app-header,aside.app-sidebar,body::before{display:none}
+  .layout-container{margin-top:0}
+  main.app-main{margin-left:0;padding:0;max-width:none}
+  .card,.kpi{box-shadow:none}
+  table.data-table th{position:static}
+}
+</style></head>
+<body>
+
+<header class="app-header">
+  <div class="brand-wrapper">
+    <button id="sidebarToggleBtn" class="btn-icon" onclick="toggleSidebar()" title="Show or hide contents ( [ )" aria-label="Toggle contents">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><line x1="9" y1="4" x2="9" y2="20"/></svg>
+    </button>
+    <span class="brand-badge">pablo</span>
+    <div class="brand-title">Scope expansion <span class="dim">&middot; lookahead catalyst ordering</span></div>
+  </div>
+  <div class="header-controls">
+    <span class="chip chip-slate">run_5</span>
+    <button id="themeToggleBtn" class="btn-icon" onclick="toggleTheme()" title="Switch theme" aria-label="Switch theme">
+      <svg class="sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      <svg class="moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
+  </div>
+  <div class="reading-progress-track"><div id="progressBar" class="reading-progress-bar"></div></div>
+</header>
+
+<div class="layout-container">
+  <aside class="app-sidebar" id="sidebar">
+    <div class="sidebar-toolbar">
+      <input type="text" id="sidebarSearch" class="search-input" placeholder="Filter sections...">
+      <button id="expandAllBtn" class="btn-icon sm" title="Expand or collapse all" aria-label="Expand or collapse all">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+    </div>
+    <nav class="nav-links-scroll" id="navLinks">
+      <div class="nav-group-title">Contents</div>
+    </nav>
+    <div class="sidebar-hint"><kbd>[</kbd> hide or show &middot; drag the right edge to resize</div>
+    <div class="sidebar-resizer" id="sidebarResizer" title="Drag to resize, double-click to reset"></div>
+  </aside>
+  <div class="sidebar-backdrop" onclick="toggleSidebar()"></div>
+
+  <main class="app-main">
+
+    <div class="hero-header">
+      <div class="hero-meta">
+        <span class="hero-tag">Method</span>
+        <span class="hero-date">October 2026 &middot; NHC acyloin campaign</span>
+      </div>
+      <h1 class="hero-title">Scope expansion: deciding which locked catalyst to order</h1>
+      <p class="hero-subtitle"><code>pablo/scope_expansion.py</code> &middot; batches of 6 experiments over the available catalysts
+      &middot; 1 catalyst ordered per iteration &middot; dead time of 4 batches &middot; fantasy tree of depth 4 with
+      (12, 4, 2, 1) children per node &middot; operating modes <code>only_terminal</code>, <code>averaged</code>, <code>layer_averaged</code></p>
+    </div>
+
+<section id="sec-background" class="content-section" data-num="00" data-nav="Background">
+  <div class="section-header-block">
+    <span class="section-num-tag">Background</span>
+    <h2 class="section-heading">The ordering decision</h2>
+    <p class="section-lead">We optimise the yield of the NHC-catalysed acyloin condensation by batch Bayesian
+    optimisation. Every iteration a Gaussian process is fitted to all measurements and six new experiments are
+    chosen with qLogEI. An experiment can only use a catalyst that is on the shelf, and most of the 161 azolium
+    catalysts in the library are not: they have to be bought or synthesised first. Every iteration we may order one
+    of these locked catalysts, and it arrives several batches later.</p>
+  </div>
+
+  <p>Scope expansion is the ordering decision. It is a different question from choosing the batch. The batch is
+  run now, with the catalysts we have and the model we have. An ordered catalyst is run later, with the catalysts we
+  will have then and the model we will have then. The module answers it with a lookahead that simulates the
+  batches the campaign runs while the catalyst is in transit, and scores each locked catalyst by its value at the
+  end of that simulation.</p>
+
+  <h3 class="subheading">1. Three sets of catalysts and a dead time</h3>
+
+  <p>At every iteration each catalyst of the library is in exactly one of three sets. The functions receive them as
+  tensors of discrete rows, one row per catalyst, solvent and base combination, and split each set into its unique
+  catalyst, solvent and base tables before optimising over it. A catalyst that needs no external base carries a
+  zero base block, as everywhere else in pablo.</p>
+
+  <div class="table-responsive"><table class="data-table">
+    <thead><tr><th>Set</th><th>Argument</th><th>Meaning</th><th>Usable in</th></tr></thead>
+    <tbody>
+      <tr><td>Available</td><td><code>x_available</code></td><td>On the shelf.</td><td>Every batch from the next one on.</td></tr>
+      <tr><td>Ordered</td><td><code>x_ordered[j]</code></td><td>Ordered at an earlier iteration, arriving inside the lookahead.</td><td>Depth <code>j</code> of the tree (batch \(t+j+1\)) and every later batch.</td></tr>
+      <tr><td>Unordered</td><td><code>x_unordered</code></td><td>Locked and not on order. These are the candidates.</td><td>Only if ordered now, from batch \(t+D+1\) on.</td></tr>
+    </tbody>
+  </table></div>
+
+  <p>At iteration \(t\), batch \(t\) has been measured and the model refitted on it. A catalyst ordered now is dead
+  for the next \(D = 4\) batches and is first usable in batch \(t+D+1\). In run_5 the lookahead depth equals the
+  dead time, \(k = D = 4\), so the tree simulates exactly the batches run while the catalyst is in transit.</p>
+
+  <div class="diagram-wrapper">
+<svg viewBox="0 0 748 150" width="748" role="img" aria-label="Timeline of the ordering decision">
+<rect x="14" y="56" width="110" height="40" rx="6" fill="var(--bg-card-subtle)" stroke="var(--text-muted)" stroke-width="1.5"/>
+<text x="69" y="81" text-anchor="middle" font-size="14" fill="var(--text-main)">batch t</text>
+<rect x="136" y="56" width="110" height="40" rx="6" fill="none" stroke="var(--border-strong)" stroke-width="1.5" stroke-dasharray="5 4"/>
+<text x="191" y="81" text-anchor="middle" font-size="14" fill="var(--text-main)">batch t+1</text>
+<rect x="258" y="56" width="110" height="40" rx="6" fill="none" stroke="var(--border-strong)" stroke-width="1.5" stroke-dasharray="5 4"/>
+<text x="313" y="81" text-anchor="middle" font-size="14" fill="var(--text-main)">batch t+2</text>
+<rect x="380" y="56" width="110" height="40" rx="6" fill="none" stroke="var(--border-strong)" stroke-width="1.5" stroke-dasharray="5 4"/>
+<text x="435" y="81" text-anchor="middle" font-size="14" fill="var(--text-main)">batch t+3</text>
+<rect x="502" y="56" width="110" height="40" rx="6" fill="none" stroke="var(--border-strong)" stroke-width="1.5" stroke-dasharray="5 4"/>
+<text x="557" y="81" text-anchor="middle" font-size="14" fill="var(--text-main)">batch t+4</text>
+<rect x="624" y="56" width="110" height="40" rx="6" fill="var(--bg-card)" stroke="var(--sec)" stroke-width="2"/>
+<text x="679" y="81" text-anchor="middle" font-size="14" fill="var(--text-main)">batch t+5</text>
+<path d="M136 46 V38 H612 V46" fill="none" stroke="var(--text-muted)" stroke-width="1.2"/>
+<text x="374.0" y="28" text-anchor="middle" font-size="12" fill="var(--text-muted)">catalyst in transit: dead time of D = 4 batches</text>
+<text x="679" y="28" text-anchor="middle" font-size="12" fill="var(--sec)">first usable</text>
+<path d="M136 106 V114 H612 V106" fill="none" stroke="var(--text-muted)" stroke-width="1.2"/>
+<text x="374.0" y="134" text-anchor="middle" font-size="12" fill="var(--text-muted)">simulated by tree layers 1 to 4</text>
+<text x="69" y="122" text-anchor="middle" font-size="12" fill="var(--text-muted)">root model,</text>
+<text x="69" y="138" text-anchor="middle" font-size="12" fill="var(--text-muted)">order placed</text>
+<text x="679" y="122" text-anchor="middle" font-size="12" fill="var(--text-muted)">scored with the</text>
+<text x="679" y="138" text-anchor="middle" font-size="12" fill="var(--text-muted)">layer-4 models</text>
+</svg>
+    <div class="diagram-caption">One iteration of the ordering decision. Batches \(t+1\) to \(t+4\) are run without
+    the ordered catalyst; the tree simulates them, and the catalyst is scored with the models that exist when batch
+    \(t+5\) is chosen.</div>
+  </div>
+
+  <h3 class="subheading">2. The current model values a catalyst as if it could be used now</h3>
+
+  <p>The obvious criterion is the one the batch generator already uses: the qLogEI of the current model, restricted
+  to experiments whose catalyst is locked. An experiment \(x\) is a full point of the search space: temperature,
+  formaldehyde ratio, catalyst loading, time (pinned at 20 h), and the catalyst, solvent and base blocks. The
+  catalyst of the best \(x\) is ordered. This is <code>optimize_scope_expansion_myopic</code>.</p>
+
+  <div class="callout callout-math">
+    <div class="callout-title">Myopic criterion</div>
+    <div class="math-display">\[ \alpha_{\text{myopic}}(x) = \operatorname{qLogEI}_0(x) = \log \mathbb{E}_0\big[\max\big(f(x) - f^{*}_0,\, 0\big)\big] \]</div>
+    <p>\(\mathbb{E}_0\) is the expectation under the posterior of the current model and \(f^{*}_0\) is the best
+    measured yield. <b>It is the expected improvement of an experiment run in the next batch, which a locked catalyst
+    cannot be.</b></p>
+  </div>
+
+  <p>One would expect this to be a sound rule, since it orders the catalyst with the most promising experiment. Its
+  weakness is timing. Before the ordered catalyst is used, four batches of six, 24 experiments, are chosen from the
+  catalysts on the shelf, and they change both quantities the expected improvement depends on. The posterior
+  variance falls wherever those experiments land, and the incumbent \(f^{*}\) rises whenever they succeed. A locked
+  catalyst whose descriptors sit close to an available one has a high expected improvement today, but the
+  campaign explores that region with the available neighbour long before the order arrives.</p>
+
+  <p><b>The quantity that matters is the expected improvement of a locked catalyst under the model that will exist
+  when it arrives, and that model is not known today.</b></p>
+</section>
+
+<section id="sec-part-1" class="content-section" data-num="I" data-nav="Fantasising the future">
+  <div class="section-header-block">
+    <span class="section-num-tag">Part I</span>
+    <h2 class="section-heading">Fantasising the batches run while the catalyst is in transit</h2>
+    <p class="section-lead">We do not know what the next four batches will measure, but the Gaussian process gives a
+    distribution over it. A fantasy replaces an unknown measurement by a sample from that distribution and treats it
+    as if it had been measured. Repeated over several samples and several batches, it gives a set of plausible
+    future models, and each locked catalyst is scored under all of them. The tree is built by
+    <code>build_fantasy_tree</code>.</p>
+  </div>
+
+  <h3 class="subheading">3. One fantasy step simulates a batch, samples its yields and conditions on them</h3>
+
+  <p>A fantasy step takes a node model \(M\) and performs three operations. First, it chooses the batch the campaign
+  itself would choose from that state: qLogEI of \(M\) against its own incumbent, optimised by
+  <code>optimize_acqf_mixed_pool_greedy</code> with the same (2, 2, 2) temperature partition and pinned time as the
+  real batch, over the catalysts usable at that depth. Second, it draws \(F\) joint samples of the noise-free yields
+  at the six batch points from the posterior of \(M\), using a Sobol quasi-random normal sampler. Third, it
+  conditions \(M\) on each sample as if it had been measured, which gives \(F\) child models.</p>
+
+  <div class="math-display">\[ X_M = \arg\max_{X} \operatorname{qLogEI}_M(X), \qquad \tilde{y}^{(b)} \sim p_M\big(f(X_M)\big), \qquad M_b = M \mid \big(X_M, \tilde{y}^{(b)}\big), \quad b = 1, \dots, F \]</div>
+
+  <p>The maximum runs over batches of six experiments whose catalysts lie in the allowed set of that depth, and
+  is found approximately by the pool-greedy optimiser. Conditioning uses <code>condition_on_observations</code>: the
+  child is the exact posterior with the six fantasised points appended to the training data, under the parent's
+  hyperparameters and noise variance. Nothing is refitted, so every model in the tree is the root model conditioned
+  on the fantasised batches along its path. This keeps the tree cheap (Part IV), and it is also its main
+  limitation: a simulated future cannot change the lengthscales, which a real refit after 24 new experiments
+  can.</p>
+
+  <p>Two properties of the child drive everything that follows. Its posterior variance is lower around the six new
+  points. Its incumbent \(f^{*}_{M_b}\) is the largest of the measured and the fantasised yields
+  (<code>best_observed_f</code> reads the child's training targets), so a branch in which the simulated batch did
+  well sets a higher bar for every later improvement.</p>
+
+  <h3 class="subheading">4. Repeating the step builds a tree of plausible futures</h3>
+
+  <p>The step is applied depth by depth. Every node of layer \(\ell - 1\) gets its own simulated batch and
+  as many children as <code>num_fantasies</code> gives for that depth, so layer \(\ell\) holds models conditioned on \(\ell\) simulated
+  batches. Different branches simulate different batches, because each node optimises its batch on its own
+  posterior. A child's batch optimisation receives its parent's batch as a warm start, so the parent's choice is
+  always among its candidates.</p>
+
+  <div class="diagram-wrapper">
+<svg viewBox="0 0 740 290" width="740" role="img" aria-label="Fantasy tree">
+<text x="70" y="20" text-anchor="middle" font-size="13" font-weight="600" fill="var(--text-main)">root</text>
+<text x="70" y="38" text-anchor="middle" font-size="11" fill="var(--text-dim)">data to batch t</text>
+<text x="270" y="20" text-anchor="middle" font-size="13" font-weight="600" fill="var(--text-main)">layer 1</text>
+<text x="270" y="38" text-anchor="middle" font-size="11" fill="var(--text-dim)">+ fantasy of batch t+1</text>
+<text x="470" y="20" text-anchor="middle" font-size="13" font-weight="600" fill="var(--text-main)">layer 2</text>
+<text x="470" y="38" text-anchor="middle" font-size="11" fill="var(--text-dim)">+ fantasy of batch t+2</text>
+<text x="670" y="20" text-anchor="middle" font-size="13" font-weight="600" fill="var(--text-main)">layer 3</text>
+<text x="670" y="38" text-anchor="middle" font-size="11" fill="var(--text-dim)">+ fantasy of batch t+3</text>
+<line x1="92" y1="170" x2="262" y2="90" stroke="var(--border-strong)" stroke-width="1.2"/>
+<line x1="92" y1="170" x2="262" y2="170" stroke="var(--border-strong)" stroke-width="1.2"/>
+<line x1="92" y1="170" x2="262" y2="250" stroke="var(--border-strong)" stroke-width="1.2"/>
+<line x1="292" y1="90" x2="462" y2="70" stroke="var(--border-strong)" stroke-width="1.2"/>
+<line x1="292" y1="90" x2="462" y2="110" stroke="var(--border-strong)" stroke-width="1.2"/>
+<line x1="292" y1="170" x2="462" y2="150" stroke="var(--border-strong)" stroke-width="1.2"/>
+<line x1="292" y1="170" x2="462" y2="190" stroke="var(--border-strong)" stroke-width="1.2"/>
+<line x1="292" y1="250" x2="462" y2="230" stroke="var(--border-strong)" stroke-width="1.2"/>
+<line x1="292" y1="250" x2="462" y2="270" stroke="var(--border-strong)" stroke-width="1.2"/>
+<line x1="492" y1="70" x2="662" y2="70" stroke="var(--border-strong)" stroke-width="1.2"/>
+<line x1="492" y1="110" x2="662" y2="110" stroke="var(--border-strong)" stroke-width="1.2"/>
+<line x1="492" y1="150" x2="662" y2="150" stroke="var(--border-strong)" stroke-width="1.2"/>
+<line x1="492" y1="190" x2="662" y2="190" stroke="var(--border-strong)" stroke-width="1.2"/>
+<line x1="492" y1="230" x2="662" y2="230" stroke="var(--border-strong)" stroke-width="1.2"/>
+<line x1="492" y1="270" x2="662" y2="270" stroke="var(--border-strong)" stroke-width="1.2"/>
+<line x1="78" y1="170" x2="82" y2="170" stroke="var(--text-muted)" stroke-width="1.2"/>
+<rect x="82" y="165" width="10" height="10" fill="var(--bg-card-subtle)" stroke="var(--text-muted)" stroke-width="1.2"/>
+<line x1="278" y1="90" x2="282" y2="90" stroke="var(--text-muted)" stroke-width="1.2"/>
+<rect x="282" y="85" width="10" height="10" fill="var(--bg-card-subtle)" stroke="var(--text-muted)" stroke-width="1.2"/>
+<line x1="278" y1="170" x2="282" y2="170" stroke="var(--text-muted)" stroke-width="1.2"/>
+<rect x="282" y="165" width="10" height="10" fill="var(--bg-card-subtle)" stroke="var(--text-muted)" stroke-width="1.2"/>
+<line x1="278" y1="250" x2="282" y2="250" stroke="var(--text-muted)" stroke-width="1.2"/>
+<rect x="282" y="245" width="10" height="10" fill="var(--bg-card-subtle)" stroke="var(--text-muted)" stroke-width="1.2"/>
+<line x1="478" y1="70" x2="482" y2="70" stroke="var(--text-muted)" stroke-width="1.2"/>
+<rect x="482" y="65" width="10" height="10" fill="var(--bg-card-subtle)" stroke="var(--text-muted)" stroke-width="1.2"/>
+<line x1="478" y1="110" x2="482" y2="110" stroke="var(--text-muted)" stroke-width="1.2"/>
+<rect x="482" y="105" width="10" height="10" fill="var(--bg-card-subtle)" stroke="var(--text-muted)" stroke-width="1.2"/>
+<line x1="478" y1="150" x2="482" y2="150" stroke="var(--text-muted)" stroke-width="1.2"/>
+<rect x="482" y="145" width="10" height="10" fill="var(--bg-card-subtle)" stroke="var(--text-muted)" stroke-width="1.2"/>
+<line x1="478" y1="190" x2="482" y2="190" stroke="var(--text-muted)" stroke-width="1.2"/>
+<rect x="482" y="185" width="10" height="10" fill="var(--bg-card-subtle)" stroke="var(--text-muted)" stroke-width="1.2"/>
+<line x1="478" y1="230" x2="482" y2="230" stroke="var(--text-muted)" stroke-width="1.2"/>
+<rect x="482" y="225" width="10" height="10" fill="var(--bg-card-subtle)" stroke="var(--text-muted)" stroke-width="1.2"/>
+<line x1="478" y1="270" x2="482" y2="270" stroke="var(--text-muted)" stroke-width="1.2"/>
+<rect x="482" y="265" width="10" height="10" fill="var(--bg-card-subtle)" stroke="var(--text-muted)" stroke-width="1.2"/>
+<circle cx="70" cy="170" r="9" fill="var(--bg-card)" stroke="var(--sec)" stroke-width="2"/>
+<circle cx="270" cy="90" r="7" fill="var(--bg-card)" stroke="var(--text-muted)" stroke-width="1.5"/>
+<circle cx="270" cy="170" r="7" fill="var(--bg-card)" stroke="var(--text-muted)" stroke-width="1.5"/>
+<circle cx="270" cy="250" r="7" fill="var(--bg-card)" stroke="var(--text-muted)" stroke-width="1.5"/>
+<circle cx="470" cy="70" r="7" fill="var(--bg-card)" stroke="var(--text-muted)" stroke-width="1.5"/>
+<circle cx="470" cy="110" r="7" fill="var(--bg-card)" stroke="var(--text-muted)" stroke-width="1.5"/>
+<circle cx="470" cy="150" r="7" fill="var(--bg-card)" stroke="var(--text-muted)" stroke-width="1.5"/>
+<circle cx="470" cy="190" r="7" fill="var(--bg-card)" stroke="var(--text-muted)" stroke-width="1.5"/>
+<circle cx="470" cy="230" r="7" fill="var(--bg-card)" stroke="var(--text-muted)" stroke-width="1.5"/>
+<circle cx="470" cy="270" r="7" fill="var(--bg-card)" stroke="var(--text-muted)" stroke-width="1.5"/>
+<circle cx="670" cy="70" r="7" fill="var(--bg-card)" stroke="var(--text-muted)" stroke-width="1.5"/>
+<circle cx="670" cy="110" r="7" fill="var(--bg-card)" stroke="var(--text-muted)" stroke-width="1.5"/>
+<circle cx="670" cy="150" r="7" fill="var(--bg-card)" stroke="var(--text-muted)" stroke-width="1.5"/>
+<circle cx="670" cy="190" r="7" fill="var(--bg-card)" stroke="var(--text-muted)" stroke-width="1.5"/>
+<circle cx="670" cy="230" r="7" fill="var(--bg-card)" stroke="var(--text-muted)" stroke-width="1.5"/>
+<circle cx="670" cy="270" r="7" fill="var(--bg-card)" stroke="var(--text-muted)" stroke-width="1.5"/>
+</svg>
+    <div class="diagram-caption">Fantasy tree with illustrative branching (3, 2, 1) and depth 3. Each square is the
+    batch of six experiments optimised on the model to its left; each edge is one joint sample of that batch's yields,
+    and the node it leads to is the parent conditioned on that sample. The run_5 tree has depth 4 and branching
+    (12, 4, 2, 1).</div>
+  </div>
+
+  <p class="small">Layer sizes of the run_5 tree. Simulated batch is the batch the layer's last fantasy stands for;
+  batch optimisations are the optimiser calls that produce it (one per parent); fantasised points are the extra
+  training rows each model of the layer carries over the root.</p>
+
+  <div class="table-responsive"><table class="data-table">
+    <thead><tr><th class="num">Layer</th><th>Simulated batch</th><th class="num">Children per node</th><th class="num">Models</th><th class="num">Batch optimisations</th><th class="num">Fantasised points</th></tr></thead>
+    <tbody>
+      <tr><td class="num r">1</td><td>\(t+1\)</td><td class="num">12</td><td class="num">12</td><td class="num">1</td><td class="num">6</td></tr>
+      <tr><td class="num r">2</td><td>\(t+2\)</td><td class="num">4</td><td class="num">48</td><td class="num">12</td><td class="num">12</td></tr>
+      <tr><td class="num r">3</td><td>\(t+3\)</td><td class="num">2</td><td class="num">96</td><td class="num">48</td><td class="num">18</td></tr>
+      <tr><td class="num r">4</td><td>\(t+4\)</td><td class="num">1</td><td class="num">96</td><td class="num">96</td><td class="num">24</td></tr>
+      <tr><td>Total</td><td></td><td></td><td class="num"><b>252</b></td><td class="num"><b>157</b></td><td></td></tr>
+    </tbody>
+  </table></div>
+
+  <p><b>The branching is widest at the first layer: the 12 outcomes of batch \(t+1\) are each followed by 8
+  continuations, and every one of the 96 deepest models descends from one of those 12.</b> With one child per node
+  at layer 4, the last layer has as many models as layer 3, each moved one simulated batch further.</p>
+
+  <h3 class="subheading">5. Each depth sees the catalysts usable at that time</h3>
+
+  <p>The simulated batch at depth \(\ell\) is optimised over the catalysts the campaign will actually have then:
+  the available set plus every order that arrives by batch \(t+\ell\).</p>
+
+  <div class="math-display">\[ \mathcal{A}_\ell = \mathcal{A}_{\text{avail}} \cup \bigcup_{j=1}^{\ell} \mathcal{O}_j, \qquad \ell = 1, \dots, k \]</div>
+
+  <p>Here \(\mathcal{O}_j\) is <code>x_ordered[j-1]</code>, the orders that become usable in batch \(t+j\). An order
+  placed two iterations ago therefore enters the simulated batches from its arrival on, and
+  <code>x_ordered</code> may hold at most \(k\) entries. The catalyst being chosen now is in none of the
+  \(\mathcal{A}_\ell\). <b>The simulated future is the one in which the campaign runs without the candidate, with
+  every catalyst already on order, which is exactly what makes the criterion count redundancy.</b></p>
+
+  <h3 class="subheading">6. Fantasies lower the value of catalysts the campaign would cover anyway</h3>
+
+  <p>Under a deep node the expected improvement of a locked candidate \(x\) is computed against a posterior that has
+  seen up to 24 more experiments and an incumbent that may have risen. If the simulated batches tested experiments
+  similar to \(x\), its posterior variance has fallen and the fantasised yields there are already part of the
+  incumbent, so its improvement shrinks. If they did not, its variance is unchanged and only the incumbent moved.
+  The ranking of locked catalysts under the tree therefore differs from the myopic ranking in a systematic
+  direction.</p>
+
+  <div class="callout callout-insight">
+    <div class="callout-title">What the tree measures</div>
+    <p>A locked catalyst keeps a high score under the fantasised models only if it promises improvement in a region
+    the simulated batches did not reach, or above the incumbents they raised. <b>Scope expansion with fantasies
+    orders the catalyst that adds what the shelf cannot provide in the next four batches, not the catalyst that
+    looks best today.</b></p>
+  </div>
+</section>
+
+<section id="sec-part-2" class="content-section" data-num="II" data-nav="The three operating modes">
+  <div class="section-header-block">
+    <span class="section-num-tag">Part II</span>
+    <h2 class="section-heading">The three operating modes aggregate the tree differently</h2>
+    <p class="section-lead">The tree yields 252 models. The expansion criterion of a candidate experiment is a weighted
+    mean of its qLogEI under them, and the operating mode sets the weights. <code>fantasized_criterion</code> builds
+    it; <code>OPERATING_MODES</code> lists the three modes. The myopic criterion is the same construction with all
+    weight on the root.</p>
+  </div>
+
+  <h3 class="subheading">7. The criterion is a weighted sum of per-node qLogEI</h3>
+
+  <div class="callout callout-math">
+    <div class="callout-title">Terminal criterion</div>
+    <div class="math-display">\[ \alpha(x) = \sum_{\ell=1}^{k} \sum_{\nu \in \mathcal{L}_\ell} w_\nu \operatorname{qLogEI}_\nu(x), \qquad \operatorname{qLogEI}_\nu(x) = \log \mathbb{E}_\nu\big[\max\big(f(x) - f^{*}_\nu,\, 0\big)\big] \]</div>
+    <p>\(\mathcal{L}_\ell\) is layer \(\ell\) of the tree, \(\mathbb{E}_\nu\) the expectation under node \(\nu\),
+    \(f^{*}_\nu\) the node's incumbent including its fantasised yields, and the weights \(w_\nu\) sum to 1. Each
+    member qLogEI uses 128 quasi-Monte Carlo samples. The root is not a member in any of the three modes.
+    <b>Every node judges the candidate against its own future: its own posterior and its own incumbent.</b></p>
+  </div>
+
+  <p>The criterion is a <code>WeightedSumAcquisition</code> over the nodes with a positive weight. The weights come
+  from <code>_aggregation_weights</code>, which lists the nodes layer by layer. Because the average is taken over log
+  values, \(\alpha\) is the logarithm of a weighted geometric mean of the per-node expected improvements. A catalyst
+  whose expected improvement is near zero in a fraction of the futures is penalised more than it would be under an
+  arithmetic mean, so the criterion prefers catalysts that are useful in most futures over catalysts that are very
+  useful in a few.</p>
+
+  <h3 class="subheading">8. only_terminal scores the catalyst at its arrival</h3>
+
+  <div class="math-display">\[ w_\nu = \begin{cases} 1 / |\mathcal{L}_k| & \nu \in \mathcal{L}_k \\ 0 & \text{otherwise} \end{cases} \]</div>
+
+  <p>Only the deepest layer counts, uniformly. A layer-\(k\) model has seen the \(k\) simulated batches, so it is a
+  fantasy of the model that chooses batch \(t+k+1\), the first batch in which the ordered catalyst can be used. With
+  \(k = D\) this mode matches the timing of the decision exactly. It also rests entirely on the deepest fantasies:
+  each of its 96 models carries 24 fantasised yields, sampled in sequence under fixed hyperparameters, and all of
+  them share the 12 sampled outcomes of the first simulated batch.</p>
+
+  <h3 class="subheading">9. averaged weights every node equally</h3>
+
+  <div class="math-display">\[ w_\nu = \frac{1}{\sum_{\ell=1}^{k} |\mathcal{L}_\ell|} \quad \text{for every node } \nu \]</div>
+
+  <p>Every model of layers 1 to \(k\) gets the same weight, 1/252 in run_5. A layer's share is therefore its share
+  of the nodes, and with branching (12, 4, 2, 1) the two deepest layers hold 192 of the 252 nodes. <b>averaged puts
+  76.2 percent of its weight on layers 3 and 4 and 4.8 percent on layer 1, so it sits close to only_terminal.</b></p>
+
+  <h3 class="subheading">10. layer_averaged weights every layer equally</h3>
+
+  <div class="math-display">\[ w_\nu = \frac{1}{k \, |\mathcal{L}_\ell|} \quad \text{for } \nu \in \mathcal{L}_\ell \]</div>
+
+  <p>Each layer contributes its mean, and the criterion is the mean over layers, so each of the four layers carries
+  25 percent regardless of its size. A layer-1 node, which rests on one simulated batch, weighs eight times as much
+  as a layer-4 node. layer_averaged is the default of <code>optimize_scope_expansion_fantasized</code> and of the
+  fantasised strategy in run_5.</p>
+
+  <h3 class="subheading">11. The modes trade exact timing against dependence on deep fantasies</h3>
+
+  <p class="small">Weight per node and share of the total weight per layer at the run_5 settings. Layer sizes in
+  brackets. The myopic row is the root alone.</p>
+
+  <div class="table-responsive"><table class="data-table">
+    <thead><tr><th>Mode</th><th class="num">Root (1)</th><th class="num">Layer 1 (12)</th><th class="num">Layer 2 (48)</th><th class="num">Layer 3 (96)</th><th class="num">Layer 4 (96)</th></tr></thead>
+    <tbody>
+      <tr><td><code>myopic</code></td><td class="num">1 &middot; 100%</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td></tr>
+      <tr><td><code>only_terminal</code></td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">1/96 &middot; 100%</td></tr>
+      <tr><td><code>averaged</code></td><td class="num">0</td><td class="num">1/252 &middot; 4.8%</td><td class="num">1/252 &middot; 19.0%</td><td class="num">1/252 &middot; 38.1%</td><td class="num">1/252 &middot; 38.1%</td></tr>
+      <tr><td><code>layer_averaged</code></td><td class="num">0</td><td class="num">1/48 &middot; 25%</td><td class="num">1/192 &middot; 25%</td><td class="num">1/384 &middot; 25%</td><td class="num">1/384 &middot; 25%</td></tr>
+    </tbody>
+  </table></div>
+
+  <p>Read from top to bottom, the table moves weight from the present to the arrival and then back towards the
+  near future. myopic scores the catalyst in a state that is four batches too early. only_terminal scores it in the
+  right state, estimated from the longest chain of fantasies. averaged and layer_averaged mix in layers 1 to 3,
+  which describe states before the catalyst arrives, in proportions set by the node counts or fixed at 25 percent
+  per layer.</p>
+
+  <div class="callout callout-arch">
+    <div class="callout-title">What the shallower layers add</div>
+    <p>Scoring a catalyst under a layer-1 model scores an experiment that cannot happen at that time, so the
+    shallower layers are never more accurate about timing than layer \(k\). What they offer is a smaller stack of
+    assumptions: a layer-1 model rests on one simulated batch, a layer-4 model on four, each chosen by an
+    approximate optimiser and conditioned without a refit. <b>only_terminal takes the timing exactly and the
+    fantasy error fully; averaged and layer_averaged accept a timing error to dilute the fantasy error.</b> Which
+    trade pays off is what the run_5 sweep measures, by scoring every pick under every criterion.</p>
+  </div>
+</section>
+
+<section id="sec-part-3" class="content-section" data-num="III" data-nav="From criterion to order">
+  <div class="section-header-block">
+    <span class="section-num-tag">Part III</span>
+    <h2 class="section-heading">From criterion to order</h2>
+    <p class="section-lead"><code>optimize_scope_expansion_fantasized</code> builds the allowed set of every depth,
+    builds the tree, turns it into the criterion of the chosen mode, and then runs a two-stage terminal step. Only
+    the first stage decides what is ordered.</p>
+  </div>
+
+  <h3 class="subheading">12. Stage 1 picks the expansion experiment among the locked catalysts</h3>
+
+  <p>The <code>expansion_optimizer</code> maximises the terminal criterion over <code>q_expand</code> experiments
+  whose catalysts come from <code>x_unordered</code>, with \(0 \lt q_{\text{expand}} \lt q_{\text{batch}}\). The
+  temperature grouping applies only in part: <code>_expansion_batch_constraints</code> passes the partial partition
+  for <code>q_expand</code> points, which is no constraint at all for up to three points under (2, 2, 2) and
+  (2, 1, 1) for four. The result is a full experiment, catalyst, solvent, base and conditions; the catalyst block is
+  the order, and the conditions are where the criterion places that catalyst, not a commitment for the experiment
+  run after arrival. With more than one expansion point, every node's qLogEI values the points jointly, so two
+  near-identical catalysts score little more than one.</p>
+
+  <h3 class="subheading">13. Stage 2 completes a batch and reports its value</h3>
+
+  <p>The <code>completion_optimizer</code> builds a full batch of <code>q_batch</code> experiments over the terminal
+  allowed set, the available set plus every entry of <code>x_ordered</code>, with the expansion points fixed at the
+  head of the batch (<code>pre_batch</code>). The function returns the criterion value of that completed batch next
+  to the expansion points. <b>Stage 2 does not influence which catalyst is ordered; it reports the terminal value of
+  a batch that uses the new catalyst alongside everything else on the shelf.</b></p>
+
+  <h3 class="subheading">14. run_5 builds one tree per iteration and cross-scores every pick</h3>
+
+  <p>The run_5 benchmark calls the two building blocks directly instead of
+  <code>optimize_scope_expansion_fantasized</code>. After every real batch it builds one fantasy tree on the
+  refitted model with <code>build_fantasy_tree</code>, derives all three criteria from it with
+  <code>fantasized_criterion</code>, and adds the myopic qLogEI of the root. Each of the four criteria picks one
+  locked experiment (stage 1 only, <code>q_expand</code> = 1), and a random expander draws a locked catalyst
+  uniformly and places it at its best point under the myopic criterion. All five picks are scored under all four
+  criteria and stored as <code>expansion_scores</code>; the operating mode of the job decides which pick is
+  ordered. The ordered catalyst becomes usable at batch \(t+D+1\), and the next trees see it in their allowed sets
+  from that depth on. The pools of the real batch and of the five picks are seeded by the landscape seed, the
+  benchmark and the iteration, not by the mode, so the five modes of one seed draw the same pools until their
+  orders differ.</p>
+
+  <div class="table-responsive"><table class="data-table">
+    <thead><tr><th>Setting</th><th>Value</th><th>Source</th></tr></thead>
+    <tbody>
+      <tr><td>Batch size, temperature partition</td><td>6, (2, 2, 2)</td><td><code>Q_BATCH_SIZE</code>, <code>DEFAULT_BATCH_CONSTRAINTS</code></td></tr>
+      <tr><td>Catalysts ordered per iteration</td><td>1</td><td><code>Q_EXPAND_SIZE</code></td></tr>
+      <tr><td>Dead time \(D\), tree depth \(k\)</td><td>4, 4</td><td><code>SOURCE_A_AVAILABILITY_DELAY</code>, <code>LOOKAHEAD_HORIZON</code></td></tr>
+      <tr><td>Children per node</td><td>(12, 4, 2, 1)</td><td><code>NUM_FANTASIES</code></td></tr>
+      <tr><td>QMC samples per node qLogEI</td><td>128</td><td><code>TREE_QMC_SAMPLES</code></td></tr>
+      <tr><td>Tree batches: pool, swap rounds, polish iterations</td><td>4,096, 0, 20</td><td><code>TREE_POOL_SIZE</code>, <code>TREE_SWAP_ROUNDS</code>, <code>TREE_POLISH_MAXITER</code></td></tr>
+      <tr><td>Expansion picks: pool, refined rows, swaps, polish</td><td>4,096, 0, 0, 0</td><td><code>EXPANSION_POOL_SIZE</code>, <code>EXPANSION_REFINE</code></td></tr>
+      <tr><td>BO batches per run</td><td>100</td><td><code>N_BO_BATCHES</code></td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="sec-part-4" class="content-section" data-num="IV" data-nav="Why the tree is affordable">
+  <div class="section-header-block">
+    <span class="section-num-tag">Part IV</span>
+    <h2 class="section-heading">Why a 252-model tree is affordable</h2>
+    <p class="section-lead">Building the tree takes 157 batch optimisations, and scoring a candidate pool under the
+    criterion takes up to 252 posteriors per candidate. Both are cheap because every node differs from the root only
+    by a few appended rows, and the optimiser is built to exploit that.</p>
+  </div>
+
+  <h3 class="subheading">15. Every node reuses the root's factorisation</h3>
+
+  <p><code>GPPoolPosteriorCache</code> holds the Cholesky factor of the root's training covariance, the whitened
+  residuals, and, for every candidate pool \(P\) it has seen, the whitened cross-covariance and the root posterior
+  on \(P\):</p>
+
+  <div class="math-display">\[ L_0 L_0^{\top} = K(X_0, X_0) + \sigma_n^2 I, \qquad \beta_0 = L_0^{-1}\big(y_0 - m(X_0)\big), \qquad W_0 = L_0^{-1} K(X_0, P) \]</div>
+
+  <p>A node with fantasised inputs \(X_f\) and targets \(\tilde{y}_f\) is the root with \(f\) extra rows and the
+  same hyperparameters, so its posterior on \(P\) follows from a block Cholesky update of size \(f\) alone:</p>
+
+  <div class="math-display">\[ \begin{aligned} W_f &= L_0^{-1} K(X_0, X_f), \qquad L_f L_f^{\top} = K(X_f, X_f) - W_f^{\top} W_f + \sigma_n^2 I, \\ \beta_f &= L_f^{-1}\big(\tilde{y}_f - m(X_f) - W_f^{\top}\beta_0\big), \qquad V = L_f^{-1}\big(K(X_f, P) - W_f^{\top} W_0\big), \\ \mu_\nu(P) &= \mu_0(P) + V^{\top}\beta_f, \qquad \sigma_\nu^2(P) = \sigma_0^2(P) - \operatorname{diag}\big(V^{\top} V\big) \end{aligned} \]</div>
+
+  <p>In run_5, \(f\) is at most 24, against 69 or more root rows. The cache verifies before reuse that a model's
+  training inputs begin with the root's and that its hyperparameters are identical; every model built by
+  <code>condition_on_observations</code> from the root passes by construction. <b>The expensive factor
+  \(W_0\) of a pool is computed once and shared by every node that scores that pool.</b></p>
+
+  <h3 class="subheading">16. Shared pools, warm starts and member-wise scoring</h3>
+
+  <p>Every batch optimisation at depth \(j\) draws its random pool rows with seed \(j\) from the same component
+  tables, so all nodes of a depth, up to 96 calls, score the same random rows and reuse one \(W_0\). Their warm-start
+  rows, the rows around their own incumbents and their refined rows differ. The expansion stage uses seed \(k\) and
+  the same cache, so every member of the criterion shares the root factors of the expansion pool as well. The pool-greedy
+  optimiser scores a <code>WeightedSumAcquisition</code> member by member on its fast path. Each member's value is
+  the larger of its Monte Carlo qLogEI and the best single-point analytic log EI in the batch, a lower bound on log
+  qEI that stays informative where no QMC sample reaches the improvement region. The optimiser itself is described
+  in <code>pablo/pool_greedy_optimizer.html</code>.</p>
+
+  <h3 class="subheading">17. A tree model holds its GP caches only while it is used</h3>
+
+  <p>The pool evaluator needs only the root cache and each node's \(f\) extra rows. GPyTorch's own prediction caches
+  of a node, about 22 dense matrices of the node's training size, are needed only for the node's batch, its fantasy
+  samples and its children. <code>build_fantasy_tree</code> therefore releases them on every non-root node once its
+  children exist, and the run_5 criteria are built with <code>release_member_caches=True</code>, so a forward call
+  (the final value of a pick, the cross-scores) rebuilds and drops one member's caches at a time. At 663 training rows
+  a 28-model tree peaks at 1.5 GB instead of 4.9 GB; the rebuilds add about 3 s per pick and per cross-scoring pass.</p>
+</section>
+
+    <footer class="report-footer">Sources: <code>pablo/scope_expansion.py</code> (<code>build_fantasy_tree</code>,
+    <code>fantasized_criterion</code>, <code>_aggregation_weights</code>, <code>optimize_scope_expansion_fantasized</code>,
+    <code>optimize_scope_expansion_myopic</code>); <code>pablo/optimize.py</code> (<code>WeightedSumAcquisition</code>,
+    <code>GPPoolPosteriorCache</code>, <code>_ExactGPPoolPosterior</code>, <code>_PoolAcquisitionEvaluator</code>,
+    <code>optimize_acqf_mixed_pool_greedy</code>); <code>pablo/mechthild_runs/run_5_scope_extension_v2/config.py</code> and
+    <code>run_bo_experiment.py</code> for the run_5 settings and call sequence; <code>tests/test_scope_expansion.py</code>.
+    Layer sizes, optimisation counts and weights are computed from <code>NUM_FANTASIES</code> = [12, 4, 2, 1].</footer>
+
+  </main>
+</div>
+
+<script>
+var narrow = window.matchMedia('(max-width: 900px)');
+
+function toggleTheme() {
+  var next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('pablo_theme', next);
+}
+
+function toggleSidebar() {
+  var root = document.documentElement;
+  if (narrow.matches) {
+    root.setAttribute('data-sidebar-mobile', root.getAttribute('data-sidebar-mobile') === 'open' ? 'closed' : 'open');
+    return;
+  }
+  var next = root.getAttribute('data-sidebar') === 'closed' ? 'open' : 'closed';
+  root.setAttribute('data-sidebar', next);
+  localStorage.setItem('pablo_sidebar', next);
+}
+
+window.addEventListener('keydown', function (e) {
+  if (e.key !== '[' || e.ctrlKey || e.metaKey || e.altKey) return;
+  if (/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName)) return;
+  toggleSidebar();
+});
+
+window.addEventListener('scroll', function () {
+  var el = document.documentElement;
+  var bar = document.getElementById('progressBar');
+  bar.style.width = (el.scrollTop / (el.scrollHeight - el.clientHeight)) * 100 + '%';
+});
+
+window.addEventListener('DOMContentLoaded', function () {
+  var root = document.documentElement;
+  var nav = document.getElementById('navLinks');
+  var sections = document.querySelectorAll('section.content-section');
+  var caretSvg = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 6 15 12 9 18"/></svg>';
+  var groups = [];
+  var subLinks = [];
+
+  sections.forEach(function (sec, i) {
+    var hue = sec.dataset.hue || String(i % 8);
+    sec.dataset.hue = hue;
+    var group = document.createElement('div');
+    group.className = 'nav-group';
+    group.dataset.hue = hue;
+    group.dataset.target = sec.id;
+
+    var row = document.createElement('div');
+    row.className = 'nav-row';
+    var a = document.createElement('a');
+    a.href = '#' + sec.id;
+    a.className = 'nav-item';
+    var num = document.createElement('span');
+    num.className = 'nav-badge-num';
+    num.textContent = sec.dataset.num || '';
+    var label = document.createElement('span');
+    label.textContent = sec.dataset.nav || sec.querySelector('.section-heading').textContent;
+    a.append(num, label);
+    row.appendChild(a);
+    group.appendChild(row);
+
+    var subs = sec.querySelectorAll('h3.subheading');
+    if (subs.length) {
+      var caret = document.createElement('button');
+      caret.className = 'nav-caret';
+      caret.setAttribute('aria-label', 'Expand');
+      caret.innerHTML = caretSvg;
+      caret.addEventListener('click', function () { group.classList.toggle('open'); });
+      row.appendChild(caret);
+      var box = document.createElement('div');
+      box.className = 'nav-sub';
+      subs.forEach(function (h, j) {
+        if (!h.id) h.id = sec.id + '-' + (j + 1);
+        var s = document.createElement('a');
+        s.href = '#' + h.id;
+        s.className = 'nav-subitem';
+        s.textContent = h.textContent;
+        box.appendChild(s);
+        subLinks.push(s);
+      });
+      group.appendChild(box);
+    }
+    a.addEventListener('click', function () { if (subs.length) group.classList.add('open'); });
+    nav.appendChild(group);
+    groups.push(group);
+  });
+
+  if (window.renderMathInElement) {
+    renderMathInElement(document.body, {
+      delimiters: [
+        {left: '\\[', right: '\\]', display: true},
+        {left: '\\(', right: '\\)', display: false}
+      ],
+      throwOnError: false
+    });
+  } else {
+    console.error('KaTeX did not load; formulas are shown as LaTeX source.');
+  }
+
+  nav.addEventListener('click', function (e) {
+    if (narrow.matches && e.target.closest('a')) root.setAttribute('data-sidebar-mobile', 'closed');
+  });
+
+  var lastActive = null;
+  function spy() {
+    var line = 120;
+    var current = sections[0];
+    sections.forEach(function (sec) { if (sec.getBoundingClientRect().top <= line) current = sec; });
+    var sub = null;
+    current.querySelectorAll('h3.subheading').forEach(function (h) { if (h.getBoundingClientRect().top <= line) sub = h; });
+    groups.forEach(function (g) {
+      var on = g.dataset.target === current.id;
+      g.classList.toggle('active', on);
+      if (on && current !== lastActive && g.querySelector('.nav-sub')) g.classList.add('open');
+    });
+    subLinks.forEach(function (s) { s.classList.toggle('active', !!sub && s.getAttribute('href') === '#' + sub.id); });
+    lastActive = current;
+  }
+  window.addEventListener('scroll', spy, {passive: true});
+  spy();
+
+  var expandBtn = document.getElementById('expandAllBtn');
+  expandBtn.addEventListener('click', function () {
+    var open = !expandBtn.classList.contains('all-open');
+    expandBtn.classList.toggle('all-open', open);
+    groups.forEach(function (g) { if (g.querySelector('.nav-sub')) g.classList.toggle('open', open); });
+  });
+
+  document.getElementById('sidebarSearch').addEventListener('input', function (e) {
+    var term = e.target.value.toLowerCase().trim();
+    groups.forEach(function (g) {
+      var own = g.querySelector('.nav-item').textContent.toLowerCase().includes(term);
+      var anySub = false;
+      g.querySelectorAll('.nav-subitem').forEach(function (s) {
+        var hit = !term || own || s.textContent.toLowerCase().includes(term);
+        s.style.display = hit ? 'block' : 'none';
+        anySub = anySub || (term && s.textContent.toLowerCase().includes(term));
+      });
+      g.style.display = !term || own || anySub ? 'block' : 'none';
+      if (term && anySub) g.classList.add('open');
+    });
+  });
+
+  var resizer = document.getElementById('sidebarResizer');
+  resizer.addEventListener('pointerdown', function (e) {
+    e.preventDefault();
+    resizer.setPointerCapture(e.pointerId);
+    root.classList.add('resizing');
+  });
+  resizer.addEventListener('pointermove', function (e) {
+    if (!root.classList.contains('resizing')) return;
+    var w = Math.min(560, Math.max(220, e.clientX));
+    root.style.setProperty('--sidebar-w', w + 'px');
+  });
+  resizer.addEventListener('pointerup', function (e) {
+    root.classList.remove('resizing');
+    resizer.releasePointerCapture(e.pointerId);
+    localStorage.setItem('pablo_sidebar_w', parseInt(getComputedStyle(root).getPropertyValue('--sidebar-w'), 10));
+  });
+  resizer.addEventListener('dblclick', function () {
+    root.style.removeProperty('--sidebar-w');
+    localStorage.removeItem('pablo_sidebar_w');
+  });
+});
+</script>
+</body></html>

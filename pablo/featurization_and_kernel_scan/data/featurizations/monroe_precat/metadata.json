@@ -1,0 +1,14 @@
+{
+  "n_molecules": 161,
+  "n_features": 720,
+  "label": "Monroe-precat",
+  "raw_model_output_file": "raw_model_output.parquet",
+  "descriptors_file": "descriptors.parquet",
+  "raw_model_dim": 720,
+  "repo": "blazejba/monroe",
+  "embedding_dim": 720,
+  "conformer_seed": 0,
+  "free_carbene": false,
+  "counterion_stripped": false,
+  "form_onehot_appended": false
+}

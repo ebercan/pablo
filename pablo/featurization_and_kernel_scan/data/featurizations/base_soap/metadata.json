@@ -1,0 +1,36 @@
+{
+  "n_molecules": 8,
+  "n_features": 7425,
+  "label": "Base-SOAP",
+  "names": [
+    "Triethylamine",
+    "Potassium tert-butoxide",
+    "Rubidium carbonate",
+    "N-Ethyl-N-isopropylpropan-2-amine (H\u00fcnig's base)",
+    "Cesium carbonate",
+    "1,8-Diazabicyclo[5.4.0]undec-7-ene",
+    "Potassium bis(trimethylsilyl)amide",
+    "Sodium tert-butoxide"
+  ],
+  "raw_model_output_file": "raw_model_output.parquet",
+  "descriptors_file": "descriptors.parquet",
+  "soap": {
+    "r_cut": 6.0,
+    "n_max": 6,
+    "l_max": 4,
+    "average": "inner",
+    "species": [
+      "C",
+      "Cs",
+      "H",
+      "K",
+      "N",
+      "Na",
+      "O",
+      "Rb",
+      "Si"
+    ]
+  },
+  "normalisation": "row-wise L2",
+  "geometry_source": "GFN2-xTB / ALPB(toluene) optimised geometry of the library SMILES, salts as the full ion pair; data/xtb/components/base_<id>/xtbopt.xyz"
+}

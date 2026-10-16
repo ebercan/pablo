@@ -1,0 +1,10 @@
+{
+  "n_molecules": 14,
+  "n_features": 2,
+  "feature_cols": [
+    "gutmann_dn",
+    "epsilon"
+  ],
+  "descriptors_file": "descriptors.parquet",
+  "method": "Gutmann donor number (Lewis basicity towards a cation) and bulk relative permittivity. Z-scored across the 14-solvent library. Gutmann (1978), The Donor-Acceptor Approach to Molecular Interactions."
+}

@@ -1,0 +1,30 @@
+{
+  "n_molecules": 161,
+  "n_features": 6,
+  "feature_cols": [
+    "graphormer_carbene_pc0",
+    "graphormer_carbene_pc1",
+    "graphormer_carbene_pc2",
+    "graphormer_carbene_pc3",
+    "graphormer_carbene_pc4",
+    "graphormer_carbene_pc5"
+  ],
+  "descriptors_file": "descriptors.parquet",
+  "method": "Frozen PCA of the standardized full-dimensional featurization, fit once over the whole 161-catalyst library with no access to any outcome. Component count from the Kneedle knee of the explained-variance curve.",
+  "source_featurization": "graphormer_carbene",
+  "source_n_features": 768,
+  "kneedle_sensitivity": 1,
+  "knee_from_fallback": false,
+  "variance_retained": 0.8317229536152017,
+  "n_components_for_90pct": 14,
+  "n_components_for_95pct": 28,
+  "explained_variance_ratio": [
+    0.6747496378757457,
+    0.0606349849576261,
+    0.033151585488840625,
+    0.02507627128443754,
+    0.02406180080836423,
+    0.014048673200187269
+  ],
+  "random_state": 42
+}

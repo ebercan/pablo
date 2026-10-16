@@ -1,0 +1,12 @@
+{
+  "n_molecules": 14,
+  "n_features": 4,
+  "feature_cols": [
+    "hansen_dD",
+    "hansen_dP",
+    "hansen_dH",
+    "logP"
+  ],
+  "descriptors_file": "descriptors.parquet",
+  "method": "Hansen solubility parameters dD/dP/dH (dispersion, polar, hydrogen bonding) plus logP, which shares their solubility/partition character. Z-scored across the 14-solvent library. Hansen (2007), Handbook; logP from PubChem / Hansch-Leo."
+}

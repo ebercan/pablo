@@ -1,0 +1,40 @@
+{
+  "n_molecules": 161,
+  "n_features": 11,
+  "feature_cols": [
+    "unimol_pc0",
+    "unimol_pc1",
+    "unimol_pc2",
+    "unimol_pc3",
+    "unimol_pc4",
+    "unimol_pc5",
+    "unimol_pc6",
+    "unimol_pc7",
+    "unimol_pc8",
+    "unimol_pc9",
+    "unimol_pc10"
+  ],
+  "descriptors_file": "descriptors.parquet",
+  "method": "Frozen PCA of the standardized full-dimensional featurization, fit once over the whole 161-catalyst library with no access to any outcome. Component count from the Kneedle knee of the explained-variance curve.",
+  "source_featurization": "unimol",
+  "source_n_features": 1536,
+  "kneedle_sensitivity": 1,
+  "knee_from_fallback": false,
+  "variance_retained": 0.9100302403690633,
+  "n_components_for_90pct": 10,
+  "n_components_for_95pct": 19,
+  "explained_variance_ratio": [
+    0.25618085220210046,
+    0.22768103081232588,
+    0.17168580331939706,
+    0.09588771729216146,
+    0.05250199924273267,
+    0.03624092195389954,
+    0.018469063350783806,
+    0.017033397323108837,
+    0.01317985675952841,
+    0.012287168605009668,
+    0.0088824295080155
+  ],
+  "random_state": 42
+}

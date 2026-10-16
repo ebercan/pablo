@@ -1,0 +1,22 @@
+{
+  "n_molecules": 14,
+  "n_features": 14,
+  "feature_cols": [
+    "is_THF",
+    "is_Me_THF",
+    "is_Propylenecarbonate",
+    "is_Dimethoxyethane",
+    "is_Toluene",
+    "is_Ethyl_Acetate",
+    "is_Heptane",
+    "is_m_xylene",
+    "is_H2O",
+    "is_EtOH",
+    "is_DMF",
+    "is_DCM",
+    "is_1_4_Dioxane",
+    "is_HFIP"
+  ],
+  "descriptors_file": "descriptors.parquet",
+  "method": "One-hot identity over the 14-solvent library. No chemistry: the no-descriptor control every other solvent block has to beat."
+}

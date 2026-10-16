@@ -1,0 +1,12 @@
+{
+  "n_molecules": 161,
+  "label": "MiniMol-precat",
+  "raw_model_output_file": "raw_model_output.parquet",
+  "raw_model_dim": 512,
+  "repo": "graphcore-research/minimol",
+  "embedding_dim": 512,
+  "free_carbene": false,
+  "form_onehot_appended": false,
+  "n_features": 512,
+  "descriptors_file": "descriptors.parquet"
+}

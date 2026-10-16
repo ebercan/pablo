@@ -1,0 +1,11 @@
+{
+  "n_molecules": 14,
+  "n_features": 3,
+  "feature_cols": [
+    "kt_alpha",
+    "kt_beta",
+    "kt_pi_star"
+  ],
+  "descriptors_file": "descriptors.parquet",
+  "method": "Kamlet-Taft solvatochromic parameters: alpha (hydrogen-bond donation), beta (hydrogen-bond acceptance), pi* (dipolarity/polarizability). Z-scored across the 14-solvent library. Marcus (1993) Chem. Soc. Rev. 22, 409."
+}

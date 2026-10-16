@@ -1,0 +1,23 @@
+{
+  "n_molecules": 161,
+  "n_features": 7425,
+  "descriptors_file": "descriptors.parquet",
+  "soap": {
+    "r_cut": 6.0,
+    "n_max": 6,
+    "l_max": 4,
+    "average": "inner",
+    "species": [
+      "Br",
+      "C",
+      "Cl",
+      "F",
+      "H",
+      "I",
+      "N",
+      "O",
+      "S"
+    ]
+  },
+  "geometry_source": "xTB GFN2 / ALPB(toluene) optimized free-carbene geometry"
+}

@@ -1,0 +1,227 @@
+{
+  "catalyst_id": 108,
+  "form": "salt",
+  "precatalyst_smiles": "ClC1=C([N+]2=CN3C(CCC3)=N2)C(Cl)=CC(Cl)=C1.F[B-](F)(F)F",
+  "azolium": {
+    "smiles": "ClC1=CC(Cl)=C([N+]2=CN3CCCC3=N2)C(Cl)=C1",
+    "charge": 1,
+    "conformer_source": "etkdgv3",
+    "conformers": [
+      {
+        "g_hartree": -50.122873923455,
+        "min_freq_cm1": -31.75,
+        "n_h_on_c2": 1,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 0,
+        "used_in_ensemble": false
+      },
+      {
+        "g_hartree": -50.122965013348,
+        "min_freq_cm1": -32.35,
+        "n_h_on_c2": 1,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 1,
+        "used_in_ensemble": true
+      },
+      {
+        "g_hartree": -50.122972346953,
+        "min_freq_cm1": -33.69,
+        "n_h_on_c2": 1,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 2,
+        "used_in_ensemble": true
+      },
+      {
+        "g_hartree": -50.122905191946,
+        "min_freq_cm1": -33.36,
+        "n_h_on_c2": 1,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 3,
+        "used_in_ensemble": false
+      },
+      {
+        "g_hartree": -50.122922285456,
+        "min_freq_cm1": -31.29,
+        "n_h_on_c2": 1,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 4,
+        "used_in_ensemble": false
+      },
+      {
+        "g_hartree": -50.12290188379,
+        "min_freq_cm1": -32.46,
+        "n_h_on_c2": 1,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 5,
+        "used_in_ensemble": false
+      },
+      {
+        "g_hartree": -50.122946580225,
+        "min_freq_cm1": -32.13,
+        "n_h_on_c2": 1,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 6,
+        "used_in_ensemble": true
+      },
+      {
+        "g_hartree": -50.122905302682,
+        "min_freq_cm1": -30.52,
+        "n_h_on_c2": 1,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 7,
+        "used_in_ensemble": false
+      }
+    ],
+    "n_conformers_embedded": 8,
+    "n_conformers_used": 3,
+    "g_boltzmann_hartree": -50.12399866867305
+  },
+  "carbene": {
+    "smiles": "ClC1=CC(Cl)=C(N2[C]N3CCCC3=N2)C(Cl)=C1",
+    "charge": 0,
+    "conformer_source": "etkdgv3",
+    "conformers": [
+      {
+        "g_hartree": -49.938155297647,
+        "min_freq_cm1": 32.61,
+        "n_h_on_c2": 0,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 0,
+        "used_in_ensemble": true
+      },
+      {
+        "g_hartree": -49.938133427591,
+        "min_freq_cm1": 33.23,
+        "n_h_on_c2": 0,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 1,
+        "used_in_ensemble": false
+      },
+      {
+        "g_hartree": -49.938190611431,
+        "min_freq_cm1": 32.59,
+        "n_h_on_c2": 0,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 2,
+        "used_in_ensemble": true
+      },
+      {
+        "g_hartree": -49.938242419739,
+        "min_freq_cm1": 32.67,
+        "n_h_on_c2": 0,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 3,
+        "used_in_ensemble": true
+      },
+      {
+        "g_hartree": -49.938202083456,
+        "min_freq_cm1": 32.91,
+        "n_h_on_c2": 0,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 4,
+        "used_in_ensemble": false
+      },
+      {
+        "g_hartree": -49.938216349707,
+        "min_freq_cm1": 32.94,
+        "n_h_on_c2": 0,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 5,
+        "used_in_ensemble": false
+      },
+      {
+        "g_hartree": -49.938156566775,
+        "min_freq_cm1": 32.82,
+        "n_h_on_c2": 0,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 6,
+        "used_in_ensemble": true
+      },
+      {
+        "g_hartree": -49.938149328464,
+        "min_freq_cm1": 32.23,
+        "n_h_on_c2": 0,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 7,
+        "used_in_ensemble": true
+      },
+      {
+        "g_hartree": -49.938096580809,
+        "min_freq_cm1": 32.41,
+        "n_h_on_c2": 0,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 8,
+        "used_in_ensemble": false
+      },
+      {
+        "g_hartree": -49.938110129597,
+        "min_freq_cm1": 32.74,
+        "n_h_on_c2": 0,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 9,
+        "used_in_ensemble": false
+      },
+      {
+        "g_hartree": -49.938253235768,
+        "min_freq_cm1": 32.47,
+        "n_h_on_c2": 0,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 10,
+        "used_in_ensemble": true
+      },
+      {
+        "g_hartree": -49.938140128706,
+        "min_freq_cm1": 32.07,
+        "n_h_on_c2": 0,
+        "converged": true,
+        "qc_pass": true,
+        "qc_reason": "",
+        "conformer": 11,
+        "used_in_ensemble": false
+      }
+    ],
+    "n_conformers_embedded": 12,
+    "n_conformers_used": 6,
+    "g_boltzmann_hartree": -49.939883947325725
+  },
+  "xtb_deltaG_deprot": 115.53373673530096,
+  "failures": []
+}

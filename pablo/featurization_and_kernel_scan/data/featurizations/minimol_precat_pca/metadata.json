@@ -1,0 +1,40 @@
+{
+  "n_molecules": 161,
+  "n_features": 11,
+  "feature_cols": [
+    "minimol_precat_pc0",
+    "minimol_precat_pc1",
+    "minimol_precat_pc2",
+    "minimol_precat_pc3",
+    "minimol_precat_pc4",
+    "minimol_precat_pc5",
+    "minimol_precat_pc6",
+    "minimol_precat_pc7",
+    "minimol_precat_pc8",
+    "minimol_precat_pc9",
+    "minimol_precat_pc10"
+  ],
+  "descriptors_file": "descriptors.parquet",
+  "method": "Frozen PCA of the standardized full-dimensional featurization, fit once over the whole 161-catalyst library with no access to any outcome. Component count from the Kneedle knee of the explained-variance curve.",
+  "source_featurization": "minimol_precat",
+  "source_n_features": 512,
+  "kneedle_sensitivity": 1,
+  "knee_from_fallback": false,
+  "variance_retained": 0.649007393952469,
+  "n_components_for_90pct": 41,
+  "n_components_for_95pct": 61,
+  "explained_variance_ratio": [
+    0.16736144852010637,
+    0.11605039405279867,
+    0.08550295057094515,
+    0.06218876424115829,
+    0.050156590056106655,
+    0.0379461492370362,
+    0.031825288612472115,
+    0.02845796604287226,
+    0.025397320005793738,
+    0.023590487091118877,
+    0.02053003552206063
+  ],
+  "random_state": 42
+}

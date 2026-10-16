@@ -1,0 +1,10 @@
+{
+  "n_molecules": 161,
+  "label": "ECFP4",
+  "fp_radius": 2,
+  "n_bits": 2048,
+  "count_fingerprint": true,
+  "raw_model_output_file": "raw_model_output.parquet",
+  "n_features": 2048,
+  "descriptors_file": "descriptors.parquet"
+}

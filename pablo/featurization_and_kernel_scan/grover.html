@@ -1,0 +1,474 @@
+<title>GROVER Reading Notes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;500&display=swap">
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']] },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-svg.js"></script>
+<style>
+/* Layout: reading column with a sticky contents rail on wide screens; teal = node-view stream, amber = edge-view stream, used consistently in text, diagram and tables. */
+:root {
+  --bg: #f4f7f8;
+  --surface: #ffffff;
+  --fg: #15212b;
+  --muted: #56636f;
+  --rule: #d5dde3;
+  --node: #0d7a81;
+  --node-tint: #e1f1f2;
+  --edge: #a85f06;
+  --edge-tint: #f7ead8;
+  --flag: #a8261c;
+  --flag-tint: #fbe9e7;
+  --code-bg: #eaf0f2;
+  --f-display: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --f-body: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --f-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f1519; --surface: #161e24; --fg: #e3e9ed; --muted: #9ba9b4; --rule: #2b3741;
+    --node: #52c4ca; --node-tint: #12303a; --edge: #e6a457; --edge-tint: #372814;
+    --flag: #ff8f85; --flag-tint: #3a1d1b; --code-bg: #1c262d; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f1519; --surface: #161e24; --fg: #e3e9ed; --muted: #9ba9b4; --rule: #2b3741;
+  --node: #52c4ca; --node-tint: #12303a; --edge: #e6a457; --edge-tint: #372814;
+  --flag: #ff8f85; --flag-tint: #3a1d1b; --code-bg: #1c262d; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--fg);
+  font-family: var(--f-body); font-size: 1.0625rem; line-height: 1.62;
+  padding-inline: 16px; padding-block: 0;
+}
+.shell {
+  max-width: 1120px; margin: 0 auto; padding-block: 2.5rem 4rem;
+  display: grid; grid-template-columns: 1fr; gap: 2rem;
+}
+@media (min-width: 1000px) {
+  .shell { grid-template-columns: 200px minmax(0, 1fr); gap: 3rem; }
+  nav.toc { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 1.5rem); align-self: start; }
+  nav.toc ol { flex-direction: column; }
+}
+main { min-width: 0; max-width: 46rem; }
+nav.toc { font-family: var(--f-display); font-size: .82rem; min-width: 0; }
+nav.toc .lab { text-transform: uppercase; letter-spacing: .09em; color: var(--muted); font-weight: 600; margin-bottom: .5rem; }
+nav.toc ol { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: .35rem .9rem; }
+nav.toc a { color: var(--fg); text-decoration: none; border-bottom: 1px solid transparent; }
+nav.toc a:hover, nav.toc a:focus-visible { border-bottom-color: var(--node); outline: none; }
+
+h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; line-height: 1.2; margin: 0; }
+h1 { font-size: clamp(2.2rem, 5vw, 3.1rem); font-weight: 700; letter-spacing: -.02em; }
+h1 .exp { display: block; font-size: .42em; font-weight: 500; letter-spacing: 0; color: var(--muted); margin-top: .5rem; }
+h1 .exp b { color: var(--node); font-weight: 700; }
+h2 { font-size: 1.55rem; font-weight: 700; padding-top: .4rem; }
+h3 { font-size: 1.12rem; font-weight: 600; }
+section { display: flex; flex-direction: column; gap: 1rem; padding-block: 1.75rem; border-top: 1px solid var(--rule); scroll-margin-top: 1rem; }
+section:first-of-type { border-top: 0; }
+p, li { margin: 0; }
+ul, ol { margin: 0; padding-left: 1.3rem; display: flex; flex-direction: column; gap: .45rem; }
+a { color: var(--node); }
+.meta { font-family: var(--f-display); font-size: .88rem; color: var(--muted); display: flex; flex-wrap: wrap; gap: .3rem 1rem; }
+.eyebrow { font-family: var(--f-display); font-size: .74rem; text-transform: uppercase; letter-spacing: .1em; font-weight: 600; color: var(--muted); }
+code, .mono { font-family: var(--f-mono); font-size: .86em; }
+code { background: var(--code-bg); padding: .08em .35em; border-radius: 4px; }
+.n { color: var(--node); font-weight: 600; }
+.e { color: var(--edge); font-weight: 600; }
+.small { font-size: .92rem; color: var(--muted); }
+.math { overflow-x: auto; overflow-y: hidden; padding-block: .25rem; }
+
+.verdict { background: var(--surface); border: 1px solid var(--rule); border-radius: 10px; padding: 1.1rem 1.25rem; display: grid; gap: .8rem; }
+.verdict div { display: grid; grid-template-columns: 7.2rem minmax(0, 1fr); gap: .8rem; }
+.verdict dt { font-family: var(--f-display); font-weight: 600; font-size: .86rem; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); padding-top: .15rem; }
+.verdict dd { margin: 0; min-width: 0; }
+@media (max-width: 520px) { .verdict div { grid-template-columns: 1fr; gap: .15rem; } }
+
+ol.steps { counter-reset: s; list-style: none; padding: 0; gap: .9rem; }
+ol.steps > li { counter-increment: s; display: grid; grid-template-columns: 2rem minmax(0, 1fr); gap: .75rem; }
+ol.steps > li::before { content: counter(s); font-family: var(--f-mono); font-size: .85rem; font-weight: 500; color: var(--node); border: 1px solid var(--node); border-radius: 50%; width: 1.7rem; height: 1.7rem; display: grid; place-items: center; margin-top: .1rem; }
+ol.steps .io { font-family: var(--f-mono); font-size: .8rem; color: var(--muted); display: block; margin-top: .2rem; overflow-wrap: anywhere; }
+
+.fig { background: var(--surface); border: 1px solid var(--rule); border-radius: 10px; padding: 1rem; overflow-x: auto; }
+.fig svg { display: block; width: 100%; min-width: 660px; height: auto; }
+.fig figcaption { font-size: .88rem; color: var(--muted); margin-top: .6rem; min-width: 0; }
+figure { margin: 0; }
+svg text { font-family: var(--f-display); fill: var(--fg); }
+svg .sub { fill: var(--muted); font-size: 10.5px; }
+svg .bx { fill: var(--surface); stroke: var(--rule); stroke-width: 1.2; }
+svg .bn { fill: var(--node-tint); stroke: var(--node); stroke-width: 1.2; }
+svg .be { fill: var(--edge-tint); stroke: var(--edge); stroke-width: 1.2; }
+svg .ln { stroke: var(--muted); stroke-width: 1.2; fill: none; }
+svg .res { stroke: var(--muted); stroke-width: 1.2; fill: none; stroke-dasharray: 4 3; }
+svg .ah { fill: var(--muted); }
+svg .tn { fill: var(--node); font-weight: 600; }
+svg .te { fill: var(--edge); font-weight: 600; }
+
+.tbl { overflow-x: auto; border: 1px solid var(--rule); border-radius: 10px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: .9rem; line-height: 1.45; }
+th, td { text-align: left; vertical-align: top; padding: .55rem .7rem; border-bottom: 1px solid var(--rule); }
+th { font-family: var(--f-display); font-size: .76rem; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); font-weight: 600; background: var(--bg); }
+tr:last-child td { border-bottom: 0; }
+td.num { font-variant-numeric: tabular-nums; font-family: var(--f-mono); font-size: .84rem; white-space: nowrap; }
+.pill { font-family: var(--f-display); font-size: .72rem; font-weight: 600; letter-spacing: .03em; padding: .1rem .45rem; border-radius: 999px; white-space: nowrap; display: inline-block; }
+.pill.yes { background: var(--node-tint); color: var(--node); }
+.pill.no { background: var(--edge-tint); color: var(--edge); }
+
+.two { display: grid; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); gap: 1rem; }
+.two > div { background: var(--surface); border: 1px solid var(--rule); border-radius: 10px; padding: 1rem 1.1rem; display: flex; flex-direction: column; gap: .6rem; min-width: 0; }
+.two h3.good { color: var(--node); }
+.two h3.bad { color: var(--edge); }
+.flag { background: var(--flag-tint); border-left: 3px solid var(--flag); padding: .75rem 1rem; border-radius: 0 8px 8px 0; font-size: .96rem; }
+.flag b { color: var(--flag); font-family: var(--f-display); font-size: .78rem; letter-spacing: .06em; text-transform: uppercase; margin-right: .35rem; }
+.src ol { font-size: .88rem; gap: .3rem; }
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+html { scroll-behavior: smooth; }
+</style>
+
+<div class="shell">
+<nav class="toc" aria-label="Contents">
+  <div class="lab">Contents</div>
+  <ol>
+    <li><a href="#verdict">Verdict</a></li>
+    <li><a href="#pipeline">Input to output</a></li>
+    <li><a href="#layers">The layers</a></li>
+    <li><a href="#pretrain">Self-supervision</a></li>
+    <li><a href="#heads">Fine-tune vs fingerprint</a></li>
+    <li><a href="#gt">Why "graph transformer"</a></li>
+    <li><a href="#works">Why it works, and audits</a></li>
+    <li><a href="#domain">Where it predicts well</a></li>
+    <li><a href="#y2026">Status in 2026</a></li>
+    <li><a href="#pablo">For PABLO</a></li>
+    <li><a href="#sources">Sources</a></li>
+  </ol>
+</nav>
+
+<main>
+<section id="verdict">
+  <div class="eyebrow">Paper notes · Rong, Bian, Xu, Xie, Wei, Huang, Huang · NeurIPS 2020 · arXiv 2007.02835</div>
+  <h1>GROVER<span class="exp"><b>G</b>raph <b>R</b>epresentation fr<b>O</b>m self-super<b>V</b>ised m<b>E</b>ssage passing t<b>R</b>ansformer</span></h1>
+  <div class="meta"><span>Tencent AI Lab</span><span>48M (base) / 100M (large) params</span><span>11M unlabelled molecules</span><span>250 V100, 2.5 / 4 days</span></div>
+  <dl class="verdict">
+    <div><dt>What</dt><dd>A 2D molecular-graph encoder whose attention Q, K, V come from message-passing nets, run twice (a <span class="n">node view</span> and an <span class="e">edge view</span>), pretrained on 11M ZINC15 + ChEMBL molecules by predicting masked 1-hop context labels and RDKit functional-group motifs.</dd></div>
+    <div><dt>2026 status</dt><dd>Historically important, no longer competitive as a representation. Its SOTA claims leaned on concatenated RDKit 2D descriptors and an optimistic split protocol; independent frozen-embedding benchmarks place it significantly below ECFP. Weights still download and run with patches.</dd></div>
+    <div><dt>For PABLO</dt><dd><code>grover_pca</code> leads the elimination sweep (baseline gem 0.193, 1st of 50), but on the 161-catalyst library its leading embedding PCs are 80 to 95 % linearly predictable from RDKit 2D descriptors. Before the paper claims a pretraining effect, add an <code>rdkit2d</code> level as the ablation. Details in <a href="#pablo">the last section</a>.</dd></div>
+  </dl>
+</section>
+
+<section id="pipeline">
+  <h2>Input to output, step by step</h2>
+  <p>Shapes use \(n\) atoms, \(m\) bonds, hidden size \(d\) (800 base, 1200 large), 4 heads. Two directed hidden states exist per bond, \(h_{vw}\neq h_{wv}\).</p>
+  <ol class="steps">
+    <li><div><b>SMILES → RDKit graph.</b> Atom features: type (100-way), formal charge, bond count, chirality, H count, mass/100, aromaticity, hybridization. Bond features: type, stereo, in-ring, conjugated.
+      <span class="io">x_v ∈ ℝ^128 per atom, e_uv ∈ ℝ^12 per bond (paper Tables 4-5)</span></div></li>
+    <li><div><b>Linear embedding.</b> Project raw features to \(d\), separately for the two streams.
+      <span class="io">node view: H ∈ ℝ^(n×d) · edge view: H_E ∈ ℝ^(2m×d)</span></div></li>
+    <li><div><b>dyMPN produces Q, K, V.</b> Per head, three separate message-passing nets run \(K_l\) hops, with \(K_l\) resampled every epoch from a truncated normal \(\phi(\mu{=}6,\sigma{=}1;[3,9])\). The edge view passes messages on the line graph with reverse-bond subtraction (D-MPNN style).
+      <span class="io">Q, K, V ∈ ℝ^(n×d) per head (edge view: ℝ^(2m×d))</span></div></li>
+    <li><div><b>Multi-head self-attention</b> over all atoms of the molecule (a complete graph), then LayerNorm with residual.
+      <span class="io">H̃ ∈ ℝ^(n×d) (edge view: ℝ^(2m×d))</span></div></li>
+    <li><div><b>Aggregate2Node and Aggregate2Edge.</b> Each view sums its attended states onto atoms and onto directed bonds, concatenates the original input features (the single long-range residual), then FFN + LayerNorm.
+      <span class="io">each view emits one atom set and one bond set → 4 embedding sets</span></div></li>
+    <li><div><b>Readout.</b> Pretraining: task heads on atoms, bonds and mean-pooled graph vectors. Fine-tuning: self-attentive pooling, concatenated with 200 RDKit 2D descriptors, then an MLP per view. Fingerprint mode: mean-pool all four sets and append the 200 descriptors.
+      <span class="io">fingerprint: 4·d + 200 = 5000 for GROVER-large</span></div></li>
+  </ol>
+</section>
+
+<section id="layers">
+  <h2>The layers</h2>
+  <figure class="fig">
+    <svg viewBox="0 0 760 500" role="img" aria-label="GROVER architecture: shared input graph feeding a node-view and an edge-view GTransformer, each producing atom and bond embeddings">
+      <defs>
+        <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah" d="M0,0 L10,5 L0,10 z"/></marker>
+      </defs>
+      <rect class="bx" x="40" y="14" width="680" height="40" rx="6"/>
+      <text x="380" y="32" text-anchor="middle" font-size="13" font-weight="600">Input graph G = (V, E)</text>
+      <text class="sub" x="380" y="47" text-anchor="middle">RDKit atom features x_v ∈ ℝ^128 · bond features e_uv ∈ ℝ^12</text>
+
+      <text class="tn" x="200" y="76" text-anchor="middle" font-size="12">NODE-VIEW GTRANSFORMER</text>
+      <text class="te" x="562" y="76" text-anchor="middle" font-size="12">EDGE-VIEW GTRANSFORMER</text>
+
+      <line class="ln" x1="200" y1="54" x2="200" y2="86" marker-end="url(#ar)"/>
+      <line class="ln" x1="562" y1="54" x2="562" y2="86" marker-end="url(#ar)"/>
+      <rect class="bx" x="120" y="88" width="160" height="28" rx="5"/><text x="200" y="106" text-anchor="middle" font-size="12">Linear → h_v ∈ ℝ^d</text>
+      <rect class="bx" x="482" y="88" width="160" height="28" rx="5"/><text x="562" y="106" text-anchor="middle" font-size="12">Linear → h_vw ∈ ℝ^d</text>
+
+      <line class="ln" x1="200" y1="116" x2="200" y2="128"/><line class="ln" x1="100" y1="128" x2="300" y2="128"/>
+      <line class="ln" x1="100" y1="128" x2="100" y2="138" marker-end="url(#ar)"/><line class="ln" x1="200" y1="128" x2="200" y2="138" marker-end="url(#ar)"/><line class="ln" x1="300" y1="128" x2="300" y2="138" marker-end="url(#ar)"/>
+      <line class="ln" x1="562" y1="116" x2="562" y2="128"/><line class="ln" x1="462" y1="128" x2="662" y2="128"/>
+      <line class="ln" x1="462" y1="128" x2="462" y2="138" marker-end="url(#ar)"/><line class="ln" x1="562" y1="128" x2="562" y2="138" marker-end="url(#ar)"/><line class="ln" x1="662" y1="128" x2="662" y2="138" marker-end="url(#ar)"/>
+
+      <rect class="bn" x="66" y="140" width="68" height="38" rx="5"/><text x="100" y="157" text-anchor="middle" font-size="11.5">dyMPN</text><text class="sub" x="100" y="171" text-anchor="middle">→ Q</text>
+      <rect class="bn" x="166" y="140" width="68" height="38" rx="5"/><text x="200" y="157" text-anchor="middle" font-size="11.5">dyMPN</text><text class="sub" x="200" y="171" text-anchor="middle">→ K</text>
+      <rect class="bn" x="266" y="140" width="68" height="38" rx="5"/><text x="300" y="157" text-anchor="middle" font-size="11.5">dyMPN</text><text class="sub" x="300" y="171" text-anchor="middle">→ V</text>
+      <rect class="be" x="428" y="140" width="68" height="38" rx="5"/><text x="462" y="157" text-anchor="middle" font-size="11.5">dyMPN</text><text class="sub" x="462" y="171" text-anchor="middle">→ Q</text>
+      <rect class="be" x="528" y="140" width="68" height="38" rx="5"/><text x="562" y="157" text-anchor="middle" font-size="11.5">dyMPN</text><text class="sub" x="562" y="171" text-anchor="middle">→ K</text>
+      <rect class="be" x="628" y="140" width="68" height="38" rx="5"/><text x="662" y="157" text-anchor="middle" font-size="11.5">dyMPN</text><text class="sub" x="662" y="171" text-anchor="middle">→ V</text>
+      <text class="sub" x="200" y="194" text-anchor="middle">×4 heads · K_l ~ truncN(6, 1; [3, 9]) hops, resampled per epoch</text>
+      <text class="sub" x="562" y="194" text-anchor="middle">same, messages over directed bonds (line graph)</text>
+
+      <line class="ln" x1="200" y1="200" x2="200" y2="212" marker-end="url(#ar)"/>
+      <line class="ln" x1="562" y1="200" x2="562" y2="212" marker-end="url(#ar)"/>
+      <rect class="bx" x="80" y="214" width="240" height="30" rx="5"/><text x="200" y="233" text-anchor="middle" font-size="12">Multi-head attention (all atom pairs) + LN</text>
+      <rect class="bx" x="442" y="214" width="240" height="30" rx="5"/><text x="562" y="233" text-anchor="middle" font-size="12">Multi-head attention (all bond pairs) + LN</text>
+
+      <line class="ln" x1="200" y1="244" x2="200" y2="254"/><line class="ln" x1="131" y1="254" x2="269" y2="254"/>
+      <line class="ln" x1="131" y1="254" x2="131" y2="264" marker-end="url(#ar)"/><line class="ln" x1="269" y1="254" x2="269" y2="264" marker-end="url(#ar)"/>
+      <line class="ln" x1="562" y1="244" x2="562" y2="254"/><line class="ln" x1="493" y1="254" x2="631" y2="254"/>
+      <line class="ln" x1="493" y1="254" x2="493" y2="264" marker-end="url(#ar)"/><line class="ln" x1="631" y1="254" x2="631" y2="264" marker-end="url(#ar)"/>
+
+      <rect class="bx" x="68" y="266" width="126" height="28" rx="5"/><text x="131" y="284" text-anchor="middle" font-size="11.5">Aggregate2Node</text>
+      <rect class="bx" x="206" y="266" width="126" height="28" rx="5"/><text x="269" y="284" text-anchor="middle" font-size="11.5">Aggregate2Edge</text>
+      <rect class="bx" x="430" y="266" width="126" height="28" rx="5"/><text x="493" y="284" text-anchor="middle" font-size="11.5">Aggregate2Node</text>
+      <rect class="bx" x="568" y="266" width="126" height="28" rx="5"/><text x="631" y="284" text-anchor="middle" font-size="11.5">Aggregate2Edge</text>
+
+      <line class="ln" x1="131" y1="294" x2="131" y2="310" marker-end="url(#ar)"/><line class="ln" x1="269" y1="294" x2="269" y2="310" marker-end="url(#ar)"/>
+      <line class="ln" x1="493" y1="294" x2="493" y2="310" marker-end="url(#ar)"/><line class="ln" x1="631" y1="294" x2="631" y2="310" marker-end="url(#ar)"/>
+      <rect class="bx" x="68" y="312" width="126" height="26" rx="5"/><text x="131" y="329" text-anchor="middle" font-size="11.5">Concat x · FFN · LN</text>
+      <rect class="bx" x="206" y="312" width="126" height="26" rx="5"/><text x="269" y="329" text-anchor="middle" font-size="11.5">Concat x · FFN · LN</text>
+      <rect class="bx" x="430" y="312" width="126" height="26" rx="5"/><text x="493" y="329" text-anchor="middle" font-size="11.5">Concat x · FFN · LN</text>
+      <rect class="bx" x="568" y="312" width="126" height="26" rx="5"/><text x="631" y="329" text-anchor="middle" font-size="11.5">Concat x · FFN · LN</text>
+
+      <path class="res" d="M52,54 L52,325 L66,325" marker-end="url(#ar)"/>
+      <path class="res" d="M708,54 L708,325 L696,325" marker-end="url(#ar)"/>
+      <text class="sub" x="46" y="200" text-anchor="middle" transform="rotate(-90 46 200)">long-range residual</text>
+      <text class="sub" x="720" y="200" text-anchor="middle" transform="rotate(90 720 200)">long-range residual</text>
+
+      <line class="ln" x1="131" y1="338" x2="131" y2="354" marker-end="url(#ar)"/><line class="ln" x1="269" y1="338" x2="269" y2="354" marker-end="url(#ar)"/>
+      <line class="ln" x1="493" y1="338" x2="493" y2="354" marker-end="url(#ar)"/><line class="ln" x1="631" y1="338" x2="631" y2="354" marker-end="url(#ar)"/>
+      <rect class="bn" x="68" y="356" width="126" height="34" rx="5"/><text x="131" y="371" text-anchor="middle" font-size="11.5">atom emb.</text><text class="sub" x="131" y="384" text-anchor="middle">H atom←atom</text>
+      <rect class="bn" x="206" y="356" width="126" height="34" rx="5"/><text x="269" y="371" text-anchor="middle" font-size="11.5">bond emb.</text><text class="sub" x="269" y="384" text-anchor="middle">H bond←atom</text>
+      <rect class="be" x="430" y="356" width="126" height="34" rx="5"/><text x="493" y="371" text-anchor="middle" font-size="11.5">atom emb.</text><text class="sub" x="493" y="384" text-anchor="middle">H atom←bond</text>
+      <rect class="be" x="568" y="356" width="126" height="34" rx="5"/><text x="631" y="371" text-anchor="middle" font-size="11.5">bond emb.</text><text class="sub" x="631" y="384" text-anchor="middle">H bond←bond</text>
+
+      <path class="ln" d="M131,390 L131,410 L631,410 L631,390"/>
+      <line class="ln" x1="269" y1="390" x2="269" y2="410"/><line class="ln" x1="493" y1="390" x2="493" y2="410"/>
+      <line class="ln" x1="380" y1="410" x2="380" y2="424" marker-end="url(#ar)"/>
+      <rect class="bx" x="70" y="426" width="620" height="56" rx="6"/>
+      <text x="380" y="446" text-anchor="middle" font-size="12" font-weight="600">Heads</text>
+      <text class="sub" x="380" y="462" text-anchor="middle">pretrain: context CE on atoms and bonds, motif BCE on mean-pooled graph vector, view-consistency MSE</text>
+      <text class="sub" x="380" y="475" text-anchor="middle">fine-tune: self-attentive readout ‖ RDKit200 → MLP per view · fingerprint: mean-pool ×4 ‖ RDKit200</text>
+    </svg>
+    <figcaption>Redrawn from paper Fig. 1 and Fig. 6. Each view is one GTransformer block; the depth lives in the dyMPN hops, not in stacked attention layers (the released code defaults to one block per view, <span class="mono">num_mt_block=1</span>; [VERIFY] against the checkpoint's stored args).</figcaption>
+  </figure>
+
+  <h3>dyMPN (inside every Q, K, V producer)</h3>
+  <div class="math">\[
+  \begin{gathered}
+  m_v^{(k)}=\sum_{u\in\mathcal N_v}\operatorname{AGG}\big(h_v^{(k-1)},h_u^{(k-1)},e_{uv}\big),\qquad
+  h_v^{(k)}=\sigma\big(W m_v^{(k)}+b\big),\\
+  k=1,\dots,K_l,\qquad K_l\sim\phi(6,1;[3,9])
+  \end{gathered}
+  \]</div>
+  <p>Weights are shared across hops within the iteration (\(L=1\) iteration in the released models). Resampling \(K_l\) per epoch trains one set of weights over a random receptive field, which acts as a regulariser: in the ablation it slightly raises training loss and lowers validation loss.</p>
+
+  <h3>Graph multi-head attention</h3>
+  <div class="math">\[
+  \begin{gathered}
+  Q_i=\mathrm{dyMPN}^{Q}_i(H),\quad K_i=\mathrm{dyMPN}^{K}_i(H),\quad V_i=\mathrm{dyMPN}^{V}_i(H),\\
+  \mathrm{head}_i=\operatorname{softmax}\!\Big(\tfrac{Q_iK_i^{\top}}{\sqrt d}\Big)V_i,\qquad
+  \tilde H=\operatorname{LN}\big(H+\big[\mathrm{head}_1\Vert\cdots\Vert\mathrm{head}_4\big]W^{O}\big)
+  \end{gathered}
+  \]</div>
+  <p>No positional or structural bias enters the attention logits. All graph information in \(QK^\top\) comes from the fact that each query and key already summarises a ~6-hop neighbourhood.</p>
+
+  <h3>Aggregate2Node / Aggregate2Edge and the long-range residual</h3>
+  <div class="math">\[
+  m_v^{\text{node}}=\sum_{u\in\mathcal N_v}\tilde h_u,\qquad
+  m_{vw}^{\text{edge}}=\sum_{u\in\mathcal N_v\setminus w}\tilde h_u,\qquad
+  z=\operatorname{LN}\big(\mathrm{FFN}([\,x\,\Vert\,m\,])\big)
+  \]</div>
+  <p>The input features \(x\) skip the whole block and are concatenated right before the FFN. One long residual replaces the per-sublayer residuals of a vanilla Transformer; the paper argues this limits over-smoothing of the message passing. The <span class="e">edge view</span> applies the same two aggregators to \(\tilde h_{uv}\), which is why the model ends with four embedding sets.</p>
+</section>
+
+<section id="pretrain">
+  <h2>Self-supervision</h2>
+  <div class="two">
+    <div>
+      <h3>Contextual property (atoms and bonds)</h3>
+      <p>For a target atom, take its \(k{=}1\) subgraph, count (neighbour element, bond type) pairs, sort alphabetically and use the string as a class label, e.g. <code>C_N-DOUBLE1_O-SINGLE1</code>. Bonds get the analogous label, e.g. <code>DOUBLE_C_SINGLE1_N-SINGLE1</code>.</p>
+      <p class="small">2518 atom classes and 2686 bond classes over the corpus. 15 % of atoms and bonds are masked per molecule; a linear softmax head predicts the class from the embedding (NLL).</p>
+    </div>
+    <div>
+      <h3>Graph-level motifs</h3>
+      <p>RDKit detects 85 functional groups (the <code>fr_*</code> fragment counters). The graph vector (mean readout) predicts their presence as an 85-way multi-label BCE problem.</p>
+      <p class="small">Labels cost one substructure match per molecule and need no experiment, so the graph-level task avoids the negative transfer Hu et al. (2019) saw with supervised graph pretraining.</p>
+    </div>
+  </div>
+  <p>Released-code objective (the paper does not state the sum explicitly), with both views predicting everything and a consistency term tying them together:</p>
+  <div class="math">\[
+  \begin{aligned}
+  \mathcal L={}&\sum_{\text{view}\in\{\text{atom},\text{bond}\}}\Big[\mathcal L^{\text{ctx}}_{\text{atom}}+\mathcal L^{\text{ctx}}_{\text{bond}}+\mathcal L^{\text{motif}}\Big]\\
+  &+\lambda\sum_{t\in\{\text{atom},\text{bond}\}}\big\lVert\hat y^{\text{ctx},t}_{\text{atom-view}}-\hat y^{\text{ctx},t}_{\text{bond-view}}\big\rVert_2^2
+  +\big\lVert\hat y^{\text{motif}}_{\text{atom-view}}-\hat y^{\text{motif}}_{\text{bond-view}}\big\rVert_2^2
+  \end{aligned}
+  \]</div>
+  <p class="small">Adam, lr 1.5·10⁻⁴ with Noam warm-up, 500 epochs, PReLU, dropout 0.1, 10 % of the 11M molecules held out for model selection.</p>
+</section>
+
+<section id="heads">
+  <h2>Fine-tuning versus fingerprint mode</h2>
+  <p><b>Fine-tuning</b> (what the paper benchmarks). Each view's atom embeddings \(H\) go through a self-attentive readout, the 200 RDKit 2D descriptors are appended, and two MLPs predict the target:</p>
+  <div class="math">\[
+  \begin{gathered}
+  S=\operatorname{softmax}\big(W_2\tanh(W_1H^{\top})\big),\qquad g=\operatorname{Flatten}(SH),\\
+  \mathcal L=\ell(p_{\text{node}},y)+\ell(p_{\text{edge}},y)+\lambda_{\text{diss}}\lVert p_{\text{node}}-p_{\text{edge}}\rVert_2
+  \end{gathered}
+  \]</div>
+  <p>Hyperparameters come from a 300-configuration random search per dataset, all encoder weights are updated.</p>
+  <p><b>Fingerprint mode</b> (what a frozen featurizer uses). No training. The code mean-pools the four embedding sets and, if a features file is passed, appends the descriptors:</p>
+  <div class="math">\[
+  \mathrm{fp}=\big[\overline{H}_{a\leftarrow a}\,\Vert\,\overline{H}_{a\leftarrow b}\,\Vert\,\overline{H}_{b\leftarrow a}\,\Vert\,\overline{H}_{b\leftarrow b}\,\Vert\,r_{\text{RDKit200}}\big]\in\mathbb R^{4d+200}
+  \]</div>
+  <p>The frozen embedding was never optimised for a mean readout on a downstream target; it inherits only what the context and motif tasks forced into it.</p>
+</section>
+
+<section id="gt">
+  <h2>Why it counts as a graph transformer</h2>
+  <p>A Transformer layer is message passing on the complete graph with learned, input-dependent edge weights \(\alpha_{uv}=\operatorname{softmax}_u(q_v^\top k_u/\sqrt d)\). A graph transformer must reinject the real topology somewhere. The families differ in where:</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Model</th><th>Where the molecular graph enters</th></tr></thead>
+    <tbody>
+      <tr><td>GROVER (2020)</td><td>In the tokens: Q, K, V are outputs of MPNNs, so each token is a local subgraph summary. Attention itself is unbiased and global.</td></tr>
+      <tr><td>Graphormer (2021)</td><td>In the logits: shortest-path, centrality and edge-path biases added to \(q^\top k\). Tokens are raw atoms.</td></tr>
+      <tr><td>GraphGPS (2022)</td><td>In parallel: an MPNN layer and a global attention layer per block, outputs summed, plus positional encodings.</td></tr>
+      <tr><td>Uni-Mol, Transformer-M</td><td>In a pair representation built from 3D distances (and 2D paths for Transformer-M) biasing the logits.</td></tr>
+    </tbody>
+  </table></div>
+  <p>GROVER's version is the "bi-level" idea from the paper: local structure from the dyMPN, long-range atom-atom interaction from attention. The ablation "GROVER w/o GTrans" (dyMPN feeding a plain Transformer) trained worst of the three variants, and on a 600K-molecule toy set GTransformer beat GIN and MPNN backbones at matched 38M parameters.</p>
+</section>
+
+<section id="works">
+  <h2>Why it works, and what survived later audits</h2>
+  <h3>Mechanisms the design relies on</h3>
+  <ul>
+    <li><b>Richer masked targets.</b> Predicting the atom type alone (Hu et al.) is a low-entropy task dominated by carbon. The 2518-way context label forces the embedding to carry the element, its neighbours and the bond orders, which is closer to what 2D structure-property relations use.</li>
+    <li><b>Chemistry-aware graph target.</b> The motif task pushes functional-group content into the graph vector without labels. This is effectively distillation of RDKit substructure rules.</li>
+    <li><b>Receptive-field randomisation</b> (dyMPN) as a regulariser, and the <b>long-range residual</b> against over-smoothing.</li>
+    <li><b>Scale.</b> 100M parameters on 11M molecules was, in 2020, the largest molecular GNN pretraining run.</li>
+  </ul>
+  <h3>Claims versus later evidence</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Paper claim</th><th>Later finding</th></tr></thead>
+    <tbody>
+      <tr><td>+6.1 % mean relative gain over SOTA on 11 MoleculeNet sets (+23.9 % on FreeSolv, n = 642)</td><td>Fine-tuning appended 200 RDKit 2D descriptors, which most baselines did not get. Deng et al. (2023) show this concatenation "significantly improves GROVER's performance" and that RF on fixed descriptors matches or beats it on BACE, BBBP, ESOL and Lipophilicity.</td></tr>
+      <tr><td>Pretraining helps: mean ROC-AUC 0.834 vs 0.803 without it</td><td>Sun et al. (2022) reproduced GROVER pretraining and saw no significant gain over training from scratch (BBBP 89.6 vs 92.6, BACE 85.1 vs 86.2 for the base model).</td></tr>
+      <tr><td>Scaffold split, 3 seeds</td><td>These were randomly seeded (balanced) scaffold splits, and each dataset had 300 tuned configurations. Both inflate numbers relative to the deterministic scaffold split used by later work.</td></tr>
+      <tr><td>Rich transferable representation</td><td>Frozen-embedding benchmark of 25 models on 25 datasets (arXiv 2508.06199, 2025): GROVER mean rank 17.1, significantly worse than ECFP. Only CLAMP was significantly better than ECFP.</td></tr>
+    </tbody>
+  </table></div>
+  <p>The architectural ideas are sound. The size of the reported benefit came mostly from protocol and descriptors, and the learned part adds little when labels are scarce and the downstream model is simple.</p>
+</section>
+
+<section id="domain">
+  <h2>Where it has predictive power</h2>
+  <p>The pretraining corpus (ZINC15 + ChEMBL) and targets (1-hop topology counts, RDKit functional groups) define the domain. The encoder sees no coordinates, no conformers, no charges beyond formal charge and no electronic structure.</p>
+  <div class="two">
+    <div>
+      <h3 class="good">Strong</h3>
+      <ul>
+        <li>Drug-like organic molecules built from H, C, N, O, S, P and halogens.</li>
+        <li>Properties that are close to additive in functional groups: aqueous solubility, logD, hydration free energy, membrane permeability, many toxicity and ADMET endpoints.</li>
+        <li>Low-to-medium data classification where a fine-tuned model can lean on the descriptor concatenation.</li>
+        <li>Small rigid QM targets (QM7/QM8) were competitive in the paper, because 2D topology nearly fixes the geometry there.</li>
+      </ul>
+    </div>
+    <div>
+      <h3 class="bad">Weak or out of domain</h3>
+      <ul>
+        <li>Conformation-controlled properties (sterics around a reactive centre, buried volume, flexible binding).</li>
+        <li>Electronic properties that differ between topologically similar molecules: σ-donor strength, redox potentials, HOMO/LUMO trends in a congeneric series.</li>
+        <li>Activity cliffs and stereochemistry beyond the chirality tag.</li>
+        <li>Organometallics, ionic multi-fragment species, radicals and carbenes; a mean readout mixes cation and counter-ion atoms.</li>
+        <li>Reactions and processes: it embeds one molecule. Temperature, concentration, mixtures and reaction centres are invisible to it; those must be modelled outside the embedding.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="y2026">
+  <h2>Is it still usable in 2026?</h2>
+  <p><b>Technically, yes.</b> Code (<code>tencent-ailab/grover</code>) is unmaintained, but checkpoints download and fingerprint mode runs on current PyTorch with two patches already in <code>features/foundation.py</code>: missing args added to the pickled Namespace, and <code>TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD=1</code> for torch ≥ 2.6.</p>
+  <p><b>As a state-of-the-art choice, no.</b> The field moved to 3D-aware pretraining, descriptor-supervised pretraining and, since 2025, in-context predictors. The ideas that worked in GROVER (descriptor-derived targets, MPNN plus attention) were refined by its successors.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Model</th><th>Backbone and pretraining signal</th><th>Relevance versus GROVER</th><th>In scan</th></tr></thead>
+    <tbody>
+      <tr><td>KPGT (Li et al., Nat. Commun. 2023)</td><td>Line-graph transformer with a "knowledge node"; masked atoms + 200 descriptors + 512 fingerprints; 2M ChEMBL</td><td>Direct successor idea: descriptors become pretraining targets. Beats GROVER in its own transfer benchmark (0.843 vs 0.818 AUROC).</td><td><span class="pill no">no</span></td></tr>
+      <tr><td>Graphormer (2021)</td><td>Structural attention bias; supervised PCQM4M HOMO-LUMO gap</td><td>QM-flavoured 2D encoder</td><td><span class="pill yes">yes</span></td></tr>
+      <tr><td>Uni-Mol / Uni-Mol2 (2023 / 2024)</td><td>SE(3) transformer on 3D conformers, up to 1.1B params</td><td>Adds geometry; used successfully for peptide catalyst screening (Li et al. 2025)</td><td><span class="pill yes">yes</span></td></tr>
+      <tr><td>Transformer-M, Frad (2023)</td><td>2D + 3D joint, coordinate denoising</td><td>Geometry-aware denoising objectives</td><td><span class="pill yes">yes</span></td></tr>
+      <tr><td>MolE (Recursion, Nat. Commun. 2024)</td><td>DeBERTa-style disentangled attention on graphs, self-supervised + multitask</td><td>Graph transformer at larger scale</td><td><span class="pill no">no</span></td></tr>
+      <tr><td>MiniMol (2024)</td><td>10M-param GNN, multitask on QM + bioassay labels (Graphium)</td><td>Small, strong on ADMET</td><td><span class="pill yes">yes</span></td></tr>
+      <tr><td>CheMeleon (Burns, Green et al., 2025)</td><td>Chemprop D-MPNN pretrained to predict Mordred descriptors</td><td>Built for small real-world datasets: 75 % win rate on 58 Polaris tasks vs 68 % for RF</td><td><span class="pill no">no</span></td></tr>
+      <tr><td>TabPFN + CheMeleon embeddings (arXiv 2604.16123, 2026)</td><td>Frozen embeddings into a tabular foundation model, in-context</td><td>86 % win rate on Polaris + MoleculeACE; transfers to fuels, solvents, polymers. A surrogate, not a featurization</td><td><span class="pill no">no</span></td></tr>
+      <tr><td>Monroe (Banaszewski &amp; Fitzgibbon, arXiv 2608.18982, 2026)</td><td>GRIT graph transformer on 81M PM6 QM molecules + PCBA; TabPFNv3 head gives a posterior predictive</td><td>Probabilistic in-context prediction; matches or beats MiniMol and CheMeleon on Polaris</td><td><span class="pill no">no</span></td></tr>
+    </tbody>
+  </table></div>
+  <p class="small">Cross-cutting 2025 result: with frozen embeddings and a simple downstream model, almost no neural representation beats ECFP significantly. Descriptor-supervised pretraining (CheMeleon) is the exception that holds up in the small-data regime.</p>
+</section>
+
+<section id="pablo">
+  <h2>Would it be useful for PABLO?</h2>
+  <p>It already is in use, so the useful question is what the <code>grover</code> signal actually is. Read from the repo on 30.09.2026 (<code>features/foundation.py</code>, <code>features/dim_reduction.py</code>, <code>data/featurizations/grover*</code>, <code>results/gem_scores.parquet</code>).</p>
+
+  <h3>What the GP sees</h3>
+  <ul>
+    <li>Input: the 161 pre-catalysts as stored (salts, free NHCs, CO₂ adducts, bicarbonates), so counter-ions are part of the graph. There is no <code>grover_carbene</code> counterpart, unlike the 7 models that have both variants.</li>
+    <li><code>grover</code>: fingerprint mode, 4 × 1200 mean-pooled embeddings ‖ 200 <code>rdkit_2d_normalized</code> descriptors (CDF-scaled to [0, 1]), row-wise L2-normalised. 5000 columns.</li>
+    <li><code>grover_pca</code>: StandardScaler + PCA over the 161 rows, Kneedle knee at 16 components, 92.4 % variance retained.</li>
+  </ul>
+
+  <h3>Scan result (elimination sweep, 576 cells)</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Level</th><th>Baseline gem</th><th>Rank / 50</th><th>Median gem over its configs</th><th>Best gem</th></tr></thead>
+    <tbody>
+      <tr><td><code>grover_pca</code></td><td class="num">0.193</td><td class="num">1</td><td class="num">0.200 (1st)</td><td class="num">0.294 (arcsin_sqrt)</td></tr>
+      <tr><td><code>graphormer_precat_pca</code></td><td class="num">0.181</td><td class="num">2</td><td class="num">0.142 (5th)</td><td class="num">0.232</td></tr>
+      <tr><td><code>mordred_pca</code></td><td class="num">0.125</td><td class="num">6</td><td class="num">0.097 (14th)</td><td class="num">0.222</td></tr>
+      <tr><td><code>grover</code> (5000-d)</td><td class="num">0.053</td><td class="num">19</td><td class="num">0.039 (33rd)</td><td class="num">0.260</td></tr>
+      <tr><td><code>ecfp4_pca</code></td><td class="num">0.080</td><td class="num">15</td><td class="num">0.068 (24th)</td><td class="num">0.138</td></tr>
+    </tbody>
+  </table></div>
+  <p class="small">Baseline = matern52 / KS1 / OHE / OHE / constant / raw / P1 / st_y. The bootstrap SD of a single gem is 0.07 to 0.13 (axis-sensitivity report), so 0.193 vs 0.181 is not a resolved ranking. The full-width collapse is the expected ARD problem at n ≈ 51 to 68 training points with 5000 inputs.</p>
+
+  <h3>Decomposition I ran on the stored matrices</h3>
+  <ul>
+    <li>The RDKit block carries only <b>3.2 %</b> of the variance in the 16 retained PCs (22 of its 200 columns are constant over the library). So <code>grover_pca</code> is not the descriptors in disguise.</li>
+    <li>However, a ridge model from the 178 non-constant RDKit 2D columns predicts the first five PCs of the 4800-d GROVER embedding alone with 5-fold CV <b>R² = 0.95, 0.90, 0.80, 0.89, 0.83</b>.</li>
+  </ul>
+  <p>On this library the embedding geometry is largely a linear re-expression of classical 2D descriptors. That matches the literature above and means the paper cannot attribute the <code>grover_pca</code> win to self-supervised pretraining without a control.</p>
+
+  <div class="flag"><b>Flag</b>This is an addition of featurization levels, not a change to a scientific default. It does not touch priors, kernels, transforms, CV or scoring.</div>
+
+  <h3>Recommendations, in order of cost</h3>
+  <ol>
+    <li><b>Add <code>rdkit2d</code> and <code>rdkit2d_pca</code></b> (the 200 columns already written by <code>save_features.py</code> into <code>data/grover_tmp/features.npz</code>) and <b><code>grover_nofeat_pca</code></b> (rerun the CLI without <code>--features_path</code>). Three cheap levels on the baseline config answer "pretraining or descriptors?", which a reviewer aware of Deng et al. (2023) will ask.</li>
+    <li><b>Add <code>grover_carbene</code></b> for parity with the other _carbene/_precat pairs. [UNVERIFIED] Expect it to do worse: a divalent carbene carbon is rare or absent in ZINC/ChEMBL, so its context classes are off-distribution, whereas imidazolium and thiazolium cations (thiamine analogues) occur in ChEMBL.</li>
+    <li><b>Add CheMeleon</b> (<code>chemprop</code> foundation checkpoint) as a new level. Its pretraining target is Mordred descriptors, it is designed for the small-data regime, and a D-MPNN fingerprint is cheap to extract for 161 molecules. It is the most defensible 2025/26 representative in the scan.</li>
+    <li>Treat TabPFN-style or Monroe in-context predictors as competing <i>surrogates</i>, not featurizations. They do not fit the GP/BO pipeline without a separate comparison against the GP on the same CV studies.</li>
+  </ol>
+  <p>None of these involve electronic descriptors, so the xTB-only boundary is unaffected. Keep <code>grover_pca</code> as a surviving level; replacing it on literature grounds alone would ignore that it currently tops your own sweep.</p>
+</section>
+
+<section id="sources" class="src">
+  <h2>Sources</h2>
+  <ol>
+    <li>Rong et al., <a href="https://arxiv.org/abs/2007.02835">Self-Supervised Graph Transformer on Large-Scale Molecular Data</a>, NeurIPS 2020 (attached PDF).</li>
+    <li>tencent-ailab/grover, <a href="https://github.com/tencent-ailab/grover">released code</a> (<span class="mono">grover/model/models.py</span>, <span class="mono">layers.py</span>).</li>
+    <li>Sun et al., <a href="https://arxiv.org/abs/2207.06010">Does GNN Pretraining Help Molecular Representation?</a>, 2022.</li>
+    <li>Deng et al., <a href="https://www.nature.com/articles/s41467-023-41948-6">A systematic study of key elements underlying molecular property prediction</a>, Nat. Commun. 2023.</li>
+    <li><a href="https://arxiv.org/html/2508.06199v2">Benchmarking Pretrained Molecular Embedding Models for Molecular Representation Learning</a>, arXiv 2508.06199, 2025.</li>
+    <li>Li et al., <a href="https://www.nature.com/articles/s41467-023-43214-1">A knowledge-guided pre-training framework for improving molecular representation learning</a> (KPGT), Nat. Commun. 2023.</li>
+    <li>Burns et al., <a href="https://arxiv.org/abs/2506.15792">Descriptor-based Foundation Models for Molecular Property Prediction</a> (CheMeleon), 2025.</li>
+    <li><a href="https://arxiv.org/html/2604.16123">Tabular foundation models for in-context prediction of molecular properties</a>, arXiv 2604.16123, 2026.</li>
+    <li>Banaszewski &amp; Fitzgibbon, <a href="https://arxiv.org/html/2608.18982v1">Monroe: A Molecular Foundation Model for In-Context Probabilistic Inference</a>, arXiv 2608.18982, 2026.</li>
+    <li>Li et al., <a href="https://www.sciencedirect.com/science/article/pii/S2666386425005302">Applying pretrained molecular representation for reaction prediction and efficient catalyst screening</a>, 2025.</li>
+    <li>pablo repo: <span class="mono">featurization_and_kernel_scan/</span> WORK-PACKAGE.md, README.md, features/foundation.py, features/dim_reduction.py, results/gem_scores.parquet.</li>
+  </ol>
+</section>
+</main>
+</div>

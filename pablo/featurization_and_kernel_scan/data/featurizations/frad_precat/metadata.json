@@ -1,0 +1,13 @@
+{
+  "n_molecules": 161,
+  "label": "Frad-precat",
+  "raw_model_output_file": "raw_model_output.parquet",
+  "raw_model_dim": 256,
+  "repo": "fengshikun/Frad",
+  "checkpoint": "/home/enis/Desktop/frad/frad_pretrained.pt",
+  "embedding_dim": 256,
+  "free_carbene": false,
+  "form_onehot_appended": false,
+  "n_features": 256,
+  "descriptors_file": "descriptors.parquet"
+}

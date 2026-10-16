@@ -1,0 +1,1162 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BO surrogate metrics</title>
+<script>
+(function () {
+  var root = document.documentElement;
+  var saved = localStorage.getItem('pablo_theme');
+  var sys = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  root.setAttribute('data-theme', saved || sys);
+  root.setAttribute('data-sidebar', localStorage.getItem('pablo_sidebar') || 'open');
+  var w = parseInt(localStorage.getItem('pablo_sidebar_w'), 10);
+  if (w >= 220 && w <= 560) root.style.setProperty('--sidebar-w', w + 'px');
+})();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.19.0/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.19.0/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.19.0/dist/contrib/auto-render.min.js"></script>
+<style>
+:root{
+  --font-sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  --font-mono:'Fira Code','SFMono-Regular',Consolas,Monaco,monospace;
+  --sidebar-w:300px; --header-h:60px;
+  --radius-sm:5px; --radius-md:8px; --radius-lg:10px;
+}
+[data-theme="light"]{
+  color-scheme:light;
+  --bg-app:#F5F6F8; --bg-card:#FFFFFF; --bg-card-subtle:#F0F2F5; --bg-elevated:#E8EBF0;
+  --bg-header:rgba(255,255,255,.92); --bg-code:#1B2330; --code-ink:#E3E7ED; --grid-line:rgba(24,32,44,.03);
+  --border-subtle:#DADFE6; --border-strong:#C3CAD4;
+  --text-main:#18202C; --text-muted:#4B5563; --text-dim:#6B7280;
+  --red:#A23B32;    --red-rgb:162,59,50;
+  --orange:#AE5520; --orange-rgb:174,85,32;
+  --yellow:#8A6A12; --yellow-rgb:138,106,18;
+  --green:#2F6B45;  --green-rgb:47,107,69;
+  --teal:#1F6E6A;   --teal-rgb:31,110,106;
+  --blue:#1F5A99;   --blue-rgb:31,90,153;
+  --indigo:#43479A; --indigo-rgb:67,71,154;
+  --purple:#6B3F8F; --purple-rgb:107,63,143;
+  --slate:#4A5568;  --slate-rgb:74,85,104;
+  --tint:.07;
+  --shadow-card:0 1px 2px rgba(24,32,44,.06),0 2px 8px rgba(24,32,44,.04);
+}
+[data-theme="dark"]{
+  color-scheme:dark;
+  --bg-app:#0F1216; --bg-card:#161A20; --bg-card-subtle:#1B2027; --bg-elevated:#232932;
+  --bg-header:rgba(15,18,22,.92); --bg-code:#0B0D10; --code-ink:#D5DBE3; --grid-line:rgba(255,255,255,.02);
+  --border-subtle:#2A3039; --border-strong:#3A424E;
+  --text-main:#E6E9EE; --text-muted:#A7B0BC; --text-dim:#7C8692;
+  --red:#E3867B;    --red-rgb:227,134,123;
+  --orange:#E5A06A; --orange-rgb:229,160,106;
+  --yellow:#D6B862; --yellow-rgb:214,184,98;
+  --green:#82C29B;  --green-rgb:130,194,155;
+  --teal:#6FC0B7;   --teal-rgb:111,192,183;
+  --blue:#82A9DE;   --blue-rgb:130,169,222;
+  --indigo:#A0A4E4; --indigo-rgb:160,164,228;
+  --purple:#BC9DD9; --purple-rgb:188,157,217;
+  --slate:#A0AEC0;  --slate-rgb:160,174,192;
+  --tint:.11;
+  --shadow-card:0 1px 2px rgba(0,0,0,.4);
+}
+:root,[data-hue="0"]{--sec:var(--blue);--sec-rgb:var(--blue-rgb)}
+[data-hue="1"]{--sec:var(--teal);--sec-rgb:var(--teal-rgb)}
+[data-hue="2"]{--sec:var(--red);--sec-rgb:var(--red-rgb)}
+[data-hue="3"]{--sec:var(--green);--sec-rgb:var(--green-rgb)}
+[data-hue="4"]{--sec:var(--purple);--sec-rgb:var(--purple-rgb)}
+[data-hue="5"]{--sec:var(--orange);--sec-rgb:var(--orange-rgb)}
+[data-hue="6"]{--sec:var(--indigo);--sec-rgb:var(--indigo-rgb)}
+[data-hue="7"]{--sec:var(--yellow);--sec-rgb:var(--yellow-rgb)}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{font-size:15px;scroll-behavior:smooth;scroll-padding-top:calc(var(--header-h) + 24px)}
+body{background:var(--bg-app);color:var(--text-main);font-family:var(--font-sans);
+ line-height:1.65;-webkit-font-smoothing:antialiased;min-height:100vh;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+ background-image:linear-gradient(to right,var(--grid-line) 1px,transparent 1px),
+  linear-gradient(to bottom,var(--grid-line) 1px,transparent 1px);
+ background-size:40px 40px}
+
+header.app-header{position:fixed;top:0;left:0;right:0;height:var(--header-h);z-index:100;
+ background:var(--bg-header);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+ border-bottom:1px solid var(--border-subtle);display:flex;align-items:center;
+ justify-content:space-between;gap:1rem;padding:0 1.25rem}
+.brand-wrapper{display:flex;align-items:center;gap:.85rem;min-width:0}
+.brand-badge{font-family:var(--font-mono);font-size:.72rem;font-weight:600;letter-spacing:.06em;
+ text-transform:uppercase;padding:.25rem .6rem;border-radius:var(--radius-sm);white-space:nowrap;
+ color:var(--text-muted);border:1px solid var(--border-strong)}
+.brand-title{font-size:1rem;font-weight:650;letter-spacing:-.01em;color:var(--text-main);
+ white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brand-title .dim{color:var(--text-muted);font-weight:400}
+.header-controls{display:flex;align-items:center;gap:.75rem}
+.reading-progress-track{position:absolute;bottom:-1px;left:0;width:100%;height:2px}
+.reading-progress-bar{height:100%;width:0;background:var(--blue);transition:width .1s ease-out}
+.btn-icon{background:transparent;border:1px solid var(--border-subtle);color:var(--text-muted);
+ width:36px;height:36px;border-radius:var(--radius-sm);display:inline-flex;align-items:center;
+ justify-content:center;cursor:pointer;transition:all .15s ease;flex:none}
+.btn-icon:hover{color:var(--text-main);border-color:var(--border-strong);background:var(--bg-card-subtle)}
+.btn-icon.sm{width:32px;height:32px}
+.btn-icon .moon{display:none}
+[data-theme="light"] .btn-icon .sun{display:none}
+[data-theme="light"] .btn-icon .moon{display:block}
+[data-sidebar="open"] #sidebarToggleBtn{color:var(--blue);border-color:rgba(var(--blue-rgb),.45);background:rgba(var(--blue-rgb),var(--tint))}
+
+.layout-container{display:flex;position:relative;margin-top:var(--header-h);z-index:1}
+aside.app-sidebar{width:var(--sidebar-w);position:fixed;top:var(--header-h);bottom:0;left:0;z-index:50;
+ background:var(--bg-card);border-right:1px solid var(--border-subtle);display:flex;flex-direction:column;
+ transition:transform .25s ease}
+[data-sidebar="closed"] aside.app-sidebar{transform:translateX(-100%)}
+.sidebar-resizer{position:absolute;top:0;right:-4px;width:8px;bottom:0;cursor:col-resize;z-index:2}
+.sidebar-resizer::after{content:"";position:absolute;top:0;bottom:0;left:3px;width:2px;background:var(--blue);
+ opacity:0;transition:opacity .2s}
+.sidebar-resizer:hover::after,.resizing .sidebar-resizer::after{opacity:1}
+.resizing,.resizing *{cursor:col-resize!important;user-select:none!important;transition:none!important}
+.sidebar-toolbar{display:flex;gap:.5rem;align-items:center;padding:1rem 1rem .75rem;
+ border-bottom:1px solid var(--border-subtle)}
+.search-input{flex:1;min-width:0;padding:.45rem .7rem;background:var(--bg-card-subtle);
+ border:1px solid var(--border-subtle);border-radius:var(--radius-sm);color:var(--text-main);
+ font:inherit;font-size:.85rem;outline:none}
+.search-input:focus{border-color:var(--blue);box-shadow:0 0 0 2px rgba(var(--blue-rgb),.18)}
+#expandAllBtn svg{transition:transform .2s}
+#expandAllBtn.all-open svg{transform:rotate(180deg)}
+.nav-links-scroll{flex:1;overflow-y:auto;padding:.75rem .75rem 2rem}
+.nav-group-title{font-size:.68rem;text-transform:uppercase;letter-spacing:.1em;font-weight:650;
+ color:var(--text-dim);padding:.6rem .5rem .35rem}
+.nav-group{margin-bottom:2px}
+.nav-row{display:flex;align-items:stretch;border-radius:var(--radius-sm);border-left:2px solid transparent}
+.nav-row:hover{background:var(--bg-card-subtle)}
+.nav-item{flex:1;min-width:0;display:flex;align-items:baseline;gap:.6rem;padding:.45rem .4rem .45rem .55rem;
+ color:var(--text-muted);text-decoration:none;font-size:.86rem;font-weight:500}
+.nav-row:hover .nav-item{color:var(--text-main)}
+.nav-badge-num{font-family:var(--font-mono);font-size:.7rem;font-weight:600;color:var(--sec);min-width:1.9rem;flex:none}
+.nav-group.active .nav-row{background:rgba(var(--sec-rgb),var(--tint));border-left-color:var(--sec)}
+.nav-group.active .nav-item{color:var(--text-main);font-weight:600}
+.nav-caret{flex:none;width:30px;background:none;border:none;color:var(--text-dim);cursor:pointer;
+ display:flex;align-items:center;justify-content:center;border-radius:var(--radius-sm)}
+.nav-caret:hover{color:var(--text-main)}
+.nav-caret svg{transition:transform .2s}
+.nav-group.open .nav-caret svg{transform:rotate(90deg)}
+.nav-sub{display:none;margin:2px 0 6px 1.4rem;padding-left:.6rem;border-left:1px solid var(--border-strong)}
+.nav-group.open .nav-sub{display:block}
+.nav-subitem{display:block;padding:.28rem .55rem;font-size:.8rem;line-height:1.4;color:var(--text-muted);
+ text-decoration:none;border-radius:4px}
+.nav-subitem:hover{color:var(--text-main);background:var(--bg-card-subtle)}
+.nav-subitem.active{color:var(--sec);font-weight:600}
+.sidebar-hint{padding:.6rem 1rem;border-top:1px solid var(--border-subtle);font-size:.7rem;color:var(--text-dim)}
+.sidebar-hint kbd{font-family:var(--font-mono);font-size:.68rem;border:1px solid var(--border-strong);
+ border-radius:3px;padding:0 .3rem;background:var(--bg-card-subtle)}
+.sidebar-backdrop{display:none}
+
+main.app-main{margin-left:var(--sidebar-w);flex:1;padding:3rem 4rem 6rem;max-width:calc(1240px + var(--sidebar-w));
+ min-width:0;transition:margin-left .25s ease}
+[data-sidebar="closed"] main.app-main{margin-inline:auto;max-width:1240px}
+.hero-header{margin-bottom:3.25rem;padding-bottom:2rem;border-bottom:1px solid var(--border-strong)}
+.hero-meta{display:flex;align-items:center;gap:.75rem;margin-bottom:1rem;flex-wrap:wrap}
+.hero-tag{font-family:var(--font-mono);font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;
+ color:var(--blue);padding:.2rem .6rem;border:1px solid rgba(var(--blue-rgb),.4);border-radius:var(--radius-sm)}
+.hero-date{font-family:var(--font-mono);font-size:.8rem;color:var(--text-dim)}
+.hero-title{font-size:2.5rem;font-weight:800;letter-spacing:-.03em;line-height:1.12;margin-bottom:.9rem;color:var(--text-main)}
+.hero-subtitle{font-size:1.05rem;color:var(--text-muted);max-width:950px;line-height:1.55}
+
+section.content-section{margin-bottom:4.25rem;scroll-margin-top:calc(var(--header-h) + 30px)}
+.section-header-block{margin-bottom:1.6rem;padding-left:1rem;border-left:3px solid var(--sec)}
+.section-num-tag{display:block;font-family:var(--font-mono);font-size:.74rem;font-weight:600;color:var(--sec);
+ text-transform:uppercase;letter-spacing:.1em;margin-bottom:.35rem}
+.section-heading{font-size:1.75rem;font-weight:750;letter-spacing:-.02em;line-height:1.25;margin-bottom:.55rem}
+.section-lead{font-size:1.05rem;color:var(--text-muted);line-height:1.6;max-width:90ch;margin-bottom:0}
+h3.subheading{font-size:1.25rem;font-weight:650;margin:2.25rem 0 .9rem;letter-spacing:-.01em;
+ display:flex;align-items:baseline;gap:.6rem;scroll-margin-top:calc(var(--header-h) + 24px)}
+h3.subheading::before{content:"";flex:none;width:8px;height:8px;border-radius:2px;background:var(--sec);transform:translateY(-2px)}
+h4.tertiary-heading{font-size:1rem;font-weight:650;color:var(--text-main);margin:1.5rem 0 .6rem}
+p{margin-bottom:1.1rem;max-width:90ch}
+p.muted,.small{color:var(--text-muted)}
+.small{font-size:.88rem}
+strong,b{font-weight:650}
+code{font-family:var(--font-mono);font-size:.84em;color:var(--text-main);background:var(--bg-card-subtle);
+ border:1px solid var(--border-subtle);padding:.05rem .35rem;border-radius:4px}
+
+.card{background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:var(--radius-lg);
+ padding:1.4rem 1.5rem;box-shadow:var(--shadow-card);margin-bottom:1.5rem}
+.card > :last-child,.callout > :last-child{margin-bottom:0}
+.grid-2,.grid-3{display:grid;gap:1.25rem;margin-bottom:1.5rem}
+.grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.grid-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.grid-2 > .card,.grid-3 > .card{margin-bottom:0}
+
+.callout{--c:var(--blue);--c-rgb:var(--blue-rgb);
+ border-radius:0 var(--radius-md) var(--radius-md) 0;padding:1rem 1.3rem;margin:1.5rem 0;
+ border-left:3px solid var(--c);background:rgba(var(--c-rgb),var(--tint));max-width:90ch}
+.callout-title{font-weight:650;font-size:.78rem;margin-bottom:.45rem;text-transform:uppercase;letter-spacing:.07em;color:var(--c)}
+.callout-insight{--c:var(--green);--c-rgb:var(--green-rgb)}
+.callout-math{--c:var(--indigo);--c-rgb:var(--indigo-rgb)}
+.callout-warning{--c:var(--yellow);--c-rgb:var(--yellow-rgb)}
+.callout-danger{--c:var(--red);--c-rgb:var(--red-rgb)}
+.callout-arch{--c:var(--blue);--c-rgb:var(--blue-rgb)}
+
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.75rem;margin:1.5rem 0}
+.kpi{background:var(--bg-card);border:1px solid var(--border-subtle);border-top:2px solid var(--sec);
+ border-radius:var(--radius-md);padding:.75rem 1rem;box-shadow:var(--shadow-card)}
+.kpi .k{font-size:.7rem;font-weight:650;text-transform:uppercase;letter-spacing:.07em;color:var(--text-dim)}
+.kpi .v{font-size:1.55rem;font-weight:750;letter-spacing:-.02em;color:var(--text-main);font-variant-numeric:tabular-nums}
+
+.table-responsive{width:100%;overflow-x:auto;margin:1.5rem 0;border-radius:var(--radius-md);
+ border:1px solid var(--border-subtle);background:var(--bg-card)}
+table.data-table{width:100%;border-collapse:collapse;text-align:left;font-size:.9rem}
+table.data-table th{background:var(--bg-card-subtle);color:var(--text-muted);padding:.65rem 1rem;font-weight:650;
+ font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;border-bottom:2px solid var(--sec);
+ white-space:nowrap;position:sticky;top:0}
+table.data-table td{padding:.55rem 1rem;border-bottom:1px solid var(--border-subtle);vertical-align:top}
+table.data-table tbody tr:hover td{background:var(--bg-card-subtle)}
+table.data-table tr:last-child td{border-bottom:none}
+table.data-table .num{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+table.data-table td.r{color:var(--text-dim)}
+table.data-table td.good{background:rgba(var(--green-rgb),calc(var(--tint) * 1.6))!important;color:var(--green);font-weight:650}
+table.data-table td.bad{background:rgba(var(--red-rgb),calc(var(--tint) * 1.6))!important;color:var(--red);font-weight:650}
+
+.chip{display:inline-flex;align-items:center;padding:.08rem .45rem;border-radius:4px;font-family:var(--font-mono);
+ font-size:.72rem;font-weight:600;margin:.1rem;--c:var(--slate);--c-rgb:var(--slate-rgb);
+ color:var(--c);background:rgba(var(--c-rgb),var(--tint));border:1px solid rgba(var(--c-rgb),.35)}
+.chip-red{--c:var(--red);--c-rgb:var(--red-rgb)} .chip-orange{--c:var(--orange);--c-rgb:var(--orange-rgb)}
+.chip-yellow{--c:var(--yellow);--c-rgb:var(--yellow-rgb)} .chip-green{--c:var(--green);--c-rgb:var(--green-rgb)}
+.chip-teal{--c:var(--teal);--c-rgb:var(--teal-rgb)} .chip-blue{--c:var(--blue);--c-rgb:var(--blue-rgb)}
+.chip-indigo{--c:var(--indigo);--c-rgb:var(--indigo-rgb)} .chip-purple{--c:var(--purple);--c-rgb:var(--purple-rgb)}
+.chip-slate{--c:var(--slate);--c-rgb:var(--slate-rgb)}
+
+.math-display{overflow-x:auto;overflow-y:hidden;padding:.35rem 1.25rem;margin:.9rem 0;background:var(--bg-card);
+ border:1px solid var(--border-subtle);border-radius:var(--radius-md);font-size:1.1rem}
+.katex{font-size:1.06em}
+.katex-display{margin:.6em 0}
+.katex-error{color:var(--red)!important;background:rgba(var(--red-rgb),.12);padding:0 .3rem;border-radius:3px}
+.diagram-wrapper{background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:var(--radius-lg);
+ padding:1.5rem;margin:1.5rem 0}
+.diagram-wrapper svg{display:block;max-width:100%;height:auto;margin:0 auto}
+.diagram-caption{margin-top:.9rem;font-size:.82rem;color:var(--text-dim);text-align:center}
+pre.code-block{background:var(--bg-code);border:1px solid var(--border-subtle);border-radius:var(--radius-md);
+ padding:1rem 1.1rem;overflow-x:auto;font-family:var(--font-mono);font-size:.83rem;line-height:1.5;
+ color:var(--code-ink);margin:1rem 0}
+pre.code-block code{color:inherit;background:none;border:none;padding:0}
+
+footer.report-footer{margin-top:3rem;padding-top:1.1rem;border-top:1px solid var(--border-strong);
+ color:var(--text-dim);font-size:.85rem}
+
+@media (max-width:1100px){.grid-2,.grid-3{grid-template-columns:1fr}}
+@media (max-width:900px){
+  aside.app-sidebar{width:min(86vw,340px);transform:translateX(-100%);box-shadow:0 8px 30px rgba(0,0,0,.25)}
+  [data-sidebar-mobile="open"] aside.app-sidebar{transform:none}
+  [data-sidebar-mobile="open"] .sidebar-backdrop{display:block;position:fixed;inset:var(--header-h) 0 0 0;
+   z-index:40;background:rgba(0,0,0,.4)}
+  .sidebar-resizer,.sidebar-hint{display:none}
+  main.app-main,[data-sidebar="closed"] main.app-main{margin-left:0;padding:2rem 16px 5rem}
+  header.app-header{padding:0 12px}
+  .header-controls .chip,.brand-badge{display:none}
+  .hero-title{font-size:1.9rem}
+  .section-heading{font-size:1.45rem}
+}
+@media print{
+  header.app-header,aside.app-sidebar,body::before{display:none}
+  .layout-container{margin-top:0}
+  main.app-main{margin-left:0;padding:0;max-width:none}
+  .card,.kpi{box-shadow:none}
+  table.data-table th{position:static}
+}
+</style></head>
+<body>
+
+<header class="app-header">
+  <div class="brand-wrapper">
+    <button id="sidebarToggleBtn" class="btn-icon" onclick="toggleSidebar()" title="Show or hide contents ( [ )" aria-label="Toggle contents">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><line x1="9" y1="4" x2="9" y2="20"/></svg>
+    </button>
+    <span class="brand-badge">pablo</span>
+    <div class="brand-title">BO surrogate metrics <span class="dim">&middot; featurization &amp; kernel scan</span></div>
+  </div>
+  <div class="header-controls">
+    <span class="chip chip-slate">cross_1</span>
+    <button id="themeToggleBtn" class="btn-icon" onclick="toggleTheme()" title="Switch theme" aria-label="Switch theme">
+      <svg class="sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      <svg class="moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
+  </div>
+  <div class="reading-progress-track"><div id="progressBar" class="reading-progress-bar"></div></div>
+</header>
+
+<div class="layout-container">
+  <aside class="app-sidebar" id="sidebar">
+    <div class="sidebar-toolbar">
+      <input type="text" id="sidebarSearch" class="search-input" placeholder="Filter sections...">
+      <button id="expandAllBtn" class="btn-icon sm" title="Expand or collapse all" aria-label="Expand or collapse all">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+    </div>
+    <nav class="nav-links-scroll" id="navLinks">
+      <div class="nav-group-title">Contents</div>
+    </nav>
+    <div class="sidebar-hint"><kbd>[</kbd> hide or show &middot; drag the right edge to resize</div>
+    <div class="sidebar-resizer" id="sidebarResizer" title="Drag to resize, double-click to reset"></div>
+  </aside>
+  <div class="sidebar-backdrop" onclick="toggleSidebar()"></div>
+
+  <main class="app-main">
+
+    <div class="hero-header">
+      <div class="hero-meta">
+        <span class="hero-tag">Research report</span>
+        <span class="hero-date">October 2026 &middot; NHC acyloin campaign</span>
+      </div>
+      <h1 class="hero-title">Scoring the scan's Gaussian processes as surrogates for Bayesian optimisation</h1>
+      <p class="hero-subtitle">Featurization &amp; kernel scan, run <code>cross_1</code> &middot; 2,520 configurations
+      &middot; 69 experiments &middot; <code>primary</code> (60 folds, 690 test points) and <code>leave_one_out</code>
+      (60 folds, 69 test points) &middot; 23 cited papers</p>
+    </div>
+
+<section id="sec-background" class="content-section" data-num="00" data-nav="Background">
+  <div class="section-header-block">
+    <span class="section-num-tag">Background</span>
+    <h2 class="section-heading">What the scan ranks today, and why that is not yet the question we ask</h2>
+    <p class="section-lead">We optimise the yield of the NHC-catalysed acyloin condensation by batch Bayesian
+    optimisation (BO). The featurization &amp; kernel scan chooses the Gaussian process (GP) that serves as the BO
+    surrogate, by cross-validating every configuration and ranking it by the gem score.</p>
+  </div>
+
+  <p>The gem rewards a GP whose predictive distribution is close to the observed yield on held-out experiments,
+  wherever that yield lies. A BO surrogate is used differently. The acquisition function only acts on the part of
+  the predictive distribution that promises an improvement, so a surrogate is useful when it is right about which
+  conditions give high yield, and harmful when it is confidently wrong there: a confident under-prediction of a
+  good condition keeps the campaign away from it, and a confident over-prediction of a poor condition spends a batch
+  slot on it. This report collects the scoring rules that judge a GP on that basis, tests them on the 69 experiments
+  and on <code>cross_1</code>, and proposes the scores that should rank the scan.</p>
+
+  <h3 class="subheading">How a model is scored now</h3>
+
+  <div class="callout callout-math">
+    <div class="callout-title">CRPS, CRPSS and the gem</div>
+    <p>For a predictive cumulative distribution function \(F\) and an observed yield \(y\) (as a fraction), the
+    continuous ranked probability score is the squared distance between \(F\) and the step function of the
+    observation, integrated over every yield level \(\theta\):</p>
+    <div class="math-display">\[ \mathrm{CRPS}(F, y) = \int_{-\infty}^{\infty} \big(F(\theta) - \mathbb{1}\{y \le \theta\}\big)^2 \, d\theta = \mathbb{E}_F|X - y| - \tfrac{1}{2}\,\mathbb{E}_F|X - X'| \]</div>
+    <p>It is in yield units and reduces to the absolute error for a point forecast. The skill score compares the
+    model with the baseline forecast \(\mathcal{N}(\bar y_{\text{train}}, s^2_{\text{train}})\), the training mean and
+    variance quoted for every test point, pooled over every test point of every fold of a study:</p>
+    <div class="math-display">\[ \mathrm{CRPSS} = 1 - \frac{\sum_{i} \mathrm{CRPS}_i(\text{model})}{\sum_{i} \mathrm{CRPS}_i(\text{baseline})}, \qquad \text{gem} = \min\big(\mathrm{CRPSS}_{\text{primary}},\ \mathrm{CRPSS}_{\text{leave-one-out}}\big) \]</div>
+    <p><b>CRPSS = 0 means the model is worth nothing over quoting the training average; the gem is the worse of the
+    two interpolation studies.</b></p>
+  </div>
+
+  <div class="card">
+    <h4 class="tertiary-heading" style="margin-top:0">Terms used throughout</h4>
+    <p><b>Proper.</b> A scoring rule \(S\) is proper if the expected score under the true distribution \(G\) is
+    minimised by quoting \(G\) itself, \(\mathbb{E}_G S(G, Y) \le \mathbb{E}_G S(F, Y)\) for every \(F\); strictly
+    proper if \(G\) is the only minimiser. A proper score cannot be improved by quoting something other than one's
+    best belief, so it ranks honest forecasts above hedged ones.</p>
+    <p><b>Threshold decomposition.</b> The integrand of the CRPS at level \(\theta\) is the Brier score of the
+    probability \(1 - F(\theta)\) that the yield exceeds \(\theta\). The CRPS is therefore the sum, over every yield
+    level, of how well the model forecasts "this experiment beats \(\theta\)".</p>
+    <p><b>Studies.</b> <code>primary</code> holds out whole catalysts, 6 folds repeated 10 times, so every experiment
+    is a test point 10 times (690 pooled test points); <code>leave_one_out</code> holds out one replicate group at a
+    time (60 folds, 69 test points).</p>
+  </div>
+</section>
+
+<section id="sec-part-1" class="content-section" data-num="I" data-nav="Why CRPS ignores where an error falls">
+  <div class="section-header-block">
+    <span class="section-num-tag">Part I</span>
+    <h2 class="section-heading">CRPS, CRPSS and MAE price an error by its size, not by where it falls</h2>
+    <p class="section-lead">Seven synthetic predictions on the yield-fraction scale, each a Gaussian
+    \(\mathcal{N}(\mu, \sigma^2)\) scored against one observed yield. They differ in where the observation lies, in
+    the direction of the miss and in the predictive spread. All numbers are computed in closed form.</p>
+  </div>
+
+  <h3 class="subheading">1. The same miss costs the same at 5 percent and at 70 percent yield</h3>
+
+  <p>For a BO surrogate the seven cases are not equally harmful. Case A hides the best condition behind a confident
+  prediction of 40 percent; case B promises 35 percent for a condition that gives 5 percent, which costs one batch
+  slot and is corrected by the next measurement. One would expect a score for BO surrogates to rank A far worse than
+  B.</p>
+
+  <div class="table-responsive"><table class="data-table">
+    <thead><tr><th>Case</th><th class="num">\(y\)</th><th class="num">\(\mu\)</th><th class="num">\(\sigma\)</th>
+    <th class="num">Abs. error</th><th class="num">CRPS</th></tr></thead>
+    <tbody>
+      <tr><td>A overconfident miss at high yield</td><td class="num">0.70</td><td class="num">0.40</td><td class="num">0.03</td><td class="num">0.300</td><td class="num bad">0.2831</td></tr>
+      <tr><td>B same miss at low yield (false hope)</td><td class="num">0.05</td><td class="num">0.35</td><td class="num">0.03</td><td class="num">0.300</td><td class="num bad">0.2831</td></tr>
+      <tr><td>C calibrated wide prediction at high yield</td><td class="num">0.70</td><td class="num">0.40</td><td class="num">0.25</td><td class="num">0.300</td><td class="num">0.1870</td></tr>
+      <tr><td>D calibrated wide prediction at low yield</td><td class="num">0.05</td><td class="num">0.35</td><td class="num">0.25</td><td class="num">0.300</td><td class="num">0.1870</td></tr>
+      <tr><td>E accurate sharp prediction at high yield</td><td class="num">0.70</td><td class="num">0.68</td><td class="num">0.03</td><td class="num">0.020</td><td class="num good">0.0121</td></tr>
+      <tr><td>F overconfident false optimum</td><td class="num">0.35</td><td class="num">0.65</td><td class="num">0.03</td><td class="num">0.300</td><td class="num">0.2831</td></tr>
+      <tr><td>G missed optimum, mirror of F</td><td class="num">0.65</td><td class="num">0.35</td><td class="num">0.03</td><td class="num">0.300</td><td class="num">0.2831</td></tr>
+    </tbody>
+  </table></div>
+
+  <p><b>The CRPS of the missed optimum A equals that of the false hope B (0.2831 each), and the missed optimum G
+  equals the false optimum F; the absolute error cannot even separate the sharp from the wide prediction.</b></p>
+
+  <p>The mechanism is the threshold decomposition. A miss from 0.40 to 0.70 makes the forecast of "yield beats
+  \(\theta\)" wrong for every \(\theta\) between the two values, and the CRPS adds those Brier errors with weight 1
+  per unit of yield. An interval of length 0.30 costs the same wherever it lies on the yield axis and in whichever
+  direction the miss points. The CRPS does reward an honest spread: the wide prediction C costs 0.1870 against 0.2831
+  for the overconfident A, a factor of 1.51. MAE and RMSE do not see the spread at all.</p>
+
+  <div class="callout callout-insight">
+    <div class="callout-title">CRPS already leans on the high yields, for the wrong reason</div>
+    <p>On the 69 experiments the 11 yields above 0.40 are 16 percent of the pooled test points but carry 38 to 39
+    percent of the baseline's summed CRPS in both studies, because they lie far from the training mean of about
+    0.18. The emphasis comes from the size of the errors a constant forecast makes there, not from their value to
+    the optimisation, and it applies equally to a far-off low yield.</p>
+  </div>
+</section>
+
+<section id="sec-part-2" class="content-section" data-num="II" data-nav="The forecaster's dilemma">
+  <div class="section-header-block">
+    <span class="section-num-tag">Part II</span>
+    <h2 class="section-heading">Weighting by the observed yield rewards the optimist: the forecaster's dilemma</h2>
+    <p class="section-lead">The direct repair, scoring high-yield test points more heavily or only scoring the
+    test points whose observed yield is high, makes the score improper. We show the theorem, a simulation and the
+    effect on a real <code>cross_1</code> configuration.</p>
+  </div>
+
+  <h3 class="subheading">2. A weight on the observation changes which forecast is optimal</h3>
+
+  <p>Let \(S_0\) be a proper score and \(w \ge 0\) a weight function of the observed yield, and score with
+  \(S(F, y) = w(y)\, S_0(F, y)\). If the yield has true density \(g\), the expected score is minimised not by \(g\)
+  but by the reweighted density (Gneiting and Ranjan 2011, Theorem 1):</p>
+  <div class="math-display">\[ \mathbb{E}_g\big[w(Y)\, S_0(F, Y)\big] \text{ is minimised by } f^{\ast}(y) = \frac{w(y)\, g(y)}{\int w(z)\, g(z)\, dz} \]</div>
+  <p>With \(w(y) = \mathbb{1}\{y \gt t\}\), the case of scoring only the high-yield test points, the optimal quote is
+  the true distribution conditioned on exceeding \(t\): a model that always predicts high yield. Restricting the
+  evaluation to extreme outcomes "discredits skillful forecasts" and favours forecasters who always predict the
+  extreme (Lerch, Thorarinsdottir, Ravazzolo and Gneiting 2017). For a BO surrogate this is the optimist the
+  campaign must not choose, since it spends every batch on conditions it wrongly believes to be good.</p>
+
+  <h3 class="subheading">3. The optimist wins the restricted score in simulation and on real folds</h3>
+
+  <p>In a simulation shaped like the campaign, the latent mean yield follows \(0.9 \cdot \mathrm{Beta}(0.9, 3.5)\)
+  and the observation adds Gaussian noise with standard deviation 0.08, for 200,000 cases of which 12.4 percent
+  exceed \(t = 0.40\). The ideal forecaster quotes the true conditional distribution. The hedged forecaster raises
+  every mean below 0.45 to 0.45, which is the strategy the theorem recommends for the restricted score. Mean
+  scores, lower is better:</p>
+
+  <div class="table-responsive"><table class="data-table">
+    <thead><tr><th>Forecaster</th><th class="num">CRPS, all cases</th><th class="num">CRPS, only \(y \gt 0.40\)</th><th class="num">twCRPS, \(\theta \gt 0.40\)</th></tr></thead>
+    <tbody>
+      <tr><td>Ideal \(\mathcal{N}(\mu, 0.08^2)\)</td><td class="num good">0.0452</td><td class="num">0.0504</td><td class="num good">0.0055</td></tr>
+      <tr><td>Optimist \(\mathcal{N}(\mu + 0.15, 0.08^2)\)</td><td class="num">0.1146</td><td class="num">0.0818</td><td class="num">0.0191</td></tr>
+      <tr><td>Hedged, means raised to 0.45</td><td class="num bad">0.2400</td><td class="num good">0.0361</td><td class="num">0.0298</td></tr>
+      <tr><td>Climatology</td><td class="num">0.0982</td><td class="num">0.2420</td><td class="num">0.0138</td></tr>
+    </tbody>
+  </table></div>
+
+  <p><b>Restricted to the high observations, the CRPS ranks the hedged forecaster first (0.0361 against 0.0504 for
+  the ideal one) although its overall CRPS is 5.3 times worse; weighting through the forecast (last column, Part
+  III) keeps the ideal forecaster first.</b></p>
+
+  <p>The same happens on a real configuration. We took the best raw-scale cell of <code>cross_1</code>
+  (<code>grover_pca</code> catalyst, <code>Gutmann</code> solvent, one-hot base, Matérn-5/2, cell 1947) and
+  shifted every predictive mean by \(\delta\), keeping the spread.</p>
+
+  <div class="table-responsive"><table class="data-table">
+    <thead><tr><th class="num">\(\delta\)</th><th class="num">CRPS, primary</th><th class="num">CRPS \(y \gt 0.40\), primary</th><th class="num">CRPS, leave-one-out</th><th class="num">CRPS \(y \gt 0.40\), leave-one-out</th></tr></thead>
+    <tbody>
+      <tr><td class="num">0.00</td><td class="num good">0.0655</td><td class="num">0.1177</td><td class="num good">0.0642</td><td class="num">0.1084</td></tr>
+      <tr><td class="num">+0.05</td><td class="num">0.0812</td><td class="num good">0.1072</td><td class="num">0.0785</td><td class="num good">0.1010</td></tr>
+      <tr><td class="num">+0.10</td><td class="num">0.1086</td><td class="num">0.1138</td><td class="num">0.1059</td><td class="num">0.1114</td></tr>
+      <tr><td class="num">+0.20</td><td class="num">0.1819</td><td class="num">0.1428</td><td class="num">0.1809</td><td class="num">0.1457</td></tr>
+    </tbody>
+  </table></div>
+
+  <p><b>Moving every prediction up by 0.05 makes the model 24 percent worse on all test points and 9 percent better
+  on the high-yield ones, so a ranking by high-yield test points would prefer the deliberately biased model.</b></p>
+
+  <div class="callout callout-arch">
+    <div class="callout-title">The rule that follows</div>
+    <p>Emphasis on high yields has to enter through the forecast, never through the observation: a weight on the
+    yield levels \(\theta\) at which the forecast is judged, a weight on the forecast's quantile levels, or a
+    censoring of the forecast. Each of these keeps the score proper (Part III). The weight may depend on anything
+    known before the test yield is revealed, including the training data of the fold, which is what makes a
+    data-driven weight admissible (Part V).</p>
+  </div>
+</section>
+
+<section id="sec-part-3" class="content-section" data-num="III" data-nav="Proper ways to focus a score">
+  <div class="section-header-block">
+    <span class="section-num-tag">Part III</span>
+    <h2 class="section-heading">Five proper ways to focus a score on a region, and what each costs</h2>
+    <p class="section-lead">The literature offers five constructions that emphasise part of the outcome range and
+    stay proper, plus calibration diagnostics for the same purpose. Each is stated with its definition, its
+    propriety, what it sees of location and spread, how it is computed, and how it fits the scan's outcome
+    transforms and small test folds.</p>
+  </div>
+
+  <h3 class="subheading">4. Threshold weighting judges the forecast at the yield levels we care about</h3>
+
+  <div class="callout callout-math">
+    <div class="callout-title">Threshold-weighted CRPS</div>
+    <p>A non-negative weight \(w(\theta)\) on the yield levels replaces the uniform weight of the CRPS (Matheson and
+    Winkler 1976; Gneiting and Ranjan 2011). With a chaining function \(v\), any antiderivative of \(w\), it is the
+    CRPS after mapping forecast and observation through \(v\) (Allen, Ginsbourger and Ziegel 2023):</p>
+    <div class="math-display">\[ \mathrm{twCRPS}(F, y; w) = \int w(\theta)\big(F(\theta) - \mathbb{1}\{y \le \theta\}\big)^2 d\theta = \mathbb{E}_F|v(X) - v(y)| - \tfrac{1}{2}\,\mathbb{E}_F|v(X) - v(X')|, \qquad v'(\theta) = w(\theta) \]</div>
+    <p><b>The weight sits on the levels at which the forecast is judged, not on the observation, so the score is
+    proper for every weight.</b></p>
+  </div>
+
+  <p><b>Propriety.</b> Proper for every \(w \ge 0\) (Matheson and Winkler 1976). Strictly proper when \(v\) is
+  injective, that is when \(w \gt 0\) almost everywhere (Allen, Ginsbourger and Ziegel 2023). With a one-sided
+  indicator \(w(\theta) = \mathbb{1}\{\theta \gt t\}\) the score only depends on the forecast above \(t\) and is
+  strictly locally proper there (Holzmann and Klar 2017, Theorem 4); it then equals the CRPS of the forecast
+  censored at \(t\) against \(\max(y, t)\), the censored CRPS of de Punder, Diks, Laeven and van Dijk (2026).
+  Censoring at the incumbent \(t = y^{\ast}\) gives the CRPS of the improvement \(\max(Y - y^{\ast}, 0)\), the
+  random variable whose expectation is expected improvement.</p>
+
+  <p><b>Location and spread.</b> It is a CRPS on the chained scale, so it penalises a wrong centre and a wrong
+  spread at the weighted levels, and it penalises a miss in either direction by the weight of the yield interval
+  between prediction and observation. In Part I, case A costs 0.2796 and case B 0.0000 under
+  \(w = \mathbb{1}\{\theta \gt 0.40\}\), and the false optimum F still costs 0.2331, because the yields between
+  0.40 and 0.65 that it wrongly promised are weighted levels.</p>
+
+  <p><b>Computation.</b> Closed form for a Gaussian forecast and an indicator weight (Friedli, Gautier, Broccard and
+  Ginsbourger 2025, Theorem 1), the sample form above for draws (Allen 2024), and one-dimensional quadrature of the
+  exact predictive CDF otherwise. <b>Fit with the scan.</b> It is defined on the raw yield scale, so every outcome
+  transform is scored on the same axis once its exact raw-scale CDF is available (Part VI). Its noise is set by how
+  few test points fall where \(w\) is large.</p>
+
+  <h3 class="subheading">5. Quantile weighting sets the direction, not the region</h3>
+
+  <p>The CRPS is also the integral of quantile scores over the quantile level \(\alpha\), and weighting those levels
+  gives the quantile-weighted CRPS (Gneiting and Ranjan 2011):</p>
+  <div class="math-display">\[ \mathrm{qwCRPS}(F, y; u) = \int_0^1 u(\alpha)\, 2\big(\mathbb{1}\{y \le F^{-1}(\alpha)\} - \alpha\big)\big(F^{-1}(\alpha) - y\big)\, d\alpha \]</div>
+  <p>It is proper for every \(u \ge 0\). The quantile score at level \(\alpha\) charges an under-prediction
+  \(2\alpha\) and an over-prediction \(2(1 - \alpha)\) per unit of yield, so a weight on high \(\alpha\) makes
+  missing a high outcome dearer than promising one. It emphasises the forecast's own upper quantiles rather than a
+  region of the yield axis, so on its own it does not single out high yields. Combined with threshold weighting it
+  gives exactly the asymmetry BO needs (Part V).</p>
+
+  <h3 class="subheading">6. Outcome weighting and the likelihood scores need a correction and carry their own costs</h3>
+
+  <p><b>Outcome-weighted CRPS.</b> Holzmann and Klar (2017) restore propriety to an observation weight by scoring
+  the forecast's own reweighted distribution \(F_w\) instead of \(F\), \(\mathrm{owCRPS}(F, y) = w(y)\,
+  \mathrm{CRPS}(F_w, y)\). It is only proportionally locally proper: it judges the shape of the forecast in the
+  region and is blind to the probability the forecast assigns to the region. Adding a Brier score for that
+  probability makes it strictly locally proper, but sums a squared probability with a quantity in yield units; in
+  Part I this rates the false optimum F at 1.00 and the missed optimum A at 0.52, a ratio fixed by the units, not
+  by the problem. It also requires \(\mathbb{E}_F[w(X)] \gt 0\), which fails for sharp forecasts away from the
+  region, and Allen, Bhend, Martius and Ziegel (2023) recommend the threshold-weighted form for that reason.</p>
+
+  <p><b>Conditional and censored likelihood.</b> Diks, Panchenko and van Dijk (2011) score the log density inside
+  the region and, for the censored version, the log probability of falling outside it. Both are proper, and
+  the censored likelihood ratio test is uniformly most powerful for comparing two forecasts on the region (de
+  Punder, Diks, Laeven and van Dijk 2026). They inherit the log score's unbounded penalty: case A costs 47.4 under the
+  censored likelihood against 0.28 under the threshold-weighted CRPS. This is the fold-level heavy tail that makes
+  the scan quote MSLL as a median, and a pooled sum of such scores is set by its worst point.</p>
+
+  <p><b>Weighted kernel scores.</b> The vertically re-scaled CRPS and the threshold-weighted energy and variogram
+  scores extend the construction to several outcomes at once (Allen, Ginsbourger and Ziegel 2023). For a single
+  outcome and an indicator weight with its canonical anchor the re-scaled CRPS equals the threshold-weighted CRPS,
+  so they add nothing for yield alone. They are the route to a joint yield and selectivity score.</p>
+
+  <h3 class="subheading">7. Two limits that no weighting removes</h3>
+
+  <p>A weighted score can only judge the region with the data that falls into it. Lerch et al. (2017) find that
+  tests of equal performance based on weighted scores gain little or no power over tests based on the unweighted
+  log score, and that any advantage vanishes as the weighted region becomes rarer. Brehmer and Strokorb (2019) prove that genuine tail
+  properties, defined in the limit of extreme levels, cannot be elicited by any expected score. Here the relevant
+  region is not an asymptotic tail but the upper third of the observed yields, so the second result does not bind;
+  the first does, and Part V measures it.</p>
+
+  <p>For point forecasts the same idea exists as a mixture of elementary scores over decision thresholds (Ehm,
+  Gneiting, Jordan and Krüger 2016; Taggart 2022); a region-weighted absolute error is the median-forecast
+  special case and loses the spread. Conditional PIT histograms and tail-calibration diagnostics (Allen et al.
+  2023; Allen, Koh, Segers and Ziegel 2025) check calibration given an exceedance, paired with a reliability check
+  of the exceedance probability. They condition on the outcome and are therefore diagnostics, never ranking
+  scores.</p>
+
+  <div class="table-responsive"><table class="data-table">
+    <thead><tr><th>Family</th><th>Weight acts on</th><th>Propriety</th><th>Location, spread</th><th>Computation on <code>cross_1</code></th><th>Fit with 69 points</th></tr></thead>
+    <tbody>
+      <tr><td>Threshold-weighted CRPS</td><td>yield levels \(\theta\)</td><td>proper; strict for \(w \gt 0\)</td><td>both; either miss direction</td><td>quadrature of exact CDF</td><td>noise set by mass of \(w\)</td></tr>
+      <tr><td>Quantile-weighted CRPS</td><td>quantile levels \(\alpha\)</td><td>proper</td><td>both; sets miss direction</td><td>exact quantile function</td><td>as CRPS</td></tr>
+      <tr><td>Outcome-weighted CRPS + Brier</td><td>observation, corrected</td><td>strictly locally proper</td><td>shape in region; probability via Brier</td><td>needs \(\mathbb{E}_F[w(X)] \gt 0\)</td><td>mixes units</td></tr>
+      <tr><td>Censored likelihood</td><td>censoring outside region</td><td>proper</td><td>both; unbounded</td><td>exact density</td><td>set by worst point</td></tr>
+      <tr><td>Weighted kernel scores</td><td>chaining or weight</td><td>proper</td><td>both</td><td>samples</td><td>multivariate only</td></tr>
+      <tr><td>Restricted score (Part II)</td><td>observation</td><td class="bad">improper</td><td>rewards optimism</td><td>trivial</td><td>excluded</td></tr>
+    </tbody>
+  </table></div>
+
+  <p><b>Threshold weighting is the only construction that is proper, bounded per point, defined on the yield axis
+  for every outcome transform, and penalises a wrong centre and a wrong spread in both directions; quantile weighting
+  is the proper way to make one direction dearer.</b></p>
+</section>
+
+<section id="sec-part-4" class="content-section" data-num="IV" data-nav="What the BO literature says matters">
+  <div class="section-header-block">
+    <span class="section-num-tag">Part IV</span>
+    <h2 class="section-heading">Global accuracy and calibration do not reliably predict BO performance; accuracy near the optimum does</h2>
+    <p class="section-lead">Six studies relate a surrogate's test-set scores to the outcome of the optimisation it
+    drives, on synthetic functions, hyperparameter tuning, molecules and proteins. None is on reaction conditions, and
+    all optimise single points rather than batches.</p>
+  </div>
+
+  <h3 class="subheading">8. Within a model family, calibration error does not track regret</h3>
+
+  <p>The expectation behind calibrated BO is that a surrogate whose 80 percent intervals hold 80 percent of the
+  outcomes makes better exploration decisions (Kuleshov, Fenner and Ermon 2018). Deshpande, Marx and Kuleshov (2024)
+  argue it from the acquisition side: probability of improvement and expected improvement are expectations under the
+  predictive distribution, which a calibrated model estimates correctly on average, and online recalibration
+  improved their benchmarks. Foldager, Jordahn, Hansen and Andersen (2023) measured the relation across 128
+  synthetic problems and 6 tuning tasks. Calibration error and total regret correlate at 0.28 and 0.42 over all
+  runs, but the partial correlation given the surrogate type is -0.06 and -0.24: the association comes from GPs and
+  deep ensembles being both better calibrated and better optimisers, not from calibration within a family.
+  Recalibration did not lower regret, and inflating every predictive standard deviation by a factor above 1 raised
+  regret faster than shrinking it.</p>
+
+  <p>The chemistry studies agree. In DIONYSUS, "good prediction and calibration of a surrogate model on a test set
+  does not necessarily correspond to better Bayesian optimization" (Tom, Hickman, Zinzuwadia, Mohajeri,
+  Sanchez-Lengeling and Aspuru-Guzik 2023). On protein landscapes, uncertainty-quality metrics were not well
+  correlated with gains between active-learning rounds, and including the uncertainty in the acquisition did not
+  necessarily improve on greedy selection (Greenman, Amini and Yang 2025).</p>
+
+  <h3 class="subheading">9. Ranking and local accuracy near the optimum do track it</h3>
+
+  <p>Tom, Lo, Corapi, Aspuru-Guzik and Sanchez-Lengeling (2025) correlated the surrogate's test performance with the
+  fraction of the top 100 molecules found. The \(R^2\) of the regression fit gave no correlation with
+  \(p \lt 0.05\); Kendall's rank correlation on the test set correlated at 0.44 to 0.92 across their dataset groups
+  and models, the GP at 0.54 to 0.91. Li, Cui, Mansi, Prakash and Liao (2026) split the test log-likelihood by the
+  label: over their configurations top-k recall correlates at Spearman -0.31 and -0.22 with the global
+  log-likelihood and at 0.31 to 0.65 with the log-likelihood on the test points in the top 1 to 10 percent.</p>
+
+  <p><b>What predicts a good optimisation is how well the surrogate orders and predicts the candidates near the top,
+  not its average accuracy or average calibration.</b></p>
+
+  <p>The last result is the forecaster's dilemma in practice: restricting the likelihood to the true top points is an
+  observation weight and could be gamed by an optimistic model if used to choose one (Part II). It shows which
+  region matters, and threshold weighting is the proper way to score that region. Friedli et al. (2025) use the
+  threshold-weighted CRPS to focus GP-driven sequential design on molecules above a property threshold, and Petit, Bect,
+  Feliot and Vazquez (2023), comparing likelihood and scoring-rule criteria for selecting GP parameters, find that
+  "the choice of an appropriate family of models is often more important than the choice of a particular selection
+  criterion", the same pattern as the model-type effect of Foldager et al.</p>
+
+  <div class="callout callout-warning">
+    <div class="callout-title">How far the evidence carries</div>
+    <p>The correlations come from single-point BO on large candidate pools, with tens to hundreds of iterations. Our
+    campaign has 69 experiments, batches of six, and a mixed continuous and categorical space. The direction of the
+    evidence is consistent across studies; its size is not transferable.</p>
+  </div>
+</section>
+
+<section id="sec-part-5" class="content-section" data-num="V" data-nav="A threshold-free weight and a bounded asymmetry">
+  <div class="section-header-block">
+    <span class="section-num-tag">Part V</span>
+    <h2 class="section-heading">For this campaign the weight must follow the data, and a missed optimum must cost a bounded multiple of a false hope</h2>
+    <p class="section-lead">We first measure what a fixed high-yield threshold does on the 69 experiments, then build a
+    weight from each fold's own training yields and an asymmetric binary score from the cost-loss representation of
+    proper scores. Every number in this Part is computed from the rebuilt predictive distributions of
+    <code>cross_1</code> (Part VI) or from the synthetic cases of Part I.</p>
+  </div>
+
+  <h3 class="subheading">10. A fixed threshold puts the score on four catalysts</h3>
+
+  <p>Only 11 of the 69 yields exceed 0.40 and 4 exceed 0.50. The 11 come from four catalysts and include five
+  replicates (three at 0.43 to 0.44, two at 0.50 and 0.51), so they are eight distinct conditions. The incumbent is useless
+  as a threshold for evaluation: the best training yield of a fold is 0.67 in 50 of 60 <code>primary</code> folds and
+  59 of 60 <code>leave_one_out</code> folds, and only 10 of 690 and 1 of 69 test points exceed it. We scored 150
+  configurations of <code>cross_1</code> (the 40 best by gem and 110 drawn at random) with the indicator weight
+  \(\mathbb{1}\{\theta \gt 0.40\}\) and with a smooth weight \(\Phi((\theta - 0.35)/0.10)\).</p>
+
+  <div class="table-responsive"><table class="data-table">
+    <thead><tr><th>Score</th><th class="num">Baseline mass from \(y \gt 0.40\)</th><th class="num">Effective test points, leave-one-out</th><th class="num">Bootstrap SD of the min skill</th><th class="num">Median skill, 150 cells</th></tr></thead>
+    <tbody>
+      <tr><td>CRPS</td><td class="num">39%</td><td class="num">45 of 69</td><td class="num good">0.064</td><td class="num">+0.223</td></tr>
+      <tr><td>twCRPS, \(\Phi((\theta - 0.35)/0.10)\)</td><td class="num">82%</td><td class="num">12 of 69</td><td class="num">0.196</td><td class="num">-0.002</td></tr>
+      <tr><td>twCRPS, \(\mathbb{1}\{\theta \gt 0.40\}\)</td><td class="num">98%</td><td class="num">7 of 69</td><td class="num bad">0.396</td><td class="num bad">-0.163</td></tr>
+    </tbody>
+  </table></div>
+
+  <p class="small">Baseline mass: share of the summed baseline score contributed by the 11 test points above 0.40
+  (best cell, <code>primary</code>). Effective test points: \((\sum_i b_i)^2 / \sum_i b_i^2\) over the baseline
+  scores \(b_i\). Bootstrap SD: standard deviation of min(<code>primary</code>, <code>leave_one_out</code>) skill
+  over 500 fold resamples, median over the 10 best cells.</p>
+
+  <p><b>With a hard threshold at 0.40 the score rests on seven effective test points and its fold-bootstrap noise is
+  6.2 times that of CRPSS, so it cannot separate the leading configurations.</b></p>
+
+  <p>The leave-one-out scores of the three best cells show why. Every one of them predicts the incumbent, 0.67, at
+  0.20 to 0.22 and the runner-up, 0.62, at 0.27 to 0.28, with predictive standard deviations of 0.05 to 0.14. These
+  are case A of Part I, and these two test points carry about half of each cell's weighted score. A threshold
+  chosen by hand would also need to move as the campaign finds better conditions, which is the second reason to
+  derive the weight from the data.</p>
+
+  <h3 class="subheading">11. The training yields themselves define the weight</h3>
+
+  <p>For a fold with training yields \(y_1, \dots, y_n\) we weight the yield level \(\theta\) by the fraction of
+  training experiments it beats, the empirical distribution function of the training yields:</p>
+  <div class="math-display">\[ w_n(\theta) = \frac{1}{n}\sum_{i=1}^{n} \mathbb{1}\{y_i \le \theta\}, \qquad v_n(\theta) = \int_{-\infty}^{\theta} w_n(u)\, du = \frac{1}{n}\sum_{i=1}^{n} \max(\theta - y_i, 0) \]</div>
+  <p>The chaining function \(v_n\) is the average improvement of a yield \(\theta\) over the experiments already run.
+  Scoring on that scale generalises the improvement over the incumbent, \(\max(\theta - y^{\ast}, 0)\), which uses
+  only the best experiment and is too sparse to evaluate (item 10), to the improvement over every past experiment.
+  On the 69 experiments the weight is 0.19 at a yield of 0, 0.33 at 0.05, 0.62 at 0.20, 0.84 at 0.40, 0.97 at 0.60
+  and 1 from 0.67 up, so an error interval at the top of the range costs three to five times the same interval at
+  the bottom. There is no threshold to choose: the weight rises with the campaign's own results and moves upward as
+  better yields are found. It is fixed by the training data before the test yield is seen, so the score stays
+  proper, and it is positive above the lowest training yield (0 in every fold), so \(v_n\) is strictly increasing
+  there and the score is strictly locally proper on the whole yield range.</p>
+
+  <h3 class="subheading">12. A cost-loss mixture makes a missed optimum k times dearer than a false hope</h3>
+
+  <p>The threshold decomposition judges, at every level \(\theta\), the forecast probability \(p = 1 - F(\theta)\)
+  that the experiment beats \(\theta\). For BO this is a go or no-go decision at every level. Running a condition
+  that does not beat \(\theta\) wastes a batch slot; not running one that does loses the improvement. Every regular proper
+  score for a probability is a mixture of elementary cost-loss scores (Ehm, Gneiting, Jordan and Krüger 2016):
+  with cost-loss ratio \(c\), acting when the event fails costs \(c\) and not acting when it occurs costs \(1 - c\),
+  and the forecaster acts when \(p \gt c\). The Brier score, and with it the CRPS, mixes the ratios uniformly. A
+  mixing density \(k(1 - c)^{k - 1}\), which favours small \(c\), gives the proper binary score</p>
+  <div class="math-display">\[ s_k(p, 1) = \frac{2k}{k + 1}(1 - p)^{k + 1}, \qquad s_k(p, 0) = \frac{2}{k + 1}\Big(1 - (1 - p)^{k}(1 + k p)\Big) \]</div>
+  <p>for the event occurring (\(1\)) or failing (\(0\)). For \(k = 1\) it is the Brier score. A confident miss,
+  \(s_k(0, 1) = 2k/(k + 1)\), costs exactly \(k\) times a confident false alarm, \(s_k(1, 0) = 2/(k + 1)\), so
+  \(k\) is the price of a lost optimum in units of a wasted experiment, and it is bounded by construction. Because
+  each elementary score is proper, so is every mixture, for every \(k\).</p>
+
+  <div class="callout callout-math">
+    <div class="callout-title">BO-weighted CRPS</div>
+    <p>Integrating the asymmetric binary score over the yield levels with the training-yield weight gives</p>
+    <div class="math-display">\[ \mathrm{BOCRPS}_k(F, y) = \int w_n(\theta)\, s_k\big(1 - F(\theta),\ \mathbb{1}\{y \gt \theta\}\big)\, d\theta \]</div>
+    <p>which has the equivalent quantile form, by Theorem 1a of Ehm et al. (2016),</p>
+    <div class="math-display">\[ \mathrm{BOCRPS}_k(F, y) = \int_0^1 k\,\alpha^{k-1}\; 2\big(\mathbb{1}\{y \lt F^{-1}(\alpha)\} - \alpha\big)\big(v_n(F^{-1}(\alpha)) - v_n(y)\big)\, d\alpha \]</div>
+    <p><b>It is the threshold-weighted CRPS on the scale of average improvement over past experiments, with the
+    upper quantile levels weighted by \(k\alpha^{k-1}\); for \(k = 1\) it is the threshold-weighted CRPS with weight
+    \(w_n\), and with \(w_n \equiv 1\) and \(k = 1\) it is the CRPS.</b></p>
+  </div>
+
+  <h3 class="subheading">13. The asymmetry separates the missed optimum from the false hope without rewarding optimism</h3>
+
+  <p>The synthetic cases of Part I, scored with \(w_n\) built from the 69 observed yields:</p>
+
+  <div class="table-responsive"><table class="data-table">
+    <thead><tr><th>Case</th><th class="num">CRPS</th><th class="num">\(k = 1\)</th><th class="num">\(k = 2\)</th><th class="num">\(k = 3\)</th><th class="num">\(k = 4\)</th></tr></thead>
+    <tbody>
+      <tr><td>A overconfident miss at high yield</td><td class="num">0.2831</td><td class="num">0.2696</td><td class="num bad">0.3498</td><td class="num">0.3865</td><td class="num">0.4067</td></tr>
+      <tr><td>B same miss at low yield (false hope)</td><td class="num">0.2831</td><td class="num">0.1717</td><td class="num good">0.1237</td><td class="num">0.0964</td><td class="num">0.0791</td></tr>
+      <tr><td>C calibrated wide prediction at high yield</td><td class="num">0.1870</td><td class="num">0.1738</td><td class="num">0.1640</td><td class="num">0.1378</td><td class="num">0.1136</td></tr>
+      <tr><td>E accurate sharp prediction at high yield</td><td class="num">0.0121</td><td class="num">0.0121</td><td class="num">0.0097</td><td class="num">0.0073</td><td class="num">0.0056</td></tr>
+      <tr><td>F overconfident false optimum</td><td class="num">0.2831</td><td class="num">0.2593</td><td class="num">0.1840</td><td class="num">0.1424</td><td class="num">0.1163</td></tr>
+      <tr><td>G missed optimum, mirror of F</td><td class="num">0.2831</td><td class="num">0.2619</td><td class="num">0.3399</td><td class="num">0.3755</td><td class="num">0.3952</td></tr>
+      <tr><td>Ratio A / B, missed optimum over false hope</td><td class="num">1.00</td><td class="num">1.57</td><td class="num"><b>2.83</b></td><td class="num">4.01</td><td class="num">5.14</td></tr>
+      <tr><td>Ratio G / F, same interval, opposite direction</td><td class="num">1.00</td><td class="num">1.01</td><td class="num"><b>1.85</b></td><td class="num">2.64</td><td class="num">3.40</td></tr>
+      <tr><td>Ratio A / C, overconfident over honest</td><td class="num">1.51</td><td class="num">1.55</td><td class="num"><b>2.13</b></td><td class="num">2.80</td><td class="num">3.58</td></tr>
+    </tbody>
+  </table></div>
+
+  <p><b>At \(k = 2\) the missed optimum A costs 2.8 times the false hope B and 2.1 times an honest wide prediction of
+  the same point, against 1.0 and 1.5 under the CRPS; the false optimum F still costs 19 times an accurate
+  prediction.</b></p>
+
+  <p>Two mechanisms act. The weight \(w_n\) makes an error interval high on the yield axis dearer than the same
+  interval low on it, in either direction: it separates A from B already at \(k = 1\) (1.57), but treats F and G
+  alike (1.01). The asymmetry \(k\) makes the direction count: G against F grows from 1.01 to 1.85 at \(k = 2\).
+  The ratios stay bounded, at most 5.1 in the table, so no single test point can
+  dominate the way the incumbent does under a hard threshold.</p>
+
+  <p>Propriety is what keeps the asymmetry from turning into the forecaster's dilemma. In a simulation set up as in item 3
+  (4,000 cases, the weight built from 60 simulated training yields) the ideal forecaster has the lowest score for
+  every \(k\), and both biased forecasters are penalised:</p>
+
+  <div class="table-responsive"><table class="data-table">
+    <thead><tr><th>Forecaster</th><th class="num">CRPS</th><th class="num">CRPS, only \(y \gt 0.40\)</th><th class="num">\(k = 1\)</th><th class="num">\(k = 2\)</th><th class="num">\(k = 3\)</th></tr></thead>
+    <tbody>
+      <tr><td>Ideal \(\mathcal{N}(\mu, 0.08^2)\)</td><td class="num good">0.0448</td><td class="num">0.0487</td><td class="num good">0.0212</td><td class="num good">0.0223</td><td class="num good">0.0210</td></tr>
+      <tr><td>Optimist, mean \(+0.10\)</td><td class="num">0.0781</td><td class="num">0.0592</td><td class="num">0.0407</td><td class="num">0.0409</td><td class="num">0.0375</td></tr>
+      <tr><td>Pessimist, mean \(-0.10\)</td><td class="num">0.0779</td><td class="num">0.1023</td><td class="num">0.0328</td><td class="num">0.0369</td><td class="num">0.0365</td></tr>
+      <tr><td>Overconfident, SD divided by 3</td><td class="num">0.0520</td><td class="num">0.0567</td><td class="num">0.0246</td><td class="num">0.0261</td><td class="num">0.0256</td></tr>
+      <tr><td>Underconfident, SD times 3</td><td class="num">0.0663</td><td class="num">0.0681</td><td class="num">0.0314</td><td class="num">0.0366</td><td class="num">0.0379</td></tr>
+    </tbody>
+  </table></div>
+
+  <p>The optimist, whose errors lie high on the yield axis, is penalised more than the pessimist at \(k = 1\) and
+  \(k = 2\) and about as much at \(k = 3\); the restricted CRPS instead penalises the pessimist 1.7 times as much as
+  the optimist. On the real cell 1947, shifting every prediction up by 0.05 raises the \(k = 2\) score from 0.0477
+  to 0.0569 in <code>primary</code> and from 0.0455 to 0.0534 in <code>leave_one_out</code>, where the restricted
+  CRPS of item 3 fell. The underconfident forecaster scores worse than the overconfident one at every \(k\)
+  (0.0366 against 0.0261 at \(k = 2\)), the order Foldager et al. (2023) found for regret. <b>The BO-weighted score penalises over-prediction at low yield and under-prediction at
+  high yield, prices the second higher by a bounded factor, and still ranks the honest forecast first.</b></p>
+
+  <h3 class="subheading">14. On cross_1 the BO-weighted score stays close to the noise of CRPSS and reorders the leaders</h3>
+
+  <p>The same 150 configurations as in item 10 were scored with the BO-weighted CRPS for \(k\) from 1 to 4, and
+  with two other data-driven weights for comparison: the Gaussian CDF of the training yields,
+  \(\Phi((\theta - \bar y_{\text{train}})/s_{\text{train}})\), and the squared empirical distribution function
+  \(w_n(\theta)^2\), which concentrates the weight further on the top.</p>
+
+  <div class="table-responsive"><table class="data-table">
+    <thead><tr><th>Score</th><th class="num">Baseline mass from \(y \gt 0.40\)</th><th class="num">Effective test points, LOO</th><th class="num">Bootstrap SD</th><th class="num">Rank corr. with gem, 150 cells</th><th class="num">Rank corr., top 40</th><th class="num">Shared top 10</th></tr></thead>
+    <tbody>
+      <tr><td>CRPS (the gem)</td><td class="num">39%</td><td class="num">45 of 69</td><td class="num good">0.066</td><td class="num">1</td><td class="num">1</td><td class="num">10</td></tr>
+      <tr><td>BO-weighted, \(w_n\), \(k = 1\)</td><td class="num">51%</td><td class="num">33 of 69</td><td class="num">0.086</td><td class="num">0.953</td><td class="num">0.688</td><td class="num">5</td></tr>
+      <tr><td><b>BO-weighted, \(w_n\), \(k = 2\)</b></td><td class="num">50%</td><td class="num">32 of 69</td><td class="num">0.076</td><td class="num">0.950</td><td class="num">0.554</td><td class="num">3</td></tr>
+      <tr><td>BO-weighted, \(w_n\), \(k = 3\)</td><td class="num">50%</td><td class="num">31 of 69</td><td class="num">0.074</td><td class="num">0.925</td><td class="num">0.454</td><td class="num">2</td></tr>
+      <tr><td>BO-weighted, \(w_n\), \(k = 4\)</td><td class="num">50%</td><td class="num">30 of 69</td><td class="num">0.078</td><td class="num">0.904</td><td class="num">0.468</td><td class="num">2</td></tr>
+      <tr><td>Gaussian-CDF weight, \(k = 2\)</td><td class="num">54%</td><td class="num">29 of 69</td><td class="num">0.084</td><td class="num">0.936</td><td class="num">0.541</td><td class="num">3</td></tr>
+      <tr><td>Squared weight \(w_n^2\), \(k = 2\)</td><td class="num">59%</td><td class="num">24 of 69</td><td class="num">0.089</td><td class="num">0.913</td><td class="num">0.482</td><td class="num">3</td></tr>
+    </tbody>
+  </table></div>
+
+  <p class="small">Columns as in item 10; rank correlation is Spearman's between the score's min-over-studies skill
+  and the stored gem; shared top 10 counts the configurations in the top 10 of both. Bootstrap SDs differ by about
+  0.002 between independent resamplings.</p>
+
+  <p><b>The weight \(w_n\) with \(k = 2\) raises the share of the score carried by the 11 high-yield test points
+  from 39 to 50 percent at a bootstrap noise 1.15 times that of CRPSS, against 6.2 times for the hard threshold;
+  within the 40 leading configurations it agrees with the gem at rank correlation 0.55 and shares 3 of the top 10.</b></p>
+
+  <p>The ranking changes along the outcome transform. Averaged over the sampled configurations, the min-over-studies
+  skill at \(k = 2\) against the CRPSS changes by \(-0.006\) for <code>arcsin_sqrt</code> (0.274 to 0.268),
+  \(-0.026\) for <code>probit</code> (0.274 to 0.248) and \(+0.022\) for <code>raw</code> (0.143 to 0.165), and 9 of
+  the 12 best configurations by the BO-weighted score use <code>arcsin_sqrt</code>, against 6 of 12 by the gem.
+  The two leading cells swap: <code>arcsin_sqrt</code> cell 2235 (<code>grover_pca</code>, <code>Hansen</code>,
+  steric base) scores +0.415 and <code>probit</code> cell 1339 (<code>grover_pca</code>, <code>Hansen</code>,
+  <code>grover_pca</code> base) +0.396, but the paired fold-bootstrap interval of the difference, +0.019 [-0.023,
+  +0.059], contains zero, so the two are indistinguishable. A weight concentrated further on the top, \(w_n^2\),
+  raises the noise to 0.089 without a different picture of the leaders, and the Gaussian-CDF weight behaves like
+  \(w_n\) with more noise; \(w_n\) is also the only one of the three that assumes nothing about the shape of the
+  yield distribution.</p>
+</section>
+
+<section id="sec-part-6" class="content-section" data-num="VI" data-nav="The metrics of choice">
+  <div class="section-header-block">
+    <span class="section-num-tag">Part VI</span>
+    <h2 class="section-heading">The metrics of choice: a BO-weighted skill score that ranks, and its threshold decomposition that explains</h2>
+    <p class="section-lead">Two metrics, one for ranking and one for diagnosis, both computed from the exact
+    predictive distribution of every fold. The pending decision is the asymmetry \(k\) and whether the BO gem
+    replaces the gem as the ranking criterion.</p>
+  </div>
+
+  <h3 class="subheading">15. Metric 1: the BO-weighted CRPS skill score and the BO gem</h3>
+
+  <div class="callout callout-math">
+    <div class="callout-title">Definition</div>
+    <p>Per test point \(i\) of a fold with training yields \(y_1, \dots, y_n\), the model's predictive CDF
+    \(F_i\) and the baseline \(B_i = \mathcal{N}(\bar y_{\text{train}}, s^2_{\text{train}})\) are scored with the same
+    weight \(w_n\) and asymmetry \(k\) (item 12). Per study the skill is pooled over every test point of every
+    successful fold, and the BO gem is the worse of the two interpolation studies:</p>
+    <div class="math-display">\[ \mathrm{BOCRPSS}_k = 1 - \frac{\sum_{i} \mathrm{BOCRPS}_k(F_i, y_i)}{\sum_{i} \mathrm{BOCRPS}_k(B_i, y_i)}, \qquad \text{BO gem} = \min\big(\mathrm{BOCRPSS}_{k,\text{primary}},\ \mathrm{BOCRPSS}_{k,\text{leave-one-out}}\big) \]</div>
+    <p><b>BOCRPSS = 0 means the model is worth nothing over the training average for deciding which conditions
+    beat the campaign's past results; a missed improvement costs \(k\) times a wasted experiment.</b></p>
+  </div>
+
+  <p><b>Why this score.</b> It is the only candidate that meets all three requirements at once. It scores the whole
+  predictive distribution and penalises a wrong centre and a wrong spread (item 4). It weights the high-yield region
+  through the forecast and a weight fixed by the training data, so it is proper and does not reward the optimist
+  (items 2, 3 and 13), and the weight follows the campaign without a hand-set threshold (item 11). Its asymmetry is
+  a single number with a decision meaning, the price of a missed improvement in wasted experiments, bounded by
+  construction (item 12). On <code>cross_1</code> it carries half of its mass on the 11 high-yield test points at
+  1.15 times the noise of CRPSS (item 14).</p>
+
+  <p><b>Choice of \(k\).</b> We propose \(k = 2\): a confident miss of a condition that would have improved on the
+  campaign costs two wasted experiments. In the synthetic cases this makes the missed optimum 2.8 times as costly as
+  the same miss at low yield and 2.1 times as costly as an honest wide prediction, against 1.0 and 1.5 under CRPS;
+  on <code>cross_1</code> its bootstrap noise is lower than at \(k = 1\) (0.076 against 0.086), and
+  \(k = 3\) and \(k = 4\) change the leaders further with the same noise (item 14). The choice of \(k\) is a
+  statement about the campaign's costs, not something the data can estimate.</p>
+
+  <p><b>Skill score and pooling.</b> The pooled skill is a ratio of sums over the same test points, exactly as for
+  CRPSS. A skill score is in general not proper, because the reference score depends on the observations (Gneiting
+  and Raftery 2007). Here every configuration is scored on the same folds against the same baseline, so the
+  denominator is a common constant and the ranking by \(\mathrm{BOCRPSS}_k\) is the ranking by the summed score
+  itself, which is proper. The baseline is scored with the same \(w_n\) and \(k\), so 0 keeps its meaning. Failed
+  folds are dropped and flagged as for the gem.</p>
+
+  <h3 class="subheading">16. Metric 2: the threshold decomposition locates the loss on the yield axis</h3>
+
+  <p>The BO-weighted score is an integral over yield levels, so the same pooled skill can be restricted to a band
+  of levels: the share of the score lost or gained when deciding whether an experiment beats a yield in that band.
+  The weight \(w_n\) is nearly constant within a narrow band and cancels between model and baseline, so the band
+  skill measures the forecast of the exceedance probabilities alone. It is a diagnostic for a chosen
+  configuration, not a ranking score: each band rests on few test points. For the best cell of each outcome
+  transform, at \(k = 2\):</p>
+
+  <div class="table-responsive"><table class="data-table">
+    <thead><tr><th>Cell, study</th><th class="num">0.0 to 0.1</th><th class="num">0.1 to 0.2</th><th class="num">0.2 to 0.3</th><th class="num">0.3 to 0.4</th><th class="num">0.4 to 0.5</th><th class="num">0.5 to 0.6</th><th class="num">0.6 to 0.7</th></tr></thead>
+    <tbody>
+      <tr><td>1339 <code>probit</code>, primary</td><td class="num">+0.395</td><td class="num">+0.480</td><td class="num">+0.464</td><td class="num">+0.432</td><td class="num">+0.343</td><td class="num">+0.007</td><td class="num">+0.112</td></tr>
+      <tr><td>1339 <code>probit</code>, leave-one-out</td><td class="num">+0.494</td><td class="num">+0.480</td><td class="num">+0.518</td><td class="num">+0.511</td><td class="num">+0.340</td><td class="num bad">-0.282</td><td class="num bad">-0.370</td></tr>
+      <tr><td>2235 <code>arcsin_sqrt</code>, primary</td><td class="num">+0.362</td><td class="num">+0.489</td><td class="num">+0.477</td><td class="num">+0.459</td><td class="num">+0.362</td><td class="num">+0.078</td><td class="num">+0.175</td></tr>
+      <tr><td>2235 <code>arcsin_sqrt</code>, leave-one-out</td><td class="num">+0.491</td><td class="num">+0.488</td><td class="num">+0.536</td><td class="num">+0.515</td><td class="num">+0.350</td><td class="num bad">-0.198</td><td class="num bad">-0.259</td></tr>
+      <tr><td>1947 <code>raw</code>, primary</td><td class="num">+0.264</td><td class="num">+0.388</td><td class="num">+0.389</td><td class="num">+0.390</td><td class="num">+0.350</td><td class="num">+0.025</td><td class="num">-0.004</td></tr>
+      <tr><td>1947 <code>raw</code>, leave-one-out</td><td class="num">+0.442</td><td class="num">+0.406</td><td class="num">+0.386</td><td class="num">+0.442</td><td class="num">+0.374</td><td class="num bad">-0.163</td><td class="num bad">-0.123</td></tr>
+    </tbody>
+  </table></div>
+
+  <p><b>All three leading configurations keep a skill of +0.26 to +0.54 for deciding whether an experiment beats a
+  yield up to 0.5, and lose it above 0.5, where in leave-one-out they are 12 to 37 percent worse than quoting the
+  training average.</b></p>
+
+  <p>Above 0.5 lie the four best experiments of the campaign, the two batch results at 0.67 and 0.62 among them.
+  Held out, they are predicted at 0.20 to 0.28 (item 10). This is the region the next batches are meant to
+  explore, and it is where the surrogate is currently least reliable; the band table shows it for any configuration
+  in one line.</p>
+
+  <h3 class="subheading">17. Computing it on cross_1 and on later runs</h3>
+
+  <p>Every fold of <code>cross_1</code> stores the fitted raw parameters and the training indices. Building the
+  cell's model on those indices with the current code and loading the parameters reproduces the fitted GP without
+  refitting; the predictive distribution of an observation is then Gaussian on the model's outcome scale,
+  \(Z \sim \mathcal{N}(m, s^2)\) with \(s^2\) the posterior plus noise variance, and the raw-scale CDF is exact:
+  \(F(\theta) = \Phi\big((g(\theta) - m)/s\big)\) for the monotone probit and raw links \(g\), and a sum over the
+  periodic branches of \(\sin^2\) for <code>arcsin_sqrt</code>. The scan stores only the moments of 2,000 draws for
+  the non-raw transforms, so this rebuild is what makes a weighted score exact for them.</p>
+
+  <p>All 2,520 configurations, 137 folds each with no failed fold, were rebuilt and passed the check against what
+  the run stored before their predictions were kept. For <code>raw</code> cells the rebuilt predictive mean and variance must equal the
+  stored ones to \(10^{-6}\); the largest deviation of the min-over-studies CRPSS recomputed from them is
+  \(9.4 \times 10^{-10}\). For the other transforms the exact raw-scale mean and variance (Gauss-Hermite quadrature)
+  must differ from the stored 2,000-draw moments by Monte Carlo error only: the root-mean-square z-score of both,
+  over all test points of a cell, must stay below 1.5. On the best cells it is 0.96 to 1.02, as Monte Carlo error
+  predicts, and shifting the rebuilt mean by 2 percent of a predictive standard deviation while widening the spread by 2 percent already raises it to 1.5;
+  a model built differently from the fitted one cannot pass. The rebuild costs about 3 CPU-seconds per
+  configuration and the scoring about 12 CPU-seconds for eight score variants.</p>
+
+  <p>For later runs the same quantities are computed inside the fold: the fit already holds \(m\) and \(s\) for every
+  test point, so the score is added to the fold record next to the CRPS, with no rebuild.</p>
+
+  <h3 class="subheading">18. How the BO gem enters the ranking</h3>
+
+  <p>We propose that the BO gem at \(k = 2\) replaces the CRPSS gem as the criterion that ranks the scan and
+  chooses the production surrogate, with the CRPSS gem kept as a reported column. Both are proper; they differ in
+  what they reward, and only the BO gem rewards what the acquisition function uses. Configurations whose BO gems
+  differ by less than the bootstrap noise, about 0.08 on the leading configurations, are ties, and the choice among
+  them is made on other grounds, as for the gem today. The threshold decomposition is
+  reported for the configurations that reach the top of the ranking.</p>
+
+  <p>The other studies (type, scaffold, solvent, replicate) are scored with the same BO-weighted skill and reported
+  without entering the BO gem, as now. The full <code>cross_1</code> table with both gems and the decomposition of
+  the leaders is the next step once \(k\) and the role of the BO gem are fixed.</p>
+
+  <div class="callout callout-warning">
+    <div class="callout-title">What the BO gem cannot show</div>
+    <p>It judges one-point predictive distributions on held-out experiments. It does not see the joint
+    distribution across a batch, which <code>qLogNEI</code> uses, nor the acquisition optimiser. The direct test is a
+    retrospective BO run of the leading configurations, which the literature in Part IV recommends and which no
+    single-point score replaces.</p>
+  </div>
+</section>
+
+<section id="sec-references" class="content-section" data-num="R" data-nav="References">
+  <div class="section-header-block">
+    <span class="section-num-tag">References</span>
+    <h2 class="section-heading">Papers cited, with the archived copy</h2>
+    <p class="section-lead">Every paper is archived as a PDF in <code>archived_trash/metrics/</code>. Where the archived
+    copy is the arXiv version, the DOI is that of the published article.</p>
+  </div>
+
+  <div class="table-responsive"><table class="data-table">
+    <thead><tr><th>Reference</th><th>Archived file</th><th>DOI or identifier</th></tr></thead>
+    <tbody>
+      <tr><td>Allen, S. (2024). Weighted scoringRules: emphasizing particular outcomes when evaluating probabilistic forecasts. <i>J. Stat. Softw.</i> 110(8).</td><td><code>Allen2024_weighted_scoringRules.pdf</code></td><td>10.18637/jss.v110.i08</td></tr>
+      <tr><td>Allen, S., Bhend, J., Martius, O., Ziegel, J. (2023). Weighted verification tools to evaluate univariate and multivariate probabilistic forecasts for high-impact weather events. <i>Weather Forecast.</i> 38(3), 499-516.</td><td><code>Allen2023_weighted_verification_tools.pdf</code></td><td>10.1175/WAF-D-22-0161.1</td></tr>
+      <tr><td>Allen, S., Ginsbourger, D., Ziegel, J. (2023). Evaluating forecasts for high-impact events using transformed kernel scores. <i>SIAM/ASA J. Uncertain. Quantif.</i> 11(3), 906-940.</td><td><code>Allen2023_transformed_kernel_scores.pdf</code></td><td>10.1137/22M1532184</td></tr>
+      <tr><td>Allen, S., Koh, J., Segers, J., Ziegel, J. (2025). Tail calibration of probabilistic forecasts. <i>J. Am. Stat. Assoc.</i> 120, 2796-2808.</td><td><code>Allen2025_tail_calibration.pdf</code></td><td>10.1080/01621459.2025.2506194</td></tr>
+      <tr><td>Brehmer, J. R., Strokorb, K. (2019). Why scoring functions cannot assess tail properties. <i>Electron. J. Stat.</i> 13(2), 4015-4034.</td><td><code>Brehmer2019_scoring_tail_properties.pdf</code></td><td>10.1214/19-EJS1622</td></tr>
+      <tr><td>de Punder, R., Diks, C., Laeven, R., van Dijk, D. (2026). Localizing strictly proper scoring rules. <i>J. Am. Stat. Assoc.</i> 121(554), 1447-1459.</td><td><code>dePunder2026_localizing_scoring_rules.pdf</code></td><td>10.1080/01621459.2025.2576189</td></tr>
+      <tr><td>Deshpande, S., Marx, C., Kuleshov, V. (2024). Online calibrated and conformal prediction improves Bayesian optimization. <i>AISTATS</i>, PMLR 238, 1450-1458.</td><td><code>Deshpande2024_calibrated_conformal_BO.pdf</code></td><td>arXiv:2112.04620</td></tr>
+      <tr><td>Diks, C., Panchenko, V., van Dijk, D. (2011). Likelihood-based scoring rules for comparing density forecasts in tails. <i>J. Econometrics</i> 163, 215-230.</td><td><code>Diks2011_likelihood_scoring_tails.pdf</code></td><td>10.1016/j.jeconom.2011.04.001</td></tr>
+      <tr><td>Ehm, W., Gneiting, T., Jordan, A., Krüger, F. (2016). Of quantiles and expectiles: consistent scoring functions, Choquet representations and forecast rankings. <i>J. R. Stat. Soc. B</i> 78, 505-562.</td><td><code>Ehm2016_quantiles_expectiles_choquet.pdf</code></td><td>10.1111/rssb.12154</td></tr>
+      <tr><td>Foldager, J., Jordahn, M., Hansen, L. K., Andersen, M. R. (2023). On the role of model uncertainties in Bayesian optimisation. <i>UAI</i>, PMLR 216, 592-601.</td><td><code>Foldager2023_model_uncertainties_BO.pdf</code></td><td>arXiv:2301.05983</td></tr>
+      <tr><td>Friedli, L., Gautier, A., Broccard, A., Ginsbourger, D. (2025). CRPS-based targeted sequential design with application in chemical space. Preprint.</td><td><code>Friedli2025_crps_targeted_design.pdf</code></td><td>10.48550/arXiv.2503.11250</td></tr>
+      <tr><td>Gneiting, T., Raftery, A. E. (2007). Strictly proper scoring rules, prediction, and estimation. <i>J. Am. Stat. Assoc.</i> 102(477), 359-378.</td><td><code>Gneiting2007_strictly_proper_scoring_rules.pdf</code></td><td>10.1198/016214506000001437</td></tr>
+      <tr><td>Gneiting, T., Ranjan, R. (2011). Comparing density forecasts using threshold- and quantile-weighted scoring rules. <i>J. Bus. Econ. Stat.</i> 29(3), 411-422.</td><td><code>Gneiting2011_threshold_quantile_weighted.pdf</code></td><td>10.1198/jbes.2010.08110</td></tr>
+      <tr><td>Greenman, K. P., Amini, A. P., Yang, K. K. (2025). Benchmarking uncertainty quantification for protein engineering. <i>PLoS Comput. Biol.</i> 21(1), e1012639.</td><td><code>Greenman2025_uq_protein_engineering.pdf</code></td><td>10.1371/journal.pcbi.1012639</td></tr>
+      <tr><td>Holzmann, H., Klar, B. (2017). Focusing on regions of interest in forecast evaluation. <i>Ann. Appl. Stat.</i> 11(4), 2404-2431.</td><td><code>Holzmann2017_regions_of_interest.pdf</code></td><td>10.1214/17-AOAS1088</td></tr>
+      <tr><td>Kuleshov, V., Fenner, N., Ermon, S. (2018). Accurate uncertainties for deep learning using calibrated regression. <i>ICML</i>, PMLR 80.</td><td><code>Kuleshov2018_calibrated_regression.pdf</code></td><td>arXiv:1807.00263</td></tr>
+      <tr><td>Lerch, S., Thorarinsdottir, T. L., Ravazzolo, F., Gneiting, T. (2017). Forecaster's dilemma: extreme events and forecast evaluation. <i>Stat. Sci.</i> 32(1), 106-127.</td><td><code>Lerch2017_forecasters_dilemma.pdf</code></td><td>10.1214/16-STS588</td></tr>
+      <tr><td>Li, Y., Cui, T., Mansi, T., Prakash, M., Liao, R. (2026). BioBO: biology-informed Bayesian optimization for perturbation design. <i>ICLR</i>.</td><td><code>Li2026_biobo_perturbation_design.pdf</code></td><td>arXiv:2509.19988</td></tr>
+      <tr><td>Matheson, J. E., Winkler, R. L. (1976). Scoring rules for continuous probability distributions. <i>Manag. Sci.</i> 22(10), 1087-1096.</td><td><code>Matheson1976_scoring_continuous.pdf</code></td><td>10.1287/mnsc.22.10.1087</td></tr>
+      <tr><td>Petit, S., Bect, J., Feliot, P., Vazquez, E. (2023). Parameter selection in Gaussian process interpolation: an empirical study of selection criteria. <i>SIAM/ASA J. Uncertain. Quantif.</i> 11(4), 1308-1328.</td><td><code>Petit2023_gp_parameter_selection_criteria.pdf</code></td><td>10.1137/21M1444710</td></tr>
+      <tr><td>Taggart, R. J. (2022). Evaluation of point forecasts for extreme events using consistent scoring functions. <i>Q. J. R. Meteorol. Soc.</i> 148, 306-320.</td><td><code>Taggart2022_point_forecasts_extremes.pdf</code></td><td>10.1002/qj.4206</td></tr>
+      <tr><td>Tom, G., Hickman, R. J., Zinzuwadia, A., Mohajeri, A., Sanchez-Lengeling, B., Aspuru-Guzik, A. (2023). Calibration and generalizability of probabilistic models on low-data chemical datasets with DIONYSUS. <i>Digital Discovery</i> 2(3), 759-774.</td><td><code>Tom2023_dionysus_calibration.pdf</code></td><td>10.1039/D2DD00146B</td></tr>
+      <tr><td>Tom, G., Lo, S., Corapi, S., Aspuru-Guzik, A., Sanchez-Lengeling, B. (2025). Ranking over regression for Bayesian optimization and molecule selection. <i>APL Mach. Learn.</i> 3, 036113.</td><td><code>Tom2025_ranking_over_regression.pdf</code></td><td>10.1063/5.0272663</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+    <footer class="report-footer">Sources: <code>pablo/<wbr>featurization_<wbr>and_<wbr>kernel_<wbr>scan/<wbr>runs/<wbr>cross_<wbr>1/<wbr>cells/<wbr></code>
+    (2,520 result files, fitted parameters and training indices of every fold),
+    <code>pablo/<wbr>featurization_<wbr>and_<wbr>kernel_<wbr>scan/<wbr>runs/<wbr>cross_<wbr>1/<wbr>predictive/<wbr></code> (2,520 files of rebuilt predictive distributions,
+    833 test points per configuration over the six studies), <code>pablo/<wbr>featurization_<wbr>and_<wbr>kernel_<wbr>scan/<wbr>runs/<wbr>cross_<wbr>1/<wbr>gem_<wbr>scores.parquet</code>
+    (2,520 configurations), <code>pablo/<wbr>featurization_<wbr>and_<wbr>kernel_<wbr>scan/<wbr>data/<wbr>libraries/<wbr>experiments.parquet</code> (69
+    experiments) and <code>pablo/<wbr>featurization_<wbr>and_<wbr>kernel_<wbr>scan/<wbr>data/<wbr>grid/<wbr>cv_<wbr>splits.json</code> (137 folds per
+    configuration). The 150 sampled configurations are the 40 best by gem and 110 drawn uniformly from the rest with
+    seed 0. Fold-bootstrap intervals resample the 60 folds of each study with replacement (500 resamples for standard
+    deviations, 2,000 for paired intervals). Weighted scores are integrated by 16-point Gauss-Legendre quadrature on
+    pieces of at most 0.01 in yield, split at the observation and at every training yield; against the closed-form
+    CRPS and threshold-weighted CRPS of Gaussian forecasts the quadrature error is below \(10^{-15}\). The synthetic
+    simulations use seed 0.</footer>
+
+  </main>
+</div>
+
+<script>
+var narrow = window.matchMedia('(max-width: 900px)');
+
+function toggleTheme() {
+  var next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('pablo_theme', next);
+}
+
+function toggleSidebar() {
+  var root = document.documentElement;
+  if (narrow.matches) {
+    root.setAttribute('data-sidebar-mobile', root.getAttribute('data-sidebar-mobile') === 'open' ? 'closed' : 'open');
+    return;
+  }
+  var next = root.getAttribute('data-sidebar') === 'closed' ? 'open' : 'closed';
+  root.setAttribute('data-sidebar', next);
+  localStorage.setItem('pablo_sidebar', next);
+}
+
+window.addEventListener('keydown', function (e) {
+  if (e.key !== '[' || e.ctrlKey || e.metaKey || e.altKey) return;
+  if (/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName)) return;
+  toggleSidebar();
+});
+
+window.addEventListener('scroll', function () {
+  var el = document.documentElement;
+  var bar = document.getElementById('progressBar');
+  bar.style.width = (el.scrollTop / (el.scrollHeight - el.clientHeight)) * 100 + '%';
+});
+
+window.addEventListener('DOMContentLoaded', function () {
+  var root = document.documentElement;
+  var nav = document.getElementById('navLinks');
+  var sections = document.querySelectorAll('section.content-section');
+  var caretSvg = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 6 15 12 9 18"/></svg>';
+  var groups = [];
+  var subLinks = [];
+
+  sections.forEach(function (sec, i) {
+    var hue = sec.dataset.hue || String(i % 8);
+    sec.dataset.hue = hue;
+    var group = document.createElement('div');
+    group.className = 'nav-group';
+    group.dataset.hue = hue;
+    group.dataset.target = sec.id;
+
+    var row = document.createElement('div');
+    row.className = 'nav-row';
+    var a = document.createElement('a');
+    a.href = '#' + sec.id;
+    a.className = 'nav-item';
+    var num = document.createElement('span');
+    num.className = 'nav-badge-num';
+    num.textContent = sec.dataset.num || '';
+    var label = document.createElement('span');
+    label.textContent = sec.dataset.nav || sec.querySelector('.section-heading').textContent;
+    a.append(num, label);
+    row.appendChild(a);
+    group.appendChild(row);
+
+    var subs = sec.querySelectorAll('h3.subheading');
+    if (subs.length) {
+      var caret = document.createElement('button');
+      caret.className = 'nav-caret';
+      caret.setAttribute('aria-label', 'Expand');
+      caret.innerHTML = caretSvg;
+      caret.addEventListener('click', function () { group.classList.toggle('open'); });
+      row.appendChild(caret);
+      var box = document.createElement('div');
+      box.className = 'nav-sub';
+      subs.forEach(function (h, j) {
+        if (!h.id) h.id = sec.id + '-' + (j + 1);
+        var s = document.createElement('a');
+        s.href = '#' + h.id;
+        s.className = 'nav-subitem';
+        s.textContent = h.textContent;
+        box.appendChild(s);
+        subLinks.push(s);
+      });
+      group.appendChild(box);
+    }
+    a.addEventListener('click', function () { if (subs.length) group.classList.add('open'); });
+    nav.appendChild(group);
+    groups.push(group);
+  });
+
+  if (window.renderMathInElement) {
+    renderMathInElement(document.body, {
+      delimiters: [
+        {left: '\\[', right: '\\]', display: true},
+        {left: '\\(', right: '\\)', display: false}
+      ],
+      throwOnError: false
+    });
+  } else {
+    console.error('KaTeX did not load; formulas are shown as LaTeX source.');
+  }
+
+  nav.addEventListener('click', function (e) {
+    if (narrow.matches && e.target.closest('a')) root.setAttribute('data-sidebar-mobile', 'closed');
+  });
+
+  var lastActive = null;
+  function spy() {
+    var line = 120;
+    var current = sections[0];
+    sections.forEach(function (sec) { if (sec.getBoundingClientRect().top <= line) current = sec; });
+    var sub = null;
+    current.querySelectorAll('h3.subheading').forEach(function (h) { if (h.getBoundingClientRect().top <= line) sub = h; });
+    groups.forEach(function (g) {
+      var on = g.dataset.target === current.id;
+      g.classList.toggle('active', on);
+      if (on && current !== lastActive && g.querySelector('.nav-sub')) g.classList.add('open');
+    });
+    subLinks.forEach(function (s) { s.classList.toggle('active', !!sub && s.getAttribute('href') === '#' + sub.id); });
+    lastActive = current;
+  }
+  window.addEventListener('scroll', spy, {passive: true});
+  spy();
+
+  var expandBtn = document.getElementById('expandAllBtn');
+  expandBtn.addEventListener('click', function () {
+    var open = !expandBtn.classList.contains('all-open');
+    expandBtn.classList.toggle('all-open', open);
+    groups.forEach(function (g) { if (g.querySelector('.nav-sub')) g.classList.toggle('open', open); });
+  });
+
+  document.getElementById('sidebarSearch').addEventListener('input', function (e) {
+    var term = e.target.value.toLowerCase().trim();
+    groups.forEach(function (g) {
+      var own = g.querySelector('.nav-item').textContent.toLowerCase().includes(term);
+      var anySub = false;
+      g.querySelectorAll('.nav-subitem').forEach(function (s) {
+        var hit = !term || own || s.textContent.toLowerCase().includes(term);
+        s.style.display = hit ? 'block' : 'none';
+        anySub = anySub || (term && s.textContent.toLowerCase().includes(term));
+      });
+      g.style.display = !term || own || anySub ? 'block' : 'none';
+      if (term && anySub) g.classList.add('open');
+    });
+  });
+
+  var resizer = document.getElementById('sidebarResizer');
+  resizer.addEventListener('pointerdown', function (e) {
+    e.preventDefault();
+    resizer.setPointerCapture(e.pointerId);
+    root.classList.add('resizing');
+  });
+  resizer.addEventListener('pointermove', function (e) {
+    if (!root.classList.contains('resizing')) return;
+    var w = Math.min(560, Math.max(220, e.clientX));
+    root.style.setProperty('--sidebar-w', w + 'px');
+  });
+  resizer.addEventListener('pointerup', function (e) {
+    root.classList.remove('resizing');
+    resizer.releasePointerCapture(e.pointerId);
+    localStorage.setItem('pablo_sidebar_w', parseInt(getComputedStyle(root).getPropertyValue('--sidebar-w'), 10));
+  });
+  resizer.addEventListener('dblclick', function () {
+    root.style.removeProperty('--sidebar-w');
+    localStorage.removeItem('pablo_sidebar_w');
+  });
+});
+</script>
+</body></html>

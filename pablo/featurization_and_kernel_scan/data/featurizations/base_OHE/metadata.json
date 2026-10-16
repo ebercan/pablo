@@ -1,0 +1,16 @@
+{
+  "n_molecules": 8,
+  "n_features": 8,
+  "feature_cols": [
+    "is_Triethylamine",
+    "is_Potassium_tert_butoxide",
+    "is_Rubidium_carbonate",
+    "is_N_Ethyl_N_isopropylpropan_2_amine_H_nig_s_base",
+    "is_Cesium_carbonate",
+    "is_1_8_Diazabicyclo_5_4_0_undec_7_ene",
+    "is_Potassium_bis_trimethylsilyl_amide",
+    "is_Sodium_tert_butoxide"
+  ],
+  "descriptors_file": "descriptors.parquet",
+  "method": "One-hot identity over the 8-base library. Rows for catalysts that need no external base are zero-filled at assembly time, so the all-zero vector is the 'no base' category."
+}

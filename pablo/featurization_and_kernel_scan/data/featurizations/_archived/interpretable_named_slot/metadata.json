@@ -1,0 +1,44 @@
+{
+  "n_molecules": 161,
+  "n_features": 31,
+  "blocks": {
+    "structural": [
+      "backbone_saturated",
+      "form_salt",
+      "form_free_nhc",
+      "form_co2_adduct",
+      "form_bicarbonate",
+      "ring_imidazolylidene",
+      "ring_imidazolinylidene",
+      "ring_triazolinylidene",
+      "ring_thiazolylidene",
+      "ring_other",
+      "mw",
+      "heavy_atom_count",
+      "formal_charge"
+    ],
+    "xtb_electronic": [
+      "xtb_gap_eV",
+      "xtb_homo_eV",
+      "xtb_lumo_eV",
+      "xtb_dipole_D",
+      "xtb_polarizability_angst3"
+    ],
+    "sterimol_vbur": [
+      "vbur_pct",
+      "n1_sterimol_L",
+      "n1_sterimol_B1",
+      "n1_sterimol_B5",
+      "n2_sterimol_L",
+      "n2_sterimol_B1",
+      "n2_sterimol_B5",
+      "c4_sterimol_L",
+      "c4_sterimol_B1",
+      "c4_sterimol_B5",
+      "c5_sterimol_L",
+      "c5_sterimol_B1",
+      "c5_sterimol_B5"
+    ]
+  },
+  "method": "Structural one-hots + RDKit scalars + xTB GFN2 / ALPB(toluene) electronic descriptors + Sterimol / %Vbur via morfeus + dbstep on xTB-optimized geometry."
+}

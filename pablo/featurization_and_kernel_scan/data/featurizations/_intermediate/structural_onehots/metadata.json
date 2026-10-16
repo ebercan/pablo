@@ -1,0 +1,12 @@
+{
+  "n_molecules": 161,
+  "feature_cols": [
+    "cat_form_id",
+    "ring_type_id",
+    "backbone_saturated",
+    "mw",
+    "heavy_atom_count",
+    "formal_charge"
+  ],
+  "note": "Structural-only stage. Consumed by --assemble-light / --assemble-full."
+}

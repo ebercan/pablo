@@ -1,0 +1,489 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pool-greedy optimizer and fantasy tree</title>
+<style>
+:root{
+  color-scheme:light;
+  --page:#ffffff; --ink:#111111; --ink2:#4a4a48; --ink3:#6f6e6a;
+  --rule:#d5d2ca; --rule2:#c2beb4;
+  --win:#f4f2ec;
+  --win-edge:#e0dcd2;
+  --tbl:#eef3f8;
+  --tbl-head:#d9e5f0;
+  --tbl-alt:#e5edf5;
+  --h1:#173f5f; --h2:#1f6091; --h3:#a2541c;
+  --good:#12633c; --good-bg:#dcefe2;
+  --bad:#95231f;  --bad-bg:#f8e2df;
+  --accent:#1f6091;
+}
+*{box-sizing:border-box}
+body{background:var(--page);color:var(--ink);
+ font:15px/1.62 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+ padding:34px 22px 60px;max-width:1150px;margin:0 auto;}
+h1{font-size:26px;margin:0 0 5px;letter-spacing:-.01em;color:var(--h1)}
+h2{font-size:19px;margin:36px 0 10px;padding-bottom:6px;color:var(--h2);
+ border-bottom:2px solid var(--tbl-head)}
+h3{font-size:15.5px;margin:24px 0 6px;color:var(--h3)}
+.sub{color:var(--ink2);margin:0 0 22px;font-size:14px}
+p{margin:10px 0;max-width:84ch}
+.win{background:var(--win);border:1px solid var(--win-edge);border-radius:7px;
+ padding:13px 16px;margin:16px 0;max-width:84ch}
+.win.hi{border-left:4px solid var(--accent)}
+.win h4{margin:0 0 6px;font-size:14px;color:var(--h2)}
+.kpis{display:flex;flex-wrap:wrap;gap:9px;margin:18px 0}
+.kpi{background:var(--win);border:1px solid var(--win-edge);border-radius:7px;
+ padding:9px 13px;min-width:120px;flex:1 1 120px}
+.kpi .v{font-size:21px;font-weight:650;letter-spacing:-.02em;color:var(--h1)}
+.kpi .k{font-size:11.5px;color:var(--ink2);text-transform:uppercase;letter-spacing:.04em}
+.scroll{overflow-x:auto;margin:14px 0;border:1px solid var(--rule2);border-radius:7px}
+table{border-collapse:collapse;font-size:13px;width:100%;background:var(--tbl)}
+th,td{padding:5px 9px;text-align:right;border-bottom:1px solid #cfdbe6;white-space:nowrap}
+th{background:var(--tbl-head);color:#123;font-weight:650;text-align:right;font-size:11.5px;
+ text-transform:uppercase;letter-spacing:.03em;position:sticky;top:0}
+tr:nth-child(even) td{background:var(--tbl-alt)}
+td.lbl,th.lbl{text-align:left;white-space:normal}
+td.r{color:var(--ink3)}
+td.good{background:var(--good-bg)!important;color:var(--good)}
+td.bad{background:var(--bad-bg)!important;color:var(--bad)}
+tr:last-child td{border-bottom:none}
+code{background:var(--win);border:1px solid var(--win-edge);padding:0 4px;
+ border-radius:3px;font-size:12.5px}
+ul{max-width:84ch}li{margin:4px 0}
+.small{font-size:13px;color:var(--ink2)}
+footer{margin-top:44px;padding-top:14px;border-top:1px solid var(--rule);
+ color:var(--ink3);font-size:12.5px}
+</style></head><body>
+</head><body>
+
+<h1>The pool-greedy batch optimizer and the fantasy tree in run_5</h1>
+<p class="sub">run_5 scope extension &middot; q = 6 batches &middot; temperature partition (2, 2, 2)
+&middot; time pinned at 20 h &middot; fantasy tree [12, 4, 2, 1] &middot; 157 batch optimisations per fantasized expander call</p>
+
+<h2>Background</h2>
+
+<p>Every BO iteration in run_5 has to answer two questions. The first is which six experiments
+to run next on the catalysts that are already in the lab. The second is which catalyst that is
+not yet in the lab to order now, knowing it arrives four iterations later. Both questions end up
+as the same numerical problem: choose a set of candidate points that maximises qLogEI on some GP.
+The first question needs this once per iteration. The second question, in its fantasized form,
+needs it 157 times per iteration, once for every node of a tree of simulated futures. The
+optimizer that solves this problem is <code>optimize_acqf_mixed_pool_greedy</code>. It has to be
+fast enough to be called 157 times in about a minute and good enough that the batches it returns are
+worth running.</p>
+
+<p>A candidate point is one row of the search space. It holds four continuous values (temperature,
+formaldehyde ratio, catalyst loading and time, with time fixed at 20 h), and the descriptor
+vectors of one catalyst, one solvent and one base. A batch is six such rows. The three
+temperatures used in a batch must form the partition (2, 2, 2): three temperature levels, two rows
+at each.</p>
+
+<div class="win hi">
+<h4>What the optimizer maximises</h4>
+<p class="small" style="margin:4px 0">For a batch B of six rows, qEI(B) is the expected amount by
+which the best of the six outcomes beats the current best yield <code>best_f</code>:</p>
+<p class="small" style="margin:6px 0 4px;text-align:center">
+<code>qEI(B) = E[ max(0, max<sub>i</sub> Y<sub>i</sub> &minus; best_f) ]</code>,&nbsp; with Y<sub>1</sub> &hellip; Y<sub>6</sub> drawn jointly from the GP posterior</p>
+<p class="small" style="margin:4px 0">The optimizer works with its logarithm, qLogEI, because late
+in a run the values become tiny (EI around e<sup>&minus;20</sup>) and only the log keeps them
+comparable. <b>Because the six outcomes are drawn jointly, qEI rewards batches whose members are
+not redundant: two rows the GP considers almost identical succeed or fail together, and the second
+adds almost nothing.</b> This is the property the greedy construction exploits.</p>
+</div>
+
+<h2>Part I &middot; The fantasy tree</h2>
+
+<h3>1. Why a tree of simulated futures is needed</h3>
+
+<p>A catalyst ordered now can first be used four iterations from now. Whether it was a good order
+depends on what the model will believe at that time, and that depends on the 24 experiments run in
+between, whose yields are not known yet. The fantasized expander handles this by simulating those
+four iterations. A simulated experiment result is called a fantasy: a yield drawn from the GP
+posterior at a point that has not been measured. Conditioning the GP on fantasy yields gives a
+fantasy model, which is the GP as it would look if those yields had been observed. The kernel
+hyperparameters are not refitted; only the training data grows.</p>
+
+<p>One simulated iteration works like this. Take a model (at the start, the real GP). Optimise a
+q = 6 batch on it, using the catalysts that are available at that point in the simulated future.
+Draw <i>m</i> joint samples of the six yields at that batch, where <i>m</i> is the number of
+fantasies for that depth. Condition the model on each sample. The result is <i>m</i> child models,
+one per possible outcome of that batch. Repeating this from every child builds a tree. With
+fantasies <code>[12, 4, 2, 1]</code>, the root gets 12 children, each of those gets 4, each of
+those 2, and each of those 1.</p>
+
+<div class="scroll"><table>
+<tr><th>Depth</th><th class="lbl">What a node at this depth represents</th><th>Nodes</th><th>Fantasy points per node</th><th>Batches optimised</th><th>Children per node</th></tr>
+<tr><td>0</td><td class="lbl">Today: the real GP</td><td>1</td><td>0</td><td>1</td><td>12</td></tr>
+<tr><td>1</td><td class="lbl">One simulated iteration later</td><td>12</td><td>6</td><td>12</td><td>4</td></tr>
+<tr><td>2</td><td class="lbl">Two iterations later</td><td>48</td><td>12</td><td>48</td><td>2</td></tr>
+<tr><td>3</td><td class="lbl">Three iterations later</td><td>96</td><td>18</td><td>96</td><td>1</td></tr>
+<tr><td>4</td><td class="lbl">Four iterations later: the ordered catalyst has arrived</td><td>96</td><td>24</td><td>0</td><td>&ndash;</td></tr>
+<tr><td class="lbl"><b>Total</b></td><td class="lbl"></td><td>253</td><td></td><td class="good"><b>157</b></td><td></td></tr>
+</table></div>
+
+<p>Depth-4 nodes need no batch of their own, since nothing is simulated beyond them. That is why
+the 253 nodes cost 157 batch optimisations. The catalysts a batch may use grow with depth: a node at
+depth <i>j</i> may use the catalysts available today plus the ones ordered in earlier iterations
+that have arrived by that point.</p>
+
+<div class="scroll" style="border:none">
+<svg viewBox="0 0 900 190" width="100%" style="max-width:900px;min-width:620px" role="img" aria-label="Fantasy tree layout: 1, 12, 48, 96, 96 nodes across depths 0 to 4">
+  <g font-family="-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif" font-size="13" text-anchor="middle">
+    <rect x="20" y="60" width="120" height="70" rx="7" fill="#d9e5f0" stroke="#1f6091"/>
+    <text x="80" y="88" fill="#173f5f" font-weight="650">Depth 0</text>
+    <text x="80" y="108" fill="#111">1 real GP</text>
+    <rect x="200" y="60" width="120" height="70" rx="7" fill="#eef3f8" stroke="#1f6091"/>
+    <text x="260" y="88" fill="#173f5f" font-weight="650">Depth 1</text>
+    <text x="260" y="108" fill="#111">12 models</text>
+    <rect x="380" y="60" width="120" height="70" rx="7" fill="#eef3f8" stroke="#1f6091"/>
+    <text x="440" y="88" fill="#173f5f" font-weight="650">Depth 2</text>
+    <text x="440" y="108" fill="#111">48 models</text>
+    <rect x="560" y="60" width="120" height="70" rx="7" fill="#eef3f8" stroke="#1f6091"/>
+    <text x="620" y="88" fill="#173f5f" font-weight="650">Depth 3</text>
+    <text x="620" y="108" fill="#111">96 models</text>
+    <rect x="740" y="60" width="140" height="70" rx="7" fill="#f4f2ec" stroke="#a2541c"/>
+    <text x="810" y="88" fill="#a2541c" font-weight="650">Depth 4</text>
+    <text x="810" y="108" fill="#111">96 leaf models</text>
+    <g stroke="#4a4a48" stroke-width="1.4" fill="none">
+      <path d="M140 95 H196"/><path d="M190 90 L197 95 L190 100"/>
+      <path d="M320 95 H376"/><path d="M370 90 L377 95 L370 100"/>
+      <path d="M500 95 H556"/><path d="M550 90 L557 95 L550 100"/>
+      <path d="M680 95 H736"/><path d="M730 90 L737 95 L730 100"/>
+    </g>
+    <text x="170" y="52" fill="#4a4a48" font-size="12">batch, 12</text>
+    <text x="170" y="67" fill="#4a4a48" font-size="12">fantasies</text>
+    <text x="350" y="52" fill="#4a4a48" font-size="12">batch, 4</text>
+    <text x="350" y="67" fill="#4a4a48" font-size="12">each</text>
+    <text x="530" y="52" fill="#4a4a48" font-size="12">batch, 2</text>
+    <text x="530" y="67" fill="#4a4a48" font-size="12">each</text>
+    <text x="710" y="52" fill="#4a4a48" font-size="12">batch, 1</text>
+    <text x="710" y="67" fill="#4a4a48" font-size="12">each</text>
+    <text x="80" y="160" fill="#6f6e6a" font-size="12">1 batch optimised</text>
+    <text x="260" y="160" fill="#6f6e6a" font-size="12">12 batches</text>
+    <text x="440" y="160" fill="#6f6e6a" font-size="12">48 batches</text>
+    <text x="620" y="160" fill="#6f6e6a" font-size="12">96 batches</text>
+    <text x="810" y="160" fill="#6f6e6a" font-size="12">scored in stage 1 only</text>
+  </g>
+</svg>
+</div>
+
+<h3>2. How the tree picks the catalyst to order</h3>
+
+<p>Once the tree is built, the expander runs two more optimisations on it. <b>Stage 1</b> picks
+the expansion point: one row whose catalyst is still locked (not yet in the lab and not yet
+ordered). Its score is a weighted average of that row's log EI over the fantasy models, so a
+catalyst is preferred when it looks promising across many plausible futures, not just under
+today's model. Averaging logs makes this a geometric mean of EI: a row that is hopeless in many
+futures is penalised hard even if it is excellent in a few. The weights are set by
+<code>operating_mode</code>. The expander runs after the current batch has been measured and the GP
+refitted, so the tree starts from the newest real data.</p>
+
+<div class="scroll"><table>
+<tr><th class="lbl">operating_mode</th><th class="lbl">Models that count</th><th class="lbl">Weight per model</th></tr>
+<tr><td class="lbl"><code>only_terminal</code></td><td class="lbl">the 96 depth-4 models</td><td class="lbl">1/96 each</td></tr>
+<tr><td class="lbl"><code>averaged</code></td><td class="lbl">all 252 models of depths 1&ndash;4</td><td class="lbl">1/252 each, so depths 3 and 4 carry 76% of the weight</td></tr>
+<tr><td class="lbl"><code>layer_averaged</code></td><td class="lbl">all 252 models of depths 1&ndash;4</td><td class="lbl">each depth carries 25%, split evenly inside the depth</td></tr>
+</table></div>
+
+<p>Stage 1 is a q = 1 problem, so the greedy construction of Part II reduces to scoring every pool
+row once and keeping the best. The catalyst of that row is the one ordered. <b>Stage 2</b> completes
+a full batch around the chosen row and reports its value in <code>selected_source_a_acq_values</code>.
+It does not influence which catalyst is ordered.</p>
+
+<div class="win">
+<h4>Why the tree calls are cheap</h4>
+<p class="small" style="margin:4px 0">Every node in the tree is the real GP plus at most 24 fantasy
+points, with the same hyperparameters. The expensive part of a GP posterior over a pool of
+candidates is solving against the n training points, which is O(n&sup2;) per candidate with n up to
+652. That solve is done once for the real GP and cached. A node only adds a correction for its own
+f &le; 24 fantasy points, which costs O(f) per candidate instead of O(n). Nodes at the same depth share
+one random pool, so the cached part is computed once per depth rather than once per node.</p>
+</div>
+
+<h2>Part II &middot; One batch, step by step</h2>
+
+<p>The optimizer never searches over all possible six-row batches. It first builds a finite table
+of single candidate rows, the pool, and then chooses the batch from that table. The Sobol sequence
+fills only the continuous columns of most of those rows. The word greedy describes how rows are
+taken from the table.</p>
+
+<div class="kpis">
+  <div class="kpi"><div class="k">Random rows</div><div class="v">4,096</div></div>
+  <div class="kpi"><div class="k">Local rows</div><div class="v">256</div></div>
+  <div class="kpi"><div class="k">Refined rows</div><div class="v">32</div></div>
+  <div class="kpi"><div class="k">Pool, main batch</div><div class="v">4,384</div></div>
+  <div class="kpi"><div class="k">Greedy steps</div><div class="v">6</div></div>
+</div>
+
+<h3>3. Step 1: build the pool</h3>
+
+<p>The pool is built from four sources. Each source adds a fixed number of complete rows, and
+the pool is simply their concatenation. Nothing is deduplicated and nothing is removed.</p>
+
+<div class="scroll"><table>
+<tr><th class="lbl">Source</th><th>Rows</th><th class="lbl">Catalyst, solvent, base</th><th class="lbl">Temperature, formaldehyde, loading</th><th class="lbl">Present in</th></tr>
+<tr><td class="lbl">Random</td><td>4,096</td><td class="lbl">each drawn uniformly from the available tables</td><td class="lbl">one point of a scrambled 3-dimensional Sobol sequence per row</td><td class="lbl">every call</td></tr>
+<tr><td class="lbl">Local</td><td>256</td><td class="lbl">copied from the incumbent for about half the rows, drawn uniformly for the rest</td><td class="lbl">the incumbent's values plus Gaussian noise, sd 0.1 &times; range, clipped to the bounds</td><td class="lbl">every call</td></tr>
+<tr><td class="lbl">Parent batch</td><td>6</td><td class="lbl">the parent node's batch</td><td class="lbl">the parent node's batch</td><td class="lbl">tree nodes below the root</td></tr>
+<tr><td class="lbl">Refined</td><td>32</td><td class="lbl">copied from the 32 best rows of the three sources above</td><td class="lbl">those rows' values after L-BFGS-B (step 2)</td><td class="lbl">every call</td></tr>
+<tr><td class="lbl"><b>Total</b></td><td><b>4,384</b></td><td class="lbl" colspan="3">4,096 + 256 + 32 in the main batch and at the tree root; 4,390 at every other tree node</td></tr>
+</table></div>
+
+<p>The Sobol sequence is only 3-dimensional. It spreads the 4,096 random rows evenly over
+temperature, formaldehyde ratio and loading. Time is written into every row as 20 h. Catalyst,
+solvent and base of a random row are drawn independently and uniformly, and the base slice is set
+to zero when the catalyst needs no external base. The 256 local rows are 32 copies of each of the
+8 training points with the highest targets, fantasy points included, each copy jittered. A fair
+coin decides whether a copy keeps its incumbent's catalyst, solvent and base or gets random ones.
+The refined rows are added next to the rows they were refined from, so the pool holds both
+versions.</p>
+
+<p>The other roles use the same recipe with different counts: stage 1 of the expander has
+4,096 + 256 + 8 = 4,360 rows, and stage 2 has 512 random rows only.</p>
+
+<h3>4. Step 2: refine the most promising single rows</h3>
+
+<p>Every row of the first three sources is scored on its own, with the same screening estimate the
+greedy step uses, bounded below by its analytic LogEI. The 32 best rows then have their continuous
+values tuned by 30 iterations of L-BFGS-B on analytic LogEI, with catalyst, solvent and base held
+fixed. The tuned copies are appended to the pool. The high-EI region is narrow once the model has
+located a good area, and a random row seldom lands in it exactly.</p>
+
+<h3>5. Step 3: greedy construction</h3>
+
+<p>The batch is built one slot at a time. For slot 1 every pool row is scored on its own and the
+best is kept. For slot 2 every remaining row is scored as a pair with slot 1, using qLogEI, and the
+row that makes the best pair is kept. Slot 3 is chosen the same way against slots 1 and 2, and so
+on up to slot 6. Each choice is final. That is what greedy means here: each slot takes the best
+available addition given what is already chosen, and no earlier choice is revisited. Within a slot
+the search is exhaustive, since every pool row is scored.</p>
+
+<p>Scoring 4,384 rows six times with 1,024 QMC samples each would be slow. Each step therefore
+screens first. All rows are ranked on 32 QMC samples with a cheap approximation, and only the best
+64 are scored exactly on all samples. The random rows and the other rows are screened as two
+separate blocks, so 128 rows get the exact score. Exhaustive search over every six-row subset of
+the pool would need about 10<sup>19</sup> evaluations. The greedy construction needs about
+6 &times; 4,384 &asymp; 26,000 cheap scores plus the joining candidates below.</p>
+
+<p><b>Temperature grouping is handled inside the same loop.</b> A group is a set of rows that share
+one temperature, and the batch needs three groups of two. At each step a candidate row can either
+open a new group, keeping its own temperature, or join a group that already has one row, in which
+case its temperature is overwritten with the group's value. Joining is tried on the 256 rows that
+ranked best in that step's screen, once per joinable group. All options are scored and the best
+single row across them is taken. A move is only allowed if the partition can still be completed: a
+fourth group cannot be opened, and a group that already has two rows cannot be joined. The finished
+batch therefore always has exactly (2, 2, 2). Section 9 shows the real sequence of opens and
+joins.</p>
+
+<h3>6. Steps 4 and 5: swaps and polish</h3>
+
+<p>In the main batch role, one swap pass follows. Each of the six slots in turn is removed and
+chosen again from the pool with the other five fixed, and the new row is kept if the batch value
+rises. Tree nodes skip this. Last comes the polish: L-BFGS-B on qLogEI over the continuous values of
+all six rows at once, with catalysts, solvents, bases and grouping held fixed. Each temperature
+group has a single temperature variable, so the two rows of a group move together and the partition
+survives. The polished batch replaces the greedy one only if its value is higher.</p>
+
+<div class="win hi">
+<h4>The batch value V, and why it has a lower bound</h4>
+<p class="small" style="margin:4px 0">Monte Carlo qLogEI estimates the expectation from a fixed set
+of QMC samples. When the improvement region lies far in the tail of every candidate's
+distribution, no sample reaches it, and the estimator flattens near &minus;51 for every batch. The
+greedy step then has nothing to compare. The optimizer therefore scores with</p>
+<p class="small" style="margin:6px 0 4px;text-align:center">
+<code>V(B) = max( MC qLogEI(B), max<sub>i</sub> LogEI(x<sub>i</sub>) )</code></p>
+<p class="small" style="margin:4px 0">The second term is exact and cheap, and since a batch can never
+be worse than its best single member, it is a valid lower bound on log qEI. <b>Where MC resolves the
+tail, the two agree. Where it cannot, the analytic term keeps the ranking informative.</b> In the
+fantasized stage 1 the score is the weighted sum of V over the tree models, with the weights of
+section 2. In the example of Part III, MC resolves the tail at every step: V and the plain MC value
+differ by at most 0.003.</p>
+</div>
+
+<h2>Part III &middot; A worked example on the campaign data</h2>
+
+<div class="kpis">
+  <div class="kpi"><div class="k">Experiments</div><div class="v">69</div></div>
+  <div class="kpi"><div class="k">Best yield</div><div class="v">67%</div></div>
+  <div class="kpi"><div class="k">Catalysts available</div><div class="v">22</div></div>
+  <div class="kpi"><div class="k">Pool rows</div><div class="v">4,384</div></div>
+  <div class="kpi"><div class="k">Final log qEI</div><div class="v">&minus;0.819</div></div>
+  <div class="kpi"><div class="k">Wall time</div><div class="v">3.7 s</div></div>
+</div>
+
+<p>We ran the main-batch role on the 69 experiments of <code>nhc_doe.xlsx</code>. The GP is one
+cell of the featurization scan: <code>grover_pca</code> catalyst (16 PCs) &times;
+<code>Hansen</code> solvent (4) &times; <code>grover_pca</code> base (4), KS1 kernel, Mat&eacute;rn-5/2,
+probit outcome, P2 lengthscale priors, constant mean, <code>st_y</code>. It was fitted on all 69
+experiments with the scan's own fitting routine. The candidate space is the <code>Next Batch</code>
+availability: 22 catalysts (16 salts, 6 that need no base), 14 solvents and 8 bases. Time is pinned at
+20 h, and the temperature partition is (2, 2, 2). The acquisition is qLogEI with 1,024 QMC
+samples. It is computed on the probit scale, so <code>best_f</code> = probit(0.67) = 0.439 and every
+improvement is in probit units. Yields quoted below are the posterior median, back-transformed, with
+the &plusmn;1 sd band in brackets.</p>
+
+<p>This GP almost interpolates the data. The fitted noise variance is 0.0009 on the probit scale,
+where the targets have a standard deviation of 1.03, and the posterior median at the 67 percent
+experiment is 66.9 percent. Far from the data it falls back to its prior: a random pool row sits at
+about 9 percent (2&ndash;31). The run below was replayed step by step with logging, and the library
+call with the same seed returns the same batch to the last digit.</p>
+
+<h3>7. The pool</h3>
+
+<p>The eight best experiments seed the local rows. All eight use catalysts that need no base, and
+seven of them use catalyst 1 or 4.</p>
+
+<div class="scroll"><table>
+<tr><th class="lbl">Experiment</th><th>Catalyst</th><th class="lbl">Solvent</th><th>T (&deg;C)</th><th>Formaldehyde (eq)</th><th>Loading</th><th>Time (h)</th><th>Yield</th></tr>
+<tr><td class="lbl">row 49</td><td>1</td><td class="lbl">THF</td><td>78</td><td>2.86</td><td>8.29</td><td>20</td><td class="good">67%</td></tr>
+<tr><td class="lbl">row 53</td><td>4</td><td class="lbl">1,4-Dioxane</td><td>72</td><td>2.91</td><td>7.34</td><td>20</td><td>62%</td></tr>
+<tr><td class="lbl">row 46</td><td>1</td><td class="lbl">THF</td><td>80</td><td>2.00</td><td>5.25</td><td>16</td><td>53%</td></tr>
+<tr><td class="lbl">row 45</td><td>4</td><td class="lbl">THF</td><td>80</td><td>2.00</td><td>5.25</td><td>16</td><td>51%</td></tr>
+<tr><td class="lbl">row 44</td><td>4</td><td class="lbl">THF</td><td>80</td><td>2.00</td><td>5.25</td><td>16</td><td>50%</td></tr>
+<tr><td class="lbl">row 48</td><td>1</td><td class="lbl">1,4-Dioxane</td><td>55</td><td>1.18</td><td>7.37</td><td>20</td><td>47%</td></tr>
+<tr><td class="lbl">row 58</td><td>4</td><td class="lbl">Dimethoxyethane</td><td>72</td><td>2.75</td><td>9.02</td><td>20</td><td>47%</td></tr>
+<tr><td class="lbl">row 43</td><td>3</td><td class="lbl">THF</td><td>80</td><td>2.00</td><td>5.25</td><td>16</td><td>44%</td></tr>
+</table></div>
+
+<p>The pool came out at 4,096 random + 256 local + 32 refined = 4,384 rows. Of the 256 local rows,
+133 kept their incumbent's catalyst and solvent, and 123 got random ones. Two rows of each kind show
+what the pool contains.</p>
+
+<div class="scroll"><table>
+<tr><th class="lbl">Source</th><th>Catalyst</th><th class="lbl">Solvent</th><th class="lbl">Base</th><th>T (&deg;C)</th><th>Formaldehyde</th><th>Loading</th><th class="lbl">Predicted yield</th></tr>
+<tr><td class="lbl">random</td><td>11</td><td class="lbl">Propylenecarbonate</td><td class="lbl">NaOtBu</td><td>62.1</td><td>1.95</td><td>6.13</td><td class="lbl">9.4% (1.6&ndash;30.5)</td></tr>
+<tr><td class="lbl">random</td><td>8</td><td class="lbl">HFIP</td><td class="lbl">none</td><td>89.1</td><td>2.27</td><td>2.13</td><td class="lbl">9.2% (1.6&ndash;30.0)</td></tr>
+<tr><td class="lbl">local, random components, from row 49</td><td>2</td><td class="lbl">Ethyl-Acetate</td><td class="lbl">N(iPr)2Et</td><td>78.9</td><td>3.00</td><td>6.60</td><td class="lbl">36.3% (15.6&ndash;62.1)</td></tr>
+<tr><td class="lbl">local, kept components, from row 58</td><td>4</td><td class="lbl">Dimethoxyethane</td><td class="lbl">none</td><td>74.5</td><td>2.91</td><td>8.33</td><td class="lbl">60.5% (43.6&ndash;75.7)</td></tr>
+</table></div>
+
+<p><b>The random rows cover the space, the local rows carry the signal.</b> All 10 rows with the
+best single-row value, before refinement, are local rows: eight on catalyst 1 in THF and two on
+catalyst 4 in dimethoxyethane. The best of them has single-row LogEI &minus;1.754.</p>
+
+<h3>8. Refinement lifts the best single row from 64 to 71 percent</h3>
+
+<p>Of the 32 rows sent to refinement, 25 were local rows and 7 were random. The median single-row
+LogEI of the 32 rose from &minus;3.169 to &minus;2.265, and the best from &minus;1.754 to &minus;1.497.
+The best row moved only slightly, but into the peak: catalyst 1 in THF at 72.5 &deg;C, 3.00 eq,
+loading 7.76 (median 64.3 percent, 43.7&ndash;81.3) became 73.3 &deg;C, 2.91 eq, loading 8.30
+(71.4 percent, 57.0&ndash;82.9). The next three local rows on catalyst 1 in THF started at different
+settings and converged to the same point. The refined block therefore contains duplicates, which
+costs nothing because greedy never picks a row that adds no value.</p>
+
+<h3>9. Greedy builds the batch across two catalysts and five solvents</h3>
+
+<p class="small">V is the batch value after the step (log qEI, probit units). Open means the row
+kept its own temperature and started a new group. Join means its temperature was overwritten with
+that group's value. The runner-up is the best row of the other option, or the second-best row when
+only one option was allowed.</p>
+
+<div class="scroll"><table>
+<tr><th>Step</th><th class="lbl">Decision</th><th class="lbl">Chosen row</th><th class="lbl">Predicted yield</th><th>V</th><th class="lbl">Runner-up</th></tr>
+<tr><td>1</td><td class="lbl">open group A at 73.3 &deg;C</td><td class="lbl">cat 1, THF, 2.91 eq, 8.30 (refined)</td><td class="lbl">71.4% (57.0&ndash;82.9)</td><td>&minus;1.497</td><td class="lbl">its own duplicates</td></tr>
+<tr><td>2</td><td class="lbl">open group B at 72.4 &deg;C</td><td class="lbl">cat 4, DCM, 2.91 eq, 8.18 (refined)</td><td class="lbl">63.8% (43.1&ndash;81.0)</td><td>&minus;1.228</td><td class="lbl">same row joined to A: &minus;1.234</td></tr>
+<tr><td>3</td><td class="lbl">open group C at 76.7 &deg;C</td><td class="lbl">cat 1, THF, 2.81 eq, 9.75 (local)</td><td class="lbl">65.8% (53.6&ndash;76.6)</td><td>&minus;1.082</td><td class="lbl">cat 4, EtOAc joined to A: &minus;1.117</td></tr>
+<tr><td>4</td><td class="lbl">join C</td><td class="lbl">cat 4, Ethyl-Acetate, 2.93 eq, 8.21</td><td class="lbl">64.7% (49.5&ndash;77.9)</td><td>&minus;0.953</td><td class="lbl">same row joined to A: &minus;0.992</td></tr>
+<tr><td>5</td><td class="lbl">join A</td><td class="lbl">cat 1, Me-THF, 2.91 eq, 8.26</td><td class="lbl">63.0% (43.0&ndash;80.0)</td><td>&minus;0.897</td><td class="lbl">same row joined to B: &minus;0.898</td></tr>
+<tr><td>6</td><td class="lbl">join B</td><td class="lbl">cat 4, HFIP, 2.92 eq, 8.19</td><td class="lbl">44.4% (20.8&ndash;70.4)</td><td>&minus;0.847</td><td class="lbl">cat 1, THF, 3.00 eq, 9.79: &minus;0.849</td></tr>
+</table></div>
+
+<p><b>Step 2 is where greedy differs from ranking single rows.</b> The rows with the best
+single values after step 1 are near-copies of the step-1 row, catalyst 1 in THF near 73 &deg;C. As
+partners they add almost nothing: an exact duplicate leaves V at &minus;1.497, because a second vial of
+the same experiment cannot beat the first. Step 2 asks which row adds the most expected improvement
+on top of step 1. The answer is catalyst 4 in DCM (&minus;1.228). Its median is lower than that of
+the step-1 row (63.8 against 71.4 percent), but its band is the widest among the leading candidates,
+43 to 81 percent, and its posterior correlation with the step-1 row is 0.52, so it has a fair chance of
+exceeding 67 percent in the outcomes where the step-1 row does not. The runner-up is catalyst 1 in THF
+at 76.7 &deg;C (&minus;1.276): less correlated with step 1 (0.13) but narrower (54 to 77 percent),
+so its chance of beating 67 percent is smaller. It enters the batch at step 3. Steps 4 to 6 add a
+new solvent each: ethyl acetate, Me-THF and HFIP. The step-6 row has the lowest median of the
+batch, 44 percent, but its band reaches 70 percent.</p>
+
+<p>The temperature decisions follow the values. In step 2 the chosen row scores &minus;1.228 at its own
+72.4 &deg;C and &minus;1.234 when forced to 73.3 &deg;C, so it opens group B. Step 3 opens the last
+group at 76.7 &deg;C. From step 4 on no group can be opened, and the three remaining rows are placed by
+joining, one in each group, which completes (2, 2, 2).</p>
+
+<h3>10. Swaps and polish add 0.03</h3>
+
+<p>The swap pass replaced two of the six slots. Slot 1 (catalyst 1, THF, 8.30 loading) became the
+same catalyst and solvent at 2.89 eq and 7.74 loading. Slot 5 (catalyst 1, Me-THF) became catalyst 1
+in THF at 3.00 eq and 9.20 loading. Together they raised V from &minus;0.847 to &minus;0.833. The polish
+moved 15 continuous variables (the six rows' formaldehyde and loading, plus the three group
+temperatures)
+for 32 L-BFGS-B iterations and raised V to &minus;0.819. The group temperatures moved from 73.3, 72.4 and
+76.7 &deg;C to 73.0, 72.9 and 77.0 &deg;C.</p>
+
+<p>Groups A and B end 0.1 &deg;C apart. The optimizer enforces that the batch uses at most three
+temperature values with two rows each. It does not enforce that the three values differ, so in the
+lab this batch runs at effectively two temperatures, four vials near 73 &deg;C and two at 77 &deg;C.
+If distinct heating blocks are required, the optimizer needs a minimum-separation constraint on the
+group temperatures.</p>
+
+<div class="scroll"><table>
+<tr><th>Slot</th><th>Group</th><th>T (&deg;C)</th><th>Catalyst</th><th class="lbl">Solvent</th><th>Formaldehyde (eq)</th><th>Loading</th><th class="lbl">Predicted yield</th><th>LogEI alone</th></tr>
+<tr><td>1</td><td>A</td><td>73.0</td><td>1</td><td class="lbl">THF</td><td>2.90</td><td>7.37</td><td class="lbl">69.5% (54.2&ndash;82.0)</td><td>&minus;1.621</td></tr>
+<tr><td>2</td><td>B</td><td>72.9</td><td>4</td><td class="lbl">DCM</td><td>2.88</td><td>8.23</td><td class="lbl">63.6% (43.5&ndash;80.6)</td><td>&minus;1.820</td></tr>
+<tr><td>3</td><td>C</td><td>77.0</td><td>1</td><td class="lbl">THF</td><td>2.79</td><td>10.00</td><td class="lbl">62.9% (48.6&ndash;75.6)</td><td>&minus;2.335</td></tr>
+<tr><td>4</td><td>C</td><td>77.0</td><td>4</td><td class="lbl">Ethyl-Acetate</td><td>2.90</td><td>8.43</td><td class="lbl">65.8% (52.5&ndash;77.5)</td><td>&minus;2.099</td></tr>
+<tr><td>5</td><td>A</td><td>73.0</td><td>1</td><td class="lbl">THF</td><td>2.96</td><td>9.22</td><td class="lbl">66.1% (46.9&ndash;81.9)</td><td>&minus;1.684</td></tr>
+<tr><td>6</td><td>B</td><td>72.9</td><td>4</td><td class="lbl">HFIP</td><td>2.89</td><td>8.22</td><td class="lbl">44.8% (21.2&ndash;70.4)</td><td>&minus;2.626</td></tr>
+</table></div>
+
+<p>No base appears in the batch. Catalysts 1 and 4 need none, and the model predicts all 3,119
+pool rows with a salt catalyst below 53 percent at the median.</p>
+
+<h3>11. Greedy beats the six best single rows by 35 percent</h3>
+
+<div class="scroll"><table>
+<tr><th class="lbl">Batch</th><th class="lbl">How it was chosen</th><th>log qEI</th><th>qEI (probit units)</th></tr>
+<tr><td class="lbl">Six best single rows of the unrefined pool</td><td class="lbl">rank by LogEI alone, take the top six; five are catalyst 1 in THF</td><td class="bad">&minus;1.118</td><td>0.327</td></tr>
+<tr><td class="lbl">Greedy, before swaps and polish</td><td class="lbl">section 9</td><td>&minus;0.847</td><td>0.429</td></tr>
+<tr><td class="lbl">Final batch</td><td class="lbl">after swaps and polish</td><td class="good">&minus;0.819</td><td>0.441</td></tr>
+</table></div>
+
+<p><b>The greedy batch has 35 percent more expected improvement than the six best single rows,
+and almost all of it comes from the construction, not the clean-up.</b> Ranking single rows fills
+the batch with near-copies of one experiment. Five of the six are catalyst 1 in THF between 72 and
+77 &deg;C. The top-six batch also ignores the temperature partition, so the comparison flatters it.</p>
+
+<h3>12. The same steps in run_5</h3>
+
+<p>run_5 calls the same function with the settings below. Its model is this GP on the same 28-column
+NHC space, fitted to a synthetic yield instead of the measured one, and the fantasy tree calls the
+optimizer on fantasy models. The steps are the ones traced above.</p>
+
+<div class="scroll"><table>
+<tr><th class="lbl">Role</th><th>Random rows</th><th>Refined rows</th><th>Pool total</th><th>Swap passes</th><th>Polish iterations</th><th>QMC samples</th></tr>
+<tr><td class="lbl">Main batch</td><td>4,096</td><td>32</td><td>4,384</td><td>1</td><td>50</td><td>1,024</td></tr>
+<tr><td class="lbl">Tree node (below the root)</td><td>4,096</td><td>32</td><td>4,390</td><td>0</td><td>20</td><td>128</td></tr>
+<tr><td class="lbl">Expansion pick (each of the five)</td><td>4,096</td><td>0</td><td>4,352</td><td>0</td><td>0</td><td>128 / 512</td></tr>
+</table></div>
+
+<p>Compared on 81 tree nodes from Ackley, Gallagher101 and LunacekBiRastrigin trajectories, with
+three seeds each, pool-greedy trails the GA by a median 0.04 nats at n &asymp; 52. That is about
+4 percent in EI. It leads by 0.50 nats at n &asymp; 250 and by 17.3 nats at n &asymp; 550, where the
+GA optimises into Monte Carlo noise. It is about 20 times faster per call (0.4&ndash;0.9 s against
+9&ndash;11 s). The guarantee behind greedy is that expected improvement over a fixed pool has
+diminishing returns, and for such functions one-at-a-time greedy reaches at least 1 &minus; 1/e
+&asymp; 63 percent of the best subset of that pool. This guarantee does not carry over exactly here,
+because the optimizer maximises the log, the temperature overwrite changes the pool during the loop,
+and the pool is itself a sample of the space. The comparison above is the evidence that it holds in
+practice.</p>
+
+<footer>Sources: <code>pablo/nhc_doe.xlsx</code> (<code>Next Batch</code> availability: 22 catalysts,
+14 solvents, 8 bases); <code>featurization_and_kernel_scan/data/libraries/experiments.parquet</code>
+(69 experiments) and the <code>grover_pca</code>, <code>solvent_Hansen</code> and
+<code>base_grover_pca</code> descriptor tables; the GP built by <code>AcyloinCondensationModel</code> and
+fitted by <code>_fit_multistart</code> (5 restarts) on all 69 experiments; pool-greedy seed 0 with the
+main-batch settings. The code: <code>optimize_acqf_mixed_pool_greedy</code>,
+<code>_PoolAcquisitionEvaluator</code> and <code>GPPoolPosteriorCache</code> in
+<code>pablo/optimize.py</code>, <code>optimize_scope_expansion_fantasized</code> in
+<code>pablo/scope_expansion.py</code>, <code>pool_greedy_settings()</code> in
+<code>run_5_scope_extension_v2/run_bo_experiment.py</code>, <code>NUM_FANTASIES = [12, 4, 2, 1]</code> in
+<code>run_5_scope_extension_v2/config.py</code>. The GA comparison is from
+<code>pablo/session_report_scope_expansion_optimizer.md</code> (81 nodes &times; 3 seeds). Predicted
+yields are the back-transformed posterior median &plusmn;1 sd on the probit scale. The subset count
+C(4,384, 6) &asymp; 10<sup>19</sup>.</footer>
+</body></html>

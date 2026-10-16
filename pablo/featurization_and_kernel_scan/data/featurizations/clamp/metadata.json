@@ -1,0 +1,11 @@
+{
+  "n_molecules": 161,
+  "label": "CLAMP",
+  "raw_model_output_file": "raw_model_output.parquet",
+  "raw_model_dim": 768,
+  "model": "clamp-pretrained",
+  "encoding": "compound_encoder_output",
+  "input_fp": "morganc+rdkc_8192",
+  "n_features": 768,
+  "descriptors_file": "descriptors.parquet"
+}
